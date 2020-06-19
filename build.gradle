@@ -27,11 +27,6 @@ dependencies {
 
 	modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
 
-	modApi "me.shedaniel.cloth:config-2:4.5.1"
-	include "me.shedaniel.cloth:config-2:4.5.1"
-
-	modImplementation "io.github.prospector:modmenu:1.12.1+build.15"
-
 }
 
 processResources {

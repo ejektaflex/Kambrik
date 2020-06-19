@@ -1,36 +1,30 @@
 {
   "schemaVersion": 1,
-  "id": "makkit",
+  "id": "kambrik",
   "version": "${version}",
 
-  "name": "Makkit",
-  "description": "A Creative Map Editor, Made Easy! \n\nMakkit is world editor for Fabric. To start using it, look at the ground and press the New Box button (default: B). This will create a new Selection Box for you to edit the world with. To move it around, click and drag on a face with your mouse (default: LMB). To resize it, right click and drag on a face (default: RMB). A legend should show up in the corner telling you which keybinds you can use. You can change how verbose the legend is with the config menu. \n\nMakkit requires Mod Menu in order to change it's settings! You can change everything from keybinds to visuals to what shows up in the legend, as well as change some of the mod's own functionality.",
+  "name": "Kambrik",
+  "description": "Kambrik: A Lightweight Kotlin-Fabric Library",
   "authors": [
     "Ejektaflex"
   ],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/makkit",
-    "sources": "https://github.com/ejektaflex/Makkit",
-    "issues": "https://github.com/ejektaflex/Makkit/issues"
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/kambrik",
+    "sources": "https://github.com/ejektaflex/Kambrik",
+    "issues": "https://github.com/ejektaflex/Kambrik/issues"
   },
 
   "license": "GPL 3.0",
-  "icon": "assets/makkit/icon.png",
+  "icon": "assets/kambrik/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
-      "io.ejekta.makkit.common.MakkitCommon::INSTANCE"
-    ],
-    "client": [
-      "io.ejekta.makkit.client.MakkitClient::INSTANCE"
-    ],
-    "modmenu": [
-      "io.ejekta.makkit.client.compat.MakkitModMenu"
+      "io.ejekta.kambrik.Kambrik::INSTANCE"
     ]
   },
+
   "mixins": [
-    "makkit.mixins.json"
   ],
 
   "depends": {
