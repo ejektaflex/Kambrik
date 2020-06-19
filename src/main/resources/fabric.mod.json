@@ -3,7 +3,7 @@
   "id": "kambrik",
   "version": "${version}",
 
-  "name": "Kambrik",
+  "name": "kambrik",
   "description": "Kambrik: A Lightweight Kotlin-Fabric Library",
   "authors": [
     "Ejektaflex"
@@ -14,7 +14,7 @@
     "issues": "https://github.com/ejektaflex/Kambrik/issues"
   },
 
-  "license": "GPL 3.0",
+  "license": "MIT",
   "icon": "assets/kambrik/icon.png",
 
   "environment": "*",
