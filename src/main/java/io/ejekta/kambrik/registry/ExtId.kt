@@ -1,4 +1,4 @@
-package io.ejekta.kambrik
+package io.ejekta.kambrik.registry
 
 import net.minecraft.block.Block
 import net.minecraft.enchantment.Enchantment
