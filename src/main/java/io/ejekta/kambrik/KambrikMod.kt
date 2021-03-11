@@ -19,7 +19,7 @@ internal class KambrikMod : ModInitializer {
     }
 
     internal companion object {
-        const val ID = "assets/kambrik"
+        const val ID = "kambrik"
     }
 
 }

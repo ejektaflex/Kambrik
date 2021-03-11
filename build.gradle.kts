@@ -1,15 +1,18 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import net.fabricmc.loom.task.RemapSourcesJarTask
 
 plugins {
 	//id 'com.github.johnrengelman.shadow' version '6.1.0'
 	kotlin("jvm") version "1.4.30"
 	kotlin("plugin.serialization") version "1.4.30"
 	id("fabric-loom") version "0.6-SNAPSHOT"
+	`maven-publish`
 }
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_1_8
 	targetCompatibility = JavaVersion.VERSION_1_8
+	withSourcesJar()
 }
 
 val modId: String by project
@@ -20,6 +23,11 @@ val fabricVersion: String by project
 val kotlinVersion: String by project
 val loaderVersion: String by project
 val yarnMappings: String by project
+val pkgName: String by project
+val pkgDesc: String by project
+val pkgAuthor: String by project
+val pkgEmail: String by project
+val pkgHub: String by project
 
 project.group = group
 version = modVersion
@@ -68,6 +76,68 @@ dependencies {
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricVersion}")
 }
 
+tasks.named("remapJar").get().also {
+	println(it)
+}
+
+publishing {
+	publications {
+		create<MavenPublication>("Kambrik") {
+			groupId = group
+			artifactId = modId
+			version = modVersion
+			//from(components["java"])
+
+
+			val remapJarTask = tasks.named("remapJar").get()
+			val sourcesJarTask = tasks.named("sourcesJar").get()
+			val remapSourcesJarTask = tasks.named("remapSourcesJar").get()
+
+
+
+			artifact(remapJarTask) {
+				builtBy(remapJarTask)
+			}
+
+
+			artifact(sourcesJarTask) {
+				builtBy(remapSourcesJarTask)
+			}
+
+			pom {
+				name.set(pkgName)
+				description.set(pkgDesc)
+				url.set(pkgHub)
+
+				licenses {
+					license {
+						name.set("MIT License")
+						url.set("https://opensource.org/licenses/MIT")
+					}
+				}
+
+				developers {
+					developer {
+						name.set(pkgAuthor)
+						id.set(pkgAuthor)
+						email.set(pkgEmail)
+					}
+				}
+
+				scm {
+					connection.set("$pkgHub.git")
+					url.set(pkgHub)
+				}
+
+			}
+
+
+		}
+	}
+}
+
+
+
 
 tasks.getByName<ProcessResources>("processResources") {
 	filesMatching("fabric.mod.json") {
@@ -81,6 +151,7 @@ tasks.getByName<ProcessResources>("processResources") {
 		)
 	}
 }
+
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
