@@ -65,11 +65,6 @@ dependencies {
 
 	implementation("com.google.code.findbugs:jsr305:3.0.2")
 
-	modApi("com.terraformersmc:modmenu:1.16.8") {
-		exclude(module = "fabric-api")
-		exclude(module = "config-2")
-	}
-
 	modImplementation(group = "net.fabricmc", name = "fabric-language-kotlin", version = "1.4.30+build.2")
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
@@ -132,6 +127,13 @@ publishing {
 			credentials {
 				username = property("ossrh.username") as String
 				password = property("ossrh.password") as String
+			}
+		}
+		maven("https://maven.pkg.github.com/ejektaflex/kambrik") {
+			name = "GitHub"
+			credentials {
+				username = property("gpr.user") as String
+				password = property("gpr.key") as String
 			}
 		}
 	}
