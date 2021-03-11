@@ -7,12 +7,14 @@ plugins {
 	kotlin("plugin.serialization") version "1.4.30"
 	id("fabric-loom") version "0.6-SNAPSHOT"
 	`maven-publish`
+	signing
 }
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_1_8
 	targetCompatibility = JavaVersion.VERSION_1_8
 	withSourcesJar()
+	withJavadocJar()
 }
 
 val modId: String by project
@@ -31,8 +33,6 @@ val pkgHub: String by project
 
 project.group = group
 version = modVersion
-
-
 
 //compileKotlin.kotlinOptions.jvmTarget = "1.8"
 
@@ -76,33 +76,24 @@ dependencies {
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricVersion}")
 }
 
-tasks.named("remapJar").get().also {
-	println(it)
-}
+
+val remapJarTask = tasks.named("remapJar").get()
+val javadocJarTask = tasks.getByName("javadocJar")
+val sourcesJarTask = tasks.named("sourcesJar").get()
+val remapSourcesJarTask = tasks.named("remapSourcesJar").get()
 
 publishing {
+
 	publications {
 		create<MavenPublication>("Kambrik") {
+
 			groupId = group
 			artifactId = modId
 			version = modVersion
-			//from(components["java"])
 
-
-			val remapJarTask = tasks.named("remapJar").get()
-			val sourcesJarTask = tasks.named("sourcesJar").get()
-			val remapSourcesJarTask = tasks.named("remapSourcesJar").get()
-
-
-
-			artifact(remapJarTask) {
-				builtBy(remapJarTask)
-			}
-
-
-			artifact(sourcesJarTask) {
-				builtBy(remapSourcesJarTask)
-			}
+			artifact(remapJarTask) { builtBy(remapJarTask) }
+			artifact(sourcesJarTask) { builtBy(remapSourcesJarTask) }
+			artifact(javadocJarTask)
 
 			pom {
 				name.set(pkgName)
@@ -134,9 +125,23 @@ publishing {
 
 		}
 	}
+
+	repositories {
+		maven("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2") {
+			name = "Central"
+			credentials {
+				username = property("ossrh.username") as String
+				password = property("ossrh.password") as String
+			}
+		}
+	}
+
 }
 
 
+signing {
+	sign(publishing.publications)
+}
 
 
 tasks.getByName<ProcessResources>("processResources") {
