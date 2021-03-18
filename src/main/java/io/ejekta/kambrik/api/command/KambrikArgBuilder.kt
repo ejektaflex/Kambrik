@@ -6,6 +6,7 @@ import com.mojang.brigadier.arguments.FloatArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType.integer
 import com.mojang.brigadier.arguments.StringArgumentType.string
 import com.mojang.brigadier.builder.ArgumentBuilder
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.suggestion.SuggestionProvider
 import com.mojang.brigadier.tree.CommandNode
 import net.minecraft.server.command.CommandManager
@@ -23,16 +24,17 @@ class KambrikArgBuilder<A : ArgumentBuilder<ServerCommandSource, *>>(val arg: A)
         return arg
     }
 
-    fun literal(word: String, func: ArgDsl<ServerLiteralArg>) {
+    fun literal(word: String, func: ArgDsl<ServerLiteralArg> = {}): LiteralArgumentBuilder<ServerCommandSource> {
         val req = KambrikArgBuilder<ServerLiteralArg>(CommandManager.literal(word)).apply(func)
         req.finalize()
         subArgs.add(req)
+        return req.arg
     }
 
     fun <T> argument(
         type: ArgumentType<T>,
         word: String,
-        items: SuggestionProvider<ServerCommandSource>?,
+        items: SuggestionProvider<ServerCommandSource>? = null,
         func: ArgDsl<ServerRequiredArg> = {}
     ): ServerRequiredArg {
         val req = KambrikArgBuilder<ServerRequiredArg>(CommandManager.argument(word, type)).apply(func)
@@ -74,6 +76,10 @@ class KambrikArgBuilder<A : ArgumentBuilder<ServerCommandSource, *>>(val arg: A)
     }
 
     infix fun ServerRequiredArg.runs(cmd: Command<ServerCommandSource>) {
+        this@runs.executes(cmd)
+    }
+
+    infix fun ServerLiteralArg.runs(cmd: Command<ServerCommandSource>) {
         this@runs.executes(cmd)
     }
 

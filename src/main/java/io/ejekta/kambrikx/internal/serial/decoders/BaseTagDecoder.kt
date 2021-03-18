@@ -87,7 +87,6 @@ abstract class BaseTagDecoder(
 
     override fun decodeTaggedNotNullMark(tag: String): Boolean {
         val read = readTag(tag)
-        println("Reading?: ${read::class.simpleName}")
         return read != config.nullTag
     }
 }

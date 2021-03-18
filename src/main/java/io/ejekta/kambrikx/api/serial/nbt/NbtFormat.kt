@@ -38,7 +38,10 @@ class NbtFormatConfig {
     var classDiscriminator: String = "type"
 
     @ExperimentalSerializationApi
-    var serializersModule: SerializersModule = EmptySerializersModule
+    var serializersModule: SerializersModule = SerializersModule {
+        include(NbtFormat.BuiltInSerializers)
+        include(NbtFormat.ReferenceSerializers)
+    }
 
     var writePolymorphic = true
 
@@ -53,7 +56,8 @@ open class NbtFormat internal constructor(val config: NbtFormatConfig) : SerialF
     @OptIn(ExperimentalSerializationApi::class)
     override val serializersModule = EmptySerializersModule + config.serializersModule
 
-    companion object Default : NbtFormat(NbtFormatConfig()) {
+    companion object {
+
         @Suppress("UNCHECKED_CAST")
         val BuiltInSerializers = SerializersModule {
 
@@ -86,6 +90,8 @@ open class NbtFormat internal constructor(val config: NbtFormatConfig) : SerialF
             contextual(Item::class, ItemRefSerializer)
         }
 
+        val Default = NbtFormat(NbtFormatConfig())
+
     }
 
     @OptIn(ExperimentalSerializationApi::class)
@@ -109,7 +115,6 @@ open class NbtFormat internal constructor(val config: NbtFormatConfig) : SerialF
 
     @OptIn(ExperimentalSerializationApi::class)
     fun <T> decodeFromTag(deserializer: DeserializationStrategy<T>, tag: Tag): T {
-        println("Decoding: ${tag::class.simpleName}")
         val decoder = when (tag) {
             is CompoundTag, is ListTag -> TagDecoder(config, 0, tag)
             else -> TaglessDecoder(config, 0, tag)

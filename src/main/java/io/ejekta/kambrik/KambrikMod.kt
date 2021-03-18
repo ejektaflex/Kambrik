@@ -5,7 +5,9 @@ import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.loader.api.FabricLoader
 
-internal class KambrikMod : ModInitializer {
+object KambrikMod : ModInitializer {
+
+    const val ID = "kambrik"
 
     override fun onInitialize() {
         Kambrik.Logger.info("Kambrik Says Hello!")
@@ -16,10 +18,6 @@ internal class KambrikMod : ModInitializer {
             KambrikRegistrar.doRegistrationFor(it)
         }
 
-    }
-
-    internal companion object {
-        const val ID = "kambrik"
     }
 
 }

@@ -19,7 +19,7 @@ abstract class ItemData<T> {
     private val defaultTag: Tag
         get() = format.encodeToTag(ser, default())
 
-    open val format: NbtFormat = NbtFormat
+    open val format: NbtFormat = NbtFormat.Default
 
     fun of(stack: ItemStack) = get(stack)
 
@@ -29,7 +29,9 @@ abstract class ItemData<T> {
             return if (key in this) {
                 get(key)
             } else {
-                put(key, defaultTag)
+                val def = defaultTag
+                put(key, def)
+                def
             }!!
         }
     }
