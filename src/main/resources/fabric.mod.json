@@ -20,7 +20,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "io.ejekta.kambrik.KambrikMod"
+      {
+        "adapter": "kotlin",
+        "value": "io.ejekta.kambrik.KambrikMod"
+      }
     ]
   },
   "mixins": [
