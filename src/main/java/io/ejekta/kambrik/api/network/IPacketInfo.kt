@@ -15,14 +15,14 @@ interface IPacketInfo<S> {
     @Transient val id: Identifier
     @Transient val format: NbtFormat
         get() = NbtFormat.Default
-    @Transient val serializer: KSerializer<S>
+    @Transient val serial: KSerializer<S>
 
     fun serializePacket(s: S): Tag {
-        return format.encodeToTag(serializer, s)
+        return format.encodeToTag(serial, s)
     }
 
     fun deserializePacket(tag: Tag): S {
-        return format.decodeFromTag(serializer, tag)
+        return format.decodeFromTag(serial, tag)
     }
 
     object DummySerializer : KSerializer<Any> {

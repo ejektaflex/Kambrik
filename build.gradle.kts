@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import net.fabricmc.loom.task.RemapSourcesJarTask
+import java.text.SimpleDateFormat
+import java.util.Date
 
 plugins {
 	//id 'com.github.johnrengelman.shadow' version '6.1.0'
@@ -31,8 +33,14 @@ val pkgAuthor: String by project
 val pkgEmail: String by project
 val pkgHub: String by project
 
+val buildVersion = if (modVersion.endsWith("SNAPSHOT")) {
+	modVersion + ".${SimpleDateFormat("YYYY.MMdd.HHmmss").format(Date())}"
+} else {
+	modVersion
+}
+
 project.group = group
-version = modVersion
+version = buildVersion
 
 //compileKotlin.kotlinOptions.jvmTarget = "1.8"
 
@@ -48,9 +56,7 @@ repositories {
 	}
 }
 
-minecraft {
-
-}
+minecraft { }
 
 dependencies {
 	//to change the versions see the gradle.properties file
@@ -71,7 +77,6 @@ dependencies {
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricVersion}")
 }
 
-
 val remapJarTask = tasks.named("remapJar").get()
 val javadocJarTask = tasks.getByName("javadocJar")
 val sourcesJarTask = tasks.named("sourcesJar").get()
@@ -84,7 +89,7 @@ publishing {
 
 			groupId = group
 			artifactId = modId
-			version = modVersion
+			version = buildVersion
 
 			artifact(remapJarTask) { builtBy(remapJarTask) }
 			artifact(sourcesJarTask) { builtBy(remapSourcesJarTask) }
@@ -140,11 +145,9 @@ publishing {
 
 }
 
-
 signing {
 	sign(publishing.publications)
 }
-
 
 tasks.getByName<ProcessResources>("processResources") {
 	filesMatching("fabric.mod.json") {
@@ -158,7 +161,6 @@ tasks.getByName<ProcessResources>("processResources") {
 		)
 	}
 }
-
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
