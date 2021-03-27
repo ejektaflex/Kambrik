@@ -14,6 +14,8 @@ import net.minecraft.nbt.ListTag
 import net.minecraft.nbt.LongArrayTag
 import net.minecraft.nbt.LongTag
 import net.minecraft.util.math.BlockPos
+import java.text.SimpleDateFormat
+import java.util.*
 
 val serMod = SerializersModule {
 
@@ -57,6 +59,7 @@ data class Person(val name: String, val money: Money)
 
 fun main(args: Array<String>) {
 
+    /*
     @Serializable
     data class SlingshotData(val name: String,  val pos: @Contextual BlockPos)
 
@@ -67,6 +70,10 @@ fun main(args: Array<String>) {
 
     val asObj = NbtFormatTest.decodeFromTag<SlingshotData>(asNbt)
     println("As Obj: $asObj")
+    */
+
+    val date = SimpleDateFormat("YYYY.MMdd.HHmmss")
+    println(date.format(Date()))
 
 }
 

@@ -2,6 +2,7 @@ package io.ejekta.kambrik.ext
 
 import net.minecraft.block.Block
 import net.minecraft.enchantment.Enchantment
+import net.minecraft.entity.EntityType
 import net.minecraft.entity.attribute.EntityAttribute
 import net.minecraft.entity.effect.StatusEffect
 import net.minecraft.fluid.Fluid
@@ -34,3 +35,6 @@ val Block.identifier: Identifier
 
 val Fluid.identifier: Identifier
     get() = Registry.FLUID.getId(this)
+
+val EntityType<*>.identifier: Identifier
+    get() = Registry.ENTITY_TYPE.getId(this)
