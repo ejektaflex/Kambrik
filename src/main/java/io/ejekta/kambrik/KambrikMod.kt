@@ -40,26 +40,9 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
         ::KambrikInternalConfig
     )
 
-    private fun syncConfig() {
-        config.read().markers.let {
-            KambrikMarkers.handleContainerMarkers(ID, it)
-        }
-    }
-
     override fun onPreLaunch() {
         Logger.info("Kambrik Says Hello!")
-
-        FabricLoader.getInstance().allMods.forEach { mod ->
-            if (mod.metadata.containsCustomValue(ID)) {
-                val cv = mod.metadata.getCustomValue(ID)
-                if (cv is CustomValue.CvObject) {
-                    for ((k, v) in cv) {
-                        handleCustom(mod.metadata.id, k, v)
-                    }
-                }
-            }
-        }
-
+        handleCustomEntryData()
         configureLoggerFilters()
     }
 
@@ -72,28 +55,40 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
         CommandRegistrationCallback.EVENT.register(KambrikCommands)
     }
 
-    private fun handleCustom(modId: String, name: String, value: CustomValue) {
-        when (name) {
-            "markers" -> {
-                val markerMap = value.asObject.toMap().map { it.key to it.value.asBoolean }.toMap()
-                KambrikMarkers.handleContainerMarkers(modId, markerMap)
+    private fun handleCustomEntryData() {
+        FabricLoader.getInstance().allMods.forEach { mod ->
+            if (mod.metadata.containsCustomValue(ID)) {
+                val cv = mod.metadata.getCustomValue(ID)
+                if (cv is CustomValue.CvObject) {
+                    for ((name, value) in cv) {
+
+                        when (name) {
+                            "log_markers" -> {
+                                val markerMap = value.asObject.toMap().map { it.key to it.value.asBoolean }.toMap()
+                                KambrikMarkers.handleContainerMarkers(markerMap)
+                            }
+                        }
+
+                    }
+                }
             }
         }
     }
 
     fun configureLoggerFilters() {
 
-        syncConfig()
+        config.read().markers.let {
+            KambrikMarkers.handleContainerMarkers(it)
+        }
 
         val ctx = LogManager.getContext(false) as LoggerContext
         ctx.reconfigure()
 
         for (logger in ctx.loggers.filterIsInstance<Logger>()) {
-            val filters = KambrikMarkers.Registry.map {
-                MarkerFilter.createFilter(it.key, if (it.value) Filter.Result.ACCEPT else Filter.Result.DENY, Filter.Result.NEUTRAL)
-            }
+            println("Logger: ${logger.name}, ${logger.context.name}, ${ctx.name}, ${ctx.rootLogger.name}, ${ctx.loggers.map { it.name }}")
             logger.context.configuration.removeFilter(logger.context.configuration.filter)
-            for (filter in filters) {
+            KambrikMarkers.Registry.forEach { (key, value) ->
+                val filter = MarkerFilter.createFilter(key, if (value) Filter.Result.ACCEPT else Filter.Result.DENY, Filter.Result.NEUTRAL)
                 logger.addFilter(filter)
             }
         }
