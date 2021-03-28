@@ -1,5 +1,6 @@
 package io.ejekta.kambrik.api.logging
 
+import net.minecraft.util.Identifier
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.Marker
@@ -17,10 +18,8 @@ class KambrikLoggingApi internal constructor() {
         return LogManager.getLogger(modid)
     }
 
-    fun createMarker(name: String, vararg parent: Marker?): Marker {
-        val marker = MarkerManager.getMarker(name)
-        marker.setParents(*parent)
-        return marker
+    fun createMarker(id: Identifier): Marker {
+        return MarkerManager.getMarker(id.toString())
     }
 
 }
