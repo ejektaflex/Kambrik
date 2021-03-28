@@ -1,7 +1,7 @@
 # Kambrik
 
 A lightweight Kotlin library mod for Fabric. 
-Meant to simplify development
+Meant to simplify development through various means.
 
 Kambrik Currently Offers: 
 * Automatic Registration of Items, Blocks, Enchantments, etc.

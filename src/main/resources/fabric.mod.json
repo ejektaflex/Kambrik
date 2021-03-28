@@ -19,6 +19,12 @@
 
   "environment": "*",
   "entrypoints": {
+    "preLaunch": [
+      {
+        "adapter": "kotlin",
+        "value": "io.ejekta.kambrik.KambrikMod"
+      }
+    ],
     "main": [
       {
         "adapter": "kotlin",
@@ -29,6 +35,14 @@
   "mixins": [
     "kambrik.mixins.json"
   ],
+
+  "custom": {
+    "kambrik": {
+      "markers": {
+        "kambrik:rendering": false
+      }
+    }
+  },
 
   "depends": {
     "fabricloader": ">=0.11.2",

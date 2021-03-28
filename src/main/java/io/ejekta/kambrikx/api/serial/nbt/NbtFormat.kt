@@ -1,6 +1,7 @@
 package io.ejekta.kambrikx.api.serial.nbt
 
 import io.ejekta.kambrik.Kambrik
+import io.ejekta.kambrik.KambrikMod
 import io.ejekta.kambrikx.api.serial.serializers.BlockPosSerializer
 import io.ejekta.kambrikx.api.serial.serializers.BoxSerializer
 import io.ejekta.kambrikx.api.serial.serializers.ItemRefSerializer
@@ -23,7 +24,7 @@ import net.minecraft.util.math.Box
 @OptIn(InternalSerializationApi::class)
 class NbtFormatConfig {
 
-    private val nbtEncodingMarker = Kambrik.Logging.createMarker("NBT-SERIAL")
+    private val nbtEncodingMarker = Kambrik.Logging.createMarker(KambrikMod.idOf("nbt"))
 
     private val logger = Kambrik.Logger
 

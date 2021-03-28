@@ -2,6 +2,8 @@ package io.ejekta.kambrik.api.command
 
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.arguments.ArgumentType
+import com.mojang.brigadier.arguments.BoolArgumentType
+import com.mojang.brigadier.arguments.BoolArgumentType.bool
 import com.mojang.brigadier.arguments.FloatArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType.integer
 import com.mojang.brigadier.arguments.StringArgumentType.string
@@ -9,6 +11,7 @@ import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.suggestion.SuggestionProvider
 import com.mojang.brigadier.tree.CommandNode
+import net.minecraft.command.argument.IdentifierArgumentType.identifier
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 
@@ -66,6 +69,14 @@ class KambrikArgBuilder<A : ArgumentBuilder<ServerCommandSource, *>>(val arg: A)
         word: String, range: ClosedFloatingPointRange<Float>? = null,
         items: SuggestionProvider<ServerCommandSource>? = null, func: ArgDsl<ServerRequiredArg> = {}
     ) = argument(if (range != null) FloatArgumentType.floatArg(range.start, range.endInclusive) else FloatArgumentType.floatArg(), word, items, func)
+
+    fun boolArg(
+        word: String, items: SuggestionProvider<ServerCommandSource>? = null, func: ArgDsl<ServerRequiredArg> = {}
+    ) = argument(bool(), word, items, func)
+
+    fun identifierArg(
+        word: String, items: SuggestionProvider<ServerCommandSource>? = null, func: ArgDsl<ServerRequiredArg> = {}
+    ) = argument(identifier(), word, items, func)
 
     operator fun String.invoke(func: ArgDsl<ServerLiteralArg>) {
         literal(this, func)
