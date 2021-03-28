@@ -38,7 +38,8 @@
 
   "custom": {
     "kambrik": {
-      "markers": {
+      "log_level": "TRACE",
+      "log_markers": {
         "kambrik:rendering": false
       }
     }
