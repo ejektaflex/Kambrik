@@ -2,13 +2,22 @@
 
 package io.ejekta.kambrikx.api.serial.serializers
 
+import io.ejekta.kambrik.Kambrik
+import io.ejekta.kambrik.ext.toCompoundTag
+import io.ejekta.kambrik.ext.toMap
 import io.ejekta.kambrik.ext.toTag
 import io.ejekta.kambrikx.ext.internal.doStructure
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializer
+import io.ejekta.kambrikx.internal.serial.decoders.BaseTagDecoder
+import io.ejekta.kambrikx.internal.serial.encoders.BaseTagEncoder
+import kotlinx.serialization.*
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import net.minecraft.nbt.ByteTag
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.StringTag
 import net.minecraft.nbt.Tag
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
@@ -26,64 +35,136 @@ object TagSerializer : KSerializer<Tag> {
     }
 }
 
-@Serializer(forClass = BlockPos::class)
-object BlockPosSerializer : KSerializer<BlockPos> {
-    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("yarn.BlockPos") {
-        element<Int>("x")
-        element<Int>("y")
-        element<Int>("z")
-    }
-
-    override fun serialize(encoder: Encoder, value: BlockPos) {
-        encoder.doStructure(descriptor) {
-            encodeIntElement(descriptor, 0, value.x)
-            encodeIntElement(descriptor, 1, value.y)
-            encodeIntElement(descriptor, 2, value.z)
+@Serializer(forClass = Tag::class)
+class TagSerializerTwo : KSerializer<Tag> {
+    @OptIn(InternalSerializationApi::class)
+    private fun getDesc(): SerialDescriptor {
+        return buildSerialDescriptor("Doooot", PolymorphicKind.SEALED) {
+            // element("JsonPrimitive", defer { JsonPrimitiveSerializer.descriptor })
+            element("ByteTag", ByteTagSerializer.descriptor)
+            element("StringTag", StringTagSerializer.descriptor)
         }
     }
+    override val descriptor: SerialDescriptor = getDesc()
+    override fun serialize(encoder: Encoder, value: Tag) {
+        encoder.encodeString(value.asString())
+    }
+    override fun deserialize(decoder: Decoder): Tag {
+        return decoder.decodeString().toTag()
+    }
 
-    override fun deserialize(decoder: Decoder): BlockPos {
-        return decoder.doStructure(descriptor) {
-            val x = decodeIntElement(descriptor, 0)
-            val y = decodeIntElement(descriptor, 1)
-            val z = decodeIntElement(descriptor, 2)
-            BlockPos(x, y, z)
+    @Suppress("UNCHECKED_CAST")
+    operator fun <T> invoke(): KSerializer<T> {
+        return TagSerializer as KSerializer<T>
+    }
+}
+
+@Serializer(forClass = ByteTag::class)
+object ByteTagSerializer : KSerializer<ByteTag> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ByteTagSerializer", PrimitiveKind.BYTE)
+    override fun serialize(encoder: Encoder, value: ByteTag) {
+        encoder.encodeByte(value.byte)
+    }
+    override fun deserialize(decoder: Decoder): ByteTag {
+        return ByteTag.of(decoder.decodeByte())
+    }
+}
+
+@Serializer(forClass = StringTag::class)
+object StringTagSerializer : KSerializer<StringTag> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("StringTagSerializer", PrimitiveKind.STRING)
+    override fun serialize(encoder: Encoder, value: StringTag) {
+        encoder.encodeString(value.asString())
+    }
+    override fun deserialize(decoder: Decoder): StringTag {
+        return StringTag.of(decoder.decodeString())
+    }
+}
+
+@Serializable
+data class Holder(val tag: @Contextual CompoundTag)
+
+@OptIn(InternalSerializationApi::class)
+@Serializer(forClass = CompoundTag::class)
+class CompoundTagSerializer : KSerializer<CompoundTag> {
+    @OptIn(InternalSerializationApi::class)
+    private fun getDesc(): SerialDescriptor {
+        return buildClassSerialDescriptor("CompoundyTag") {
+            mapSerialDescriptor(PrimitiveSerialDescriptor(
+                "t", PrimitiveKind.STRING
+            ), TagSerializer.descriptor)
+        }
+    }
+    override val descriptor: SerialDescriptor = getDesc()
+
+    override fun serialize(encoder: Encoder, value: CompoundTag) {
+        if (encoder is BaseTagEncoder) {
+            Kambrik.Logger.warn("Encoder is base and encoding direct tag")
+            encoder.encodeNbtTag(value)
+        } else {
+            MapSerializer(String.serializer(), PolymorphicSerializer(Tag::class)).serialize(encoder, value.toMap())
+        }
+    }
+    override fun deserialize(decoder: Decoder): CompoundTag {
+        if (decoder is BaseTagDecoder) {
+            Kambrik.Logger.warn("Decoder is base and encoding direct tag")
+            return decoder.decodeNbtTag() as CompoundTag
+        } else {
+            val mapped = MapSerializer(String.serializer(), PolymorphicSerializer(Tag::class)).deserialize(decoder)
+            return mapped.toCompoundTag()
         }
     }
 }
 
-@Serializer(forClass = Box::class)
-object BoxSerializer : KSerializer<Box> {
-    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("yarn.Box") {
-        element<Double>("ax")
-        element<Double>("ay")
-        element<Double>("az")
-        element<Double>("bx")
-        element<Double>("by")
-        element<Double>("bz")
-    }
-
-    override fun serialize(encoder: Encoder, value: Box) {
-        encoder.doStructure(descriptor) {
-            value.run {
-                listOf(minX, minY, minZ, maxX, maxY, maxZ).mapIndexed { index, d ->
-                    encodeDoubleElement(descriptor, index, d)
-                }
-            }
+@Serializer(forClass = Tag::class)
+class TagFinalSer : KSerializer<Tag> {
+    @OptIn(InternalSerializationApi::class)
+    private fun getDesc(): SerialDescriptor {
+        return buildSerialDescriptor("kotlinx.serialization.Polymorphic", PolymorphicKind.OPEN) {
+            element("type", String.serializer().descriptor)
+            element(
+                "value",
+                buildSerialDescriptor("kotlinx.serialization.Polymorphic<${Tag::class.simpleName}>", SerialKind.CONTEXTUAL)
+            )
         }
     }
-
-    override fun deserialize(decoder: Decoder): Box {
-        return decoder.doStructure(descriptor) {
-            (0 until 6).map { decodeDoubleElement(descriptor, it) }.let {
-                Box(it[0], it[1], it[2], it[3], it[4], it[5])
-            }
-        }
+    override val descriptor: SerialDescriptor = getDesc()
+    override fun serialize(encoder: Encoder, value: Tag) {
+        PolymorphicSerializer(Tag::class).serialize(encoder, value)
+    }
+    override fun deserialize(decoder: Decoder): Tag {
+        return PolymorphicSerializer(Tag::class).deserialize(decoder)
     }
 }
 
-object BlockPosSerializerOptimized : KSerializer<BlockPos> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("yarn.BlockPosOptimized", PrimitiveKind.LONG)
-    override fun serialize(encoder: Encoder, value: BlockPos) = encoder.encodeLong(value.asLong())
-    override fun deserialize(decoder: Decoder): BlockPos { return BlockPos.fromLong(decoder.decodeLong()) }
+@Serializer(forClass = Tag::class)
+class TagFinalSerTwo : KSerializer<Tag> {
+    @OptIn(InternalSerializationApi::class)
+    private fun getDesc(): SerialDescriptor {
+        return buildSerialDescriptor("kotlinx.serialization.Polymorphic", PolymorphicKind.OPEN) {
+            element("type", String.serializer().descriptor)
+            element(
+                "value",
+                buildSerialDescriptor("kotlinx.serialization.Polymorphic<${Tag::class.simpleName}>", SerialKind.CONTEXTUAL)
+            )
+        }
+    }
+    override val descriptor: SerialDescriptor = getDesc()
+    override fun serialize(encoder: Encoder, value: Tag) {
+        PolymorphicSerializer(Tag::class).serialize(encoder, value)
+    }
+    override fun deserialize(decoder: Decoder): Tag {
+        return PolymorphicSerializer(Tag::class).deserialize(decoder)
+    }
 }
+
+
+
+
+
+
+
+
+
+
+

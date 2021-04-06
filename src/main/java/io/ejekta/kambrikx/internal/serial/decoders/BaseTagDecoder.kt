@@ -1,7 +1,9 @@
 package io.ejekta.kambrikx.internal.serial.decoders
 
+import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrikx.api.serial.nbt.NbtFormat
 import io.ejekta.kambrikx.api.serial.nbt.NbtFormatConfig
+import io.ejekta.kambrikx.api.serial.serializers.TagFinalSer
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.CompositeDecoder
@@ -43,7 +45,7 @@ abstract class BaseTagDecoder(
     @ExperimentalSerializationApi
     private fun <T : Any> getPolymorphicDeserializer(ser: DeserializationStrategy<T>): DeserializationStrategy<out T> {
         val abs = ser as AbstractPolymorphicSerializer<T>
-        val typed = (currentTag() as CompoundTag).getString(config.classDiscriminator)
+        val typed = (currentTag() as? CompoundTag ?: return ser).getString(config.classDiscriminator)
         if (typed == "") {
             throw SerializationException("Tried to get the polymorphic serializer in ${currentTag()} but failed!")
         }
@@ -68,6 +70,7 @@ abstract class BaseTagDecoder(
         return TagMapDecoder(config, level, currentTag()).decodeSerializableValue(actualSerializer)
     }
 
+    fun decodeNbtTag(): Tag = readTag(popTag())
     override fun decodeTaggedInt(tag: String): Int = (readTag(tag) as IntTag).int
     override fun decodeTaggedString(tag: String): String = (readTag(tag) as StringTag).asString()
     override fun decodeTaggedBoolean(tag: String): Boolean = (readTag(tag) as ByteTag).byte > 0

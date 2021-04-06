@@ -2,10 +2,7 @@ package io.ejekta.kambrikx.api.serial.nbt
 
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.KambrikMod
-import io.ejekta.kambrikx.api.serial.serializers.BlockPosSerializer
-import io.ejekta.kambrikx.api.serial.serializers.BoxSerializer
-import io.ejekta.kambrikx.api.serial.serializers.ItemRefSerializer
-import io.ejekta.kambrikx.api.serial.serializers.TagSerializer
+import io.ejekta.kambrikx.api.serial.serializers.*
 import io.ejekta.kambrikx.internal.serial.decoders.TagDecoder
 import io.ejekta.kambrikx.internal.serial.decoders.TaglessDecoder
 import io.ejekta.kambrikx.internal.serial.encoders.TagEncoder
@@ -15,6 +12,7 @@ import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.plus
+import kotlinx.serialization.modules.polymorphic
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.*
@@ -63,11 +61,15 @@ open class NbtFormat internal constructor(val config: NbtFormatConfig) : SerialF
         val BuiltInSerializers = SerializersModule {
 
             // Polymorphic
-
+            polymorphic(Tag::class) {
+                subclass(ByteTag::class, ByteTagSerializer)
+                subclass(StringTag::class, StringTagSerializer)
+            }
 
             // Contextual
 
             // Tags
+            contextual(CompoundTag::class, CompoundTagSerializer())
             contextual(Tag::class, TagSerializer)
             contextual(IntTag::class, TagSerializer())
             contextual(StringTag::class, TagSerializer())

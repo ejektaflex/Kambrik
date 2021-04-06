@@ -1,5 +1,6 @@
 package io.ejekta.kambrikx.internal.serial.encoders
 
+import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrikx.api.serial.nbt.NbtFormat
 import io.ejekta.kambrikx.api.serial.nbt.NbtFormatConfig
 import kotlinx.serialization.*
@@ -62,7 +63,7 @@ abstract class BaseTagEncoder(
     @Suppress("UNCHECKED_CAST")
     @ExperimentalSerializationApi
     private fun <T: Any> getPolymorphicSerializer(ser: SerializationStrategy<T>, value: T): SerializationStrategy<T> {
-        val abs = ser as AbstractPolymorphicSerializer<T>
+        val abs = ser as? AbstractPolymorphicSerializer<T> ?: return ser
         return abs.findPolymorphicSerializer(this, value)
     }
 
@@ -70,6 +71,7 @@ abstract class BaseTagEncoder(
     override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
         if (value is Any) {
             val open = serializer.descriptor.kind is PolymorphicKind.OPEN
+            Kambrik.Logger.info("Ser is $serializer")
             val serial = when (serializer.descriptor.kind) {
                 is PolymorphicKind.OPEN -> {
                     encodePolymorphic = true
@@ -85,6 +87,9 @@ abstract class BaseTagEncoder(
         }
     }
 
+    fun encodeNbtTag(tag: Tag) {
+        addTag(popTag(), tag)
+    }
     override fun encodeTaggedInt(tag: String, value: Int) { addTag(tag, IntTag.of(value)) }
     override fun encodeTaggedString(tag: String, value: String) { addTag(tag, StringTag.of(value)) }
     override fun encodeTaggedBoolean(tag: String, value: Boolean) { addTag(tag, ByteTag.of(value)) }

@@ -61,4 +61,13 @@ abstract class ItemData<T> {
         get(stack).apply(func).also { set(stack, it) }
     }
 
+    fun editIf(stack: ItemStack, func: T.() -> Boolean) {
+        get(stack).apply {
+            val result = func()
+            if (result) {
+                set(stack, this)
+            }
+        }
+    }
+
 }
