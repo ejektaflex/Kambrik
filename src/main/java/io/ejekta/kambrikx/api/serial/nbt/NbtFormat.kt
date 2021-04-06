@@ -61,28 +61,31 @@ open class NbtFormat internal constructor(val config: NbtFormatConfig) : SerialF
         val BuiltInSerializers = SerializersModule {
 
             // Polymorphic
+            /*
             polymorphic(Tag::class) {
                 subclass(ByteTag::class, ByteTagSerializer)
                 subclass(StringTag::class, StringTagSerializer)
             }
 
+             */
+
             // Contextual
 
             // Tags
-            contextual(CompoundTag::class, CompoundTagSerializer())
-            contextual(Tag::class, TagSerializer)
-            contextual(IntTag::class, TagSerializer())
-            contextual(StringTag::class, TagSerializer())
-            contextual(DoubleTag::class, TagSerializer())
-            contextual(ByteTag::class, TagSerializer())
-            contextual(FloatTag::class, TagSerializer())
-            contextual(LongTag::class, TagSerializer())
-            contextual(ShortTag::class, TagSerializer())
+            contextual(Tag::class, DynTagSerializer)
+            contextual(CompoundTag::class, DynTagSerializer())
+            contextual(IntTag::class, DynTagSerializer())
+            contextual(StringTag::class, DynTagSerializer())
+            contextual(DoubleTag::class, DynTagSerializer())
+            contextual(ByteTag::class, DynTagSerializer())
+            contextual(FloatTag::class, DynTagSerializer())
+            contextual(LongTag::class, DynTagSerializer())
+            contextual(ShortTag::class, DynTagSerializer())
 
             // Complex Tags
-            contextual(LongArrayTag::class, TagSerializer())
-            contextual(IntArrayTag::class, TagSerializer())
-            contextual(ListTag::class, TagSerializer())
+            contextual(LongArrayTag::class, DynTagSerializer())
+            contextual(IntArrayTag::class, DynTagSerializer())
+            contextual(ListTag::class, DynTagSerializer())
 
             // Built in data classes
             contextual(BlockPos::class, BlockPosSerializer)
