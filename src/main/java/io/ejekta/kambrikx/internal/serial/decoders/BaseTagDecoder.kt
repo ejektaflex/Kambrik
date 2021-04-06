@@ -3,7 +3,6 @@ package io.ejekta.kambrikx.internal.serial.decoders
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrikx.api.serial.nbt.NbtFormat
 import io.ejekta.kambrikx.api.serial.nbt.NbtFormatConfig
-import io.ejekta.kambrikx.api.serial.serializers.TagFinalSer
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.CompositeDecoder
