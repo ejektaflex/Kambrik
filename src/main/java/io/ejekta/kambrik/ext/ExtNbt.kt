@@ -10,6 +10,18 @@ operator fun CompoundTag.iterator(): Iterator<Pair<String, Tag>> {
     return keys.map { it to get(it)!! }.iterator()
 }
 
+fun CompoundTag.toMap(): Map<String, Tag> {
+    return keys.map { it to get(it)!! }.toMap()
+}
+
+fun Map<String, Tag>.toCompoundTag(): CompoundTag {
+    return CompoundTag().apply {
+        this@toCompoundTag.forEach { key, tag ->
+            put(key, tag)
+        }
+    }
+}
+
 fun StringNbtReader.parseTag(nbt: String): Tag {
     return StringNbtReader.parse("{content:$nbt}")
 }

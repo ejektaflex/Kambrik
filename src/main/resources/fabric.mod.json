@@ -42,6 +42,9 @@
       "log_markers": {
         "kambrik:rendering": false
       }
+    },
+    "modmenu": {
+      "badges": [ "library" ]
     }
   },
 

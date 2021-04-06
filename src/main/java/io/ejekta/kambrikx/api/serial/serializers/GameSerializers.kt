@@ -1,14 +1,23 @@
 package io.ejekta.kambrikx.api.serial.serializers
 
+import io.ejekta.kambrik.ext.toMap
+import io.ejekta.kambrikx.ext.internal.doCollection
+import io.ejekta.kambrikx.ext.internal.doStructure
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import net.minecraft.item.ItemStack
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.StringNbtReader
+import net.minecraft.nbt.Tag
 import net.minecraft.util.Identifier
+import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Box
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializer(forClass = Identifier::class)
@@ -22,6 +31,131 @@ object IdentitySer : KSerializer<Identifier> {
     }
 }
 
+@OptIn(ExperimentalSerializationApi::class)
+@Serializer(forClass = ItemStack::class)
+object ItemStackSer : KSerializer<ItemStack> {
+    private fun getDesc(): SerialDescriptor {
+        return PrimitiveSerialDescriptor("ItemStack", PrimitiveKind.STRING)
+    }
+    override val descriptor: SerialDescriptor = getDesc()
+    override fun serialize(encoder: Encoder, value: ItemStack) {
+        encoder.encodeSerializableValue(TagSerializer, value.toTag(CompoundTag()))
+    }
+    override fun deserialize(decoder: Decoder): ItemStack {
+        val tag = decoder.decodeSerializableValue(TagSerializer) as CompoundTag
+        return ItemStack.fromTag(tag)
+    }
+}
+
+@OptIn(ExperimentalSerializationApi::class)
+@Serializer(forClass = ItemStack::class)
+class ItemStackSerTwo : KSerializer<ItemStack> {
+    private fun getDesc(): SerialDescriptor {
+        return serialDescriptor<Map<String, Tag>>()
+    }
+    override val descriptor: SerialDescriptor = getDesc()
+    override fun serialize(encoder: Encoder, value: ItemStack) {
+        //encoder.encodeSerializableValue(TagSerializer, value.toTag(CompoundTag()) as Tag)
+        val tagged = value.toTag(CompoundTag())
+        val mapped = tagged.toMap()
+        encoder.encodeSerializableValue(
+            MapSerializer(String.serializer(), TagSerializer),
+            mapped
+        )
+    }
+    override fun deserialize(decoder: Decoder): ItemStack {
+        val tag = decoder.decodeSerializableValue(TagSerializer) as CompoundTag
+        return ItemStack.fromTag(tag)
+    }
+}
+
+@OptIn(ExperimentalSerializationApi::class)
+@Serializer(forClass = ItemStack::class)
+class ItemStackSerThree : KSerializer<ItemStack> {
+    private fun getDesc(): SerialDescriptor {
+        return serialDescriptor<Map<String, Tag>>()
+    }
+    override val descriptor: SerialDescriptor = getDesc()
+    override fun serialize(encoder: Encoder, value: ItemStack) {
+        //encoder.encodeSerializableValue(TagSerializer, value.toTag(CompoundTag()) as Tag)
+        val mapped = value.toTag(CompoundTag()).toMap()
+        MapSerializer(String.serializer(), TagSerializer).serialize(encoder, mapped)
+    }
+    override fun deserialize(decoder: Decoder): ItemStack {
+        val tag = decoder.decodeSerializableValue(TagSerializer) as CompoundTag
+        return ItemStack.fromTag(tag)
+    }
+}
+
+
+
+
+
+
+
+
+
+@Serializer(forClass = BlockPos::class)
+object BlockPosSerializer : KSerializer<BlockPos> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("yarn.BlockPos") {
+        element<Int>("x")
+        element<Int>("y")
+        element<Int>("z")
+    }
+
+    override fun serialize(encoder: Encoder, value: BlockPos) {
+        encoder.doStructure(descriptor) {
+            encodeIntElement(descriptor, 0, value.x)
+            encodeIntElement(descriptor, 1, value.y)
+            encodeIntElement(descriptor, 2, value.z)
+        }
+    }
+
+    override fun deserialize(decoder: Decoder): BlockPos {
+        return decoder.doStructure(descriptor) {
+            val x = decodeIntElement(descriptor, 0)
+            val y = decodeIntElement(descriptor, 1)
+            val z = decodeIntElement(descriptor, 2)
+            BlockPos(x, y, z)
+        }
+    }
+}
+
+@Serializer(forClass = Box::class)
+object BoxSerializer : KSerializer<Box> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("yarn.Box") {
+        element<Double>("ax")
+        element<Double>("ay")
+        element<Double>("az")
+        element<Double>("bx")
+        element<Double>("by")
+        element<Double>("bz")
+    }
+
+    override fun serialize(encoder: Encoder, value: Box) {
+        encoder.doStructure(descriptor) {
+            value.run {
+                listOf(minX, minY, minZ, maxX, maxY, maxZ).mapIndexed { index, d ->
+                    encodeDoubleElement(descriptor, index, d)
+                }
+            }
+        }
+    }
+
+    override fun deserialize(decoder: Decoder): Box {
+        return decoder.doStructure(descriptor) {
+            (0 until 6).map { decodeDoubleElement(descriptor, it) }.let {
+                Box(it[0], it[1], it[2], it[3], it[4], it[5])
+            }
+        }
+    }
+}
+
+object BlockPosSerializerOptimized : KSerializer<BlockPos> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("yarn.BlockPosOptimized", PrimitiveKind.LONG)
+    override fun serialize(encoder: Encoder, value: BlockPos) = encoder.encodeLong(value.asLong())
+    override fun deserialize(decoder: Decoder): BlockPos { return BlockPos.fromLong(decoder.decodeLong()) }
+}
 
 
 

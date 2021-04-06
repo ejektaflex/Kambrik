@@ -9,14 +9,14 @@ internal object KambrikMarkers {
 
     val Registry = mutableMapOf<String, Boolean>()
 
+    val General = createIdMarker("general")
+    val Rendering = createIdMarker("rendering")
+
     private fun createIdMarker(name: String): Marker {
         return Kambrik.Logging.createMarker(KambrikMod.idOf(name))
     }
 
-    val General = createIdMarker("general")
-    val Rendering = createIdMarker("rendering")
-
-    fun handleContainerMarkers(states: Map<String, Boolean>) {
+    internal fun handleContainerMarkers(states: Map<String, Boolean>) {
         for ((key, state) in states) {
             Registry[key] = state
         }
