@@ -15,14 +15,14 @@ interface IPacketInfo<S> {
     @Transient val id: Identifier
     @Transient val format: NbtFormat
         get() = NbtFormat.Default
-    @Transient val serial: KSerializer<S>
+    @Transient val serial: () -> KSerializer<S>
 
     fun serializePacket(s: S): Tag {
-        return format.encodeToTag(serial, s)
+        return format.encodeToTag(serial(), s)
     }
 
     fun deserializePacket(tag: Tag): S {
-        return format.decodeFromTag(serial, tag)
+        return format.decodeFromTag(serial(), tag)
     }
 
     object DummySerializer : KSerializer<Any> {
@@ -39,7 +39,7 @@ interface IPacketInfo<S> {
     companion object {
         fun <S : Any> dummy(): IPacketInfo<S> {
             return PacketInfo(
-                Identifier("dummyid", "dummypath") to DummySerializer
+                Identifier("dummyid", "dummypath") to { DummySerializer }
             ) as PacketInfo<S>
         }
     }

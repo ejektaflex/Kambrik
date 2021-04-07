@@ -10,9 +10,8 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
-import net.minecraft.nbt.ListTag
-import net.minecraft.nbt.LongArrayTag
-import net.minecraft.nbt.LongTag
+import net.minecraft.nbt.*
+import net.minecraft.text.LiteralText
 import net.minecraft.util.math.BlockPos
 import java.text.SimpleDateFormat
 import java.util.*
@@ -57,24 +56,67 @@ data class Wallet(val amount: Double) : Money
 data class Person(val name: String, val money: Money)
 
 
+
+@Serializable
+data class Holder(val tag: @Contextual Tag)
+
+@Serializable
+data class Nullie(val a: Int? = 1, val b: Int? = 10)
+
 fun main(args: Array<String>) {
 
-    /*
-    @Serializable
-    data class SlingshotData(val name: String,  val pos: @Contextual BlockPos)
+    val u = Nullie(a = 10, b = null)
 
-    val data = SlingshotData("Neat Slingshot", BlockPos(1, 2, 3))
+    val config = NbtFormat {
+        nullTag = StringTag.of("NULL")
+    }
 
-    val asNbt = NbtFormatTest.encodeToTag(data)
-    println("As Nbt: $asNbt")
+    val result = config.encodeToTag(Nullie.serializer(), u)
+    val asString = result.toString()
+    println(asString)
 
-    val asObj = NbtFormatTest.decodeFromTag<SlingshotData>(asNbt)
-    println("As Obj: $asObj")
-    */
+    println(
+        StringNbtReader.parse(asString)
+    )
 
-    val date = SimpleDateFormat("YYYY.MMdd.HHmmss")
-    println(date.format(Date()))
+    val result2 = config.decodeFromTag(Nullie.serializer(), result)
+
+    println(result2)
+
 
 }
+
+/*
+    @Serializable
+    data class Holder(val tag: @Contextual Tag)
+
+    val t = CompoundTag().apply {
+        putString("Hai", "There")
+        putByte("Yo", 1)
+        putByte("Ma", 3)
+        put("Blah", LongArrayTag(longArrayOf(5L, 10L, 15L)))
+    }
+
+    val u = Holder(t)
+
+    //val result = NbtFormat.Default.encodeToTag(CompoundTagSerializer(), t)
+    //*
+    val result = NbtFormat.Default.encodeToTag(Holder.serializer(), u)
+    println(result.toString())
+    val result2 = NbtFormat.Default.decodeFromTag(Holder.serializer(), result)
+    println(result2.toString())
+
+
+    val json = Json {
+        serializersModule = NbtFormat.BuiltInSerializers
+    }
+
+    val result3 = json.encodeToString(Holder.serializer(), u)
+    println(result3)
+    val result4 = json.decodeFromString(Holder.serializer(), result3)
+    println(result4.toString())
+*/
+
+ */
 
 

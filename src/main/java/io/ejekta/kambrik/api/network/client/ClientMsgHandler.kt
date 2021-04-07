@@ -15,7 +15,7 @@ import net.minecraft.util.Identifier
 open class ClientMsgHandler<M : ClientMsg<M>>(private val info: IPacketInfo<M>) : ClientPlayNetworking.PlayChannelHandler,
     IKambrikMsgHandler, IPacketInfo<M> by info {
 
-    constructor(idPair: Pair<Identifier, KSerializer<M>>) : this(PacketInfo(idPair.first, idPair.second))
+    constructor(idPair: Pair<Identifier, () -> KSerializer<M>>) : this(PacketInfo(idPair.first, idPair.second))
 
     override fun register() {
         ClientPlayNetworking.registerGlobalReceiver(info.id, ::receive)
