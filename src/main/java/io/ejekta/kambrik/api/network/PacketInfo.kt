@@ -6,10 +6,10 @@ import net.minecraft.util.Identifier
 
 data class PacketInfo<S>(
     override val id: Identifier,
-    override val serial: KSerializer<S>,
+    override val serial: () -> KSerializer<S>,
     override val format: NbtFormat = NbtFormat.Default
 ) : IPacketInfo<S> {
 
-    constructor(idPair: Pair<Identifier, KSerializer<S>>) : this(idPair.first, idPair.second)
+    constructor(idPair: Pair<Identifier, () -> KSerializer<S>>) : this(idPair.first, idPair.second)
 
 }

@@ -71,7 +71,7 @@ abstract class BaseTagEncoder(
     override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
         if (value is Any) {
             val open = serializer.descriptor.kind is PolymorphicKind.OPEN
-            Kambrik.Logger.info("Ser is $serializer")
+            //Kambrik.Logger.info("Ser is $serializer")
             val serial = when (serializer.descriptor.kind) {
                 is PolymorphicKind.OPEN -> {
                     encodePolymorphic = true
@@ -85,6 +85,11 @@ abstract class BaseTagEncoder(
         } else {
             throw SerializationException("Trying to encode $value, which is not a subtype of 'Any'! D:")
         }
+    }
+
+    @OptIn(ExperimentalSerializationApi::class)
+    override fun shouldEncodeElementDefault(descriptor: SerialDescriptor, index: Int): Boolean {
+        return config.encodeDefault
     }
 
     fun encodeNbtTag(tag: Tag) {

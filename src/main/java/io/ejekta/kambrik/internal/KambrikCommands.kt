@@ -3,7 +3,6 @@ package io.ejekta.kambrik.internal
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.BoolArgumentType.getBool
-import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType.getString
 import com.mojang.brigadier.context.CommandContext
 import io.ejekta.kambrik.Kambrik
@@ -11,14 +10,12 @@ import io.ejekta.kambrik.KambrikMod
 import io.ejekta.kambrik.api.command.suggestionList
 import io.ejekta.kambrik.api.logging.KambrikMarkers
 import io.ejekta.kambrikx.api.serial.nbt.NbtFormat
-import io.ejekta.kambrikx.api.serial.serializers.CompoundTagSerializer
-import io.ejekta.kambrikx.api.serial.serializers.Holder
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.command.argument.IdentifierArgumentType.getIdentifier
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.LongArrayTag
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
 import net.minecraft.util.registry.Registry
@@ -75,31 +72,8 @@ object KambrikCommands : CommandRegistrationCallback {
 
     fun test(ctx: CommandContext<ServerCommandSource>): Int {
         try {
-            val t = CompoundTag().apply {
-                putString("Hai", "There")
-                putByte("Yo", 1)
-                putByte("Ma", 3)
-            }
 
-            val u = Holder(t)
 
-            //val result = NbtFormat.Default.encodeToTag(CompoundTagSerializer(), t)
-            //*
-            val result = NbtFormat.Default.encodeToTag(Holder.serializer(), u)
-            ctx.source.sendFeedback(LiteralText(result.toString()), false)
-            val result2 = NbtFormat.Default.decodeFromTag(Holder.serializer(), result)
-            ctx.source.sendFeedback(LiteralText(result2.toString()), false)
-
-            //*/
-
-            val json = Json {
-                serializersModule = NbtFormat.BuiltInSerializers
-            }
-
-            val result3 = json.encodeToString(Holder.serializer(), u)
-            ctx.source.sendFeedback(LiteralText(result3), false)
-            val result4 = json.decodeFromString(Holder.serializer(), result3)
-            ctx.source.sendFeedback(LiteralText(result4.toString()), false)
 
         } catch (e: Exception) {
             //e.printStackTrace()

@@ -22,7 +22,7 @@ import net.minecraft.util.math.Box
 @OptIn(InternalSerializationApi::class)
 class NbtFormatConfig {
 
-    private val nbtEncodingMarker = Kambrik.Logging.createMarker(KambrikMod.idOf("nbt"))
+    //private val nbtEncodingMarker = Kambrik.Logging.createMarker(KambrikMod.idOf("nbt"))
 
     private val logger = Kambrik.Logger
 
@@ -30,7 +30,7 @@ class NbtFormatConfig {
 
     internal fun logInfo(level: Int, msg: String) {
         if (showDebug) {
-            logger.info(nbtEncodingMarker, "\t".repeat(level) + msg)
+            //logger.info(nbtEncodingMarker, "\t".repeat(level) + msg)
         }
     }
 
@@ -44,7 +44,10 @@ class NbtFormatConfig {
 
     var writePolymorphic = true
 
-    var nullTag: Tag = StringTag.of("_serial_null")
+    var nullTag: Tag = StringTag.of("\$NULL")
+
+    var encodeDefault = false
+
 }
 
 @OptIn(InternalSerializationApi::class)
@@ -61,13 +64,6 @@ open class NbtFormat internal constructor(val config: NbtFormatConfig) : SerialF
         val BuiltInSerializers = SerializersModule {
 
             // Polymorphic
-            /*
-            polymorphic(Tag::class) {
-                subclass(ByteTag::class, ByteTagSerializer)
-                subclass(StringTag::class, StringTagSerializer)
-            }
-
-             */
 
             // Contextual
 

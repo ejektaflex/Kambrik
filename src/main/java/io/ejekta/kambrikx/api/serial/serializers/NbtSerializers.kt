@@ -36,60 +36,17 @@ object TagSerializer : KSerializer<Tag> {
 }
 
 
-@Serializable
-data class Holder(val tag: @Contextual Tag)
-
-@OptIn(InternalSerializationApi::class)
-@Serializer(forClass = CompoundTag::class)
-class CompoundTagSerializer : KSerializer<CompoundTag> {
-    @OptIn(InternalSerializationApi::class)
-    private fun getDesc(): SerialDescriptor {
-        return buildClassSerialDescriptor("CompoundyTag") {
-            mapSerialDescriptor(PrimitiveSerialDescriptor(
-                "t", PrimitiveKind.STRING
-            ), TagSerializer.descriptor)
-        }
-    }
-    override val descriptor: SerialDescriptor = getDesc()
-
-    override fun serialize(encoder: Encoder, value: CompoundTag) {
-        if (encoder is BaseTagEncoder) {
-            Kambrik.Logger.warn("Encoder is base and encoding direct tag")
-            encoder.encodeNbtTag(value)
-        } else {
-            //MapSerializer(String.serializer(), PolymorphicSerializer(Tag::class)).serialize(encoder, value.toMap())
-            TagSerializer.serialize(encoder, value)
-        }
-    }
-    override fun deserialize(decoder: Decoder): CompoundTag {
-        return if (decoder is BaseTagDecoder) {
-            Kambrik.Logger.warn("Decoder is base and encoding direct tag")
-            decoder.decodeNbtTag() as CompoundTag
-        } else {
-            val mapped = MapSerializer(String.serializer(), PolymorphicSerializer(Tag::class)).deserialize(decoder)
-            mapped.toCompoundTag()
-        }
-    }
-}
-
 @OptIn(InternalSerializationApi::class)
 @Serializer(forClass = Tag::class)
 object DynTagSerializer : KSerializer<Tag> {
     @OptIn(InternalSerializationApi::class)
     private fun getDesc(): SerialDescriptor {
-        return buildClassSerialDescriptor("DynamicTag") {
-            /*
-            mapSerialDescriptor(PrimitiveSerialDescriptor(
-                "t", PrimitiveKind.STRING
-            ), TagSerializer.descriptor)
-             */
-        }
+        return buildClassSerialDescriptor("DynamicTag") { }
     }
     override val descriptor: SerialDescriptor = getDesc()
 
     override fun serialize(encoder: Encoder, value: Tag) {
         if (encoder is BaseTagEncoder) {
-            Kambrik.Logger.warn("Encoder is base and encoding direct tag")
             encoder.encodeNbtTag(value)
         } else {
             TagSerializer.serialize(encoder, value)
@@ -97,7 +54,6 @@ object DynTagSerializer : KSerializer<Tag> {
     }
     override fun deserialize(decoder: Decoder): Tag {
         return if (decoder is BaseTagDecoder) {
-            Kambrik.Logger.warn("Decoder is base and encoding direct tag")
             decoder.decodeNbtTag()
         } else {
             TagSerializer.deserialize(decoder)
