@@ -1,44 +1,44 @@
 package io.ejekta.kambrik.ext
 
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.StringNbtReader
-import net.minecraft.nbt.Tag
+import net.minecraft.nbt.NbtElement
 import net.minecraft.network.PacketByteBuf
 
-operator fun CompoundTag.iterator(): Iterator<Pair<String, Tag>> {
+operator fun NbtCompound.iterator(): Iterator<Pair<String, NbtElement>> {
     return keys.map { it to get(it)!! }.iterator()
 }
 
-fun CompoundTag.toMap(): Map<String, Tag> {
+fun NbtCompound.toMap(): Map<String, NbtElement> {
     return keys.map { it to get(it)!! }.toMap()
 }
 
-fun Map<String, Tag>.toCompoundTag(): CompoundTag {
-    return CompoundTag().apply {
-        this@toCompoundTag.forEach { key, tag ->
+fun Map<String, NbtElement>.toNbtCompound(): NbtCompound {
+    return NbtCompound().apply {
+        this@toNbtCompound.forEach { key, tag ->
             put(key, tag)
         }
     }
 }
 
-fun StringNbtReader.parseTag(nbt: String): Tag {
+fun StringNbtReader.parseTag(nbt: String): NbtElement {
     return StringNbtReader.parse("{content:$nbt}")
 }
 
-fun String.toTag(): Tag {
+fun String.toTag(): NbtElement {
     return StringNbtReader.parse("{content:$this}").get("content")!!
 }
 
-fun Tag.wrapToPacketByteBuf(): PacketByteBuf {
+fun NbtElement.wrapToPacketByteBuf(): PacketByteBuf {
     return PacketByteBufs.create().apply {
-        writeCompoundTag(CompoundTag().apply {
+        writeNbt(NbtCompound().apply {
             put("content", this@wrapToPacketByteBuf.copy())
         })
     }
 }
 
-fun PacketByteBuf.unwrapToTag(): Tag {
-    return readCompoundTag()!!.get("content")!!
+fun PacketByteBuf.unwrapToTag(): NbtElement {
+    return readNbt()!!.get("content")!!
 }
 

@@ -2,32 +2,26 @@
 
 package io.ejekta.kambrikx.api.serial.serializers
 
-import io.ejekta.kambrik.Kambrik
-import io.ejekta.kambrik.ext.toCompoundTag
-import io.ejekta.kambrik.ext.toMap
 import io.ejekta.kambrik.ext.toTag
-import io.ejekta.kambrikx.ext.internal.doStructure
 import io.ejekta.kambrikx.internal.serial.decoders.BaseTagDecoder
 import io.ejekta.kambrikx.internal.serial.encoders.BaseTagEncoder
-import kotlinx.serialization.*
-import kotlinx.serialization.builtins.MapSerializer
-import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import net.minecraft.nbt.ByteTag
-import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.StringTag
-import net.minecraft.nbt.Tag
-import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Box
+import net.minecraft.nbt.NbtElement
 
 
-@Serializer(forClass = Tag::class)
-object TagSerializer : KSerializer<Tag> {
+@Serializer(forClass = NbtElement::class)
+object TagSerializer : KSerializer<NbtElement> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("TagSerializer", PrimitiveKind.STRING)
-    override fun serialize(encoder: Encoder, value: Tag) { encoder.encodeString(value.asString()) }
-    override fun deserialize(decoder: Decoder): Tag = decoder.decodeString().toTag()
+    override fun serialize(encoder: Encoder, value: NbtElement) { encoder.encodeString(value.asString()) }
+    override fun deserialize(decoder: Decoder): NbtElement = decoder.decodeString().toTag()
 
     @Suppress("UNCHECKED_CAST")
     operator fun <T> invoke(): KSerializer<T> {
@@ -37,22 +31,22 @@ object TagSerializer : KSerializer<Tag> {
 
 
 @OptIn(InternalSerializationApi::class)
-@Serializer(forClass = Tag::class)
-object DynTagSerializer : KSerializer<Tag> {
+@Serializer(forClass = NbtElement::class)
+object DynTagSerializer : KSerializer<NbtElement> {
     @OptIn(InternalSerializationApi::class)
     private fun getDesc(): SerialDescriptor {
         return buildClassSerialDescriptor("DynamicTag") { }
     }
     override val descriptor: SerialDescriptor = getDesc()
 
-    override fun serialize(encoder: Encoder, value: Tag) {
+    override fun serialize(encoder: Encoder, value: NbtElement) {
         if (encoder is BaseTagEncoder) {
             encoder.encodeNbtTag(value)
         } else {
             TagSerializer.serialize(encoder, value)
         }
     }
-    override fun deserialize(decoder: Decoder): Tag {
+    override fun deserialize(decoder: Decoder): NbtElement {
         return if (decoder is BaseTagDecoder) {
             decoder.decodeNbtTag()
         } else {

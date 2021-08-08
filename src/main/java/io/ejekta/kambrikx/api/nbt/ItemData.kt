@@ -5,7 +5,7 @@ import io.ejekta.kambrikx.api.serial.nbt.NbtFormat
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.Tag
+import net.minecraft.nbt.NbtElement
 import net.minecraft.util.Identifier
 
 abstract class ItemData<T> {
@@ -16,15 +16,15 @@ abstract class ItemData<T> {
 
     abstract val default: () -> T
 
-    private val defaultTag: Tag
+    private val defaultTag: NbtElement
         get() = format.encodeToTag(ser, default())
 
     open val format: NbtFormat = NbtFormat.Default
 
     fun of(stack: ItemStack) = get(stack)
 
-    private fun getSubtag(stack: ItemStack): Tag {
-        stack.orCreateTag.apply {
+    private fun getSubtag(stack: ItemStack): NbtElement {
+        stack.orCreateNbt.apply {
             val key = identifier.toString()
             return if (key in this) {
                 get(key)
@@ -36,8 +36,8 @@ abstract class ItemData<T> {
         }
     }
 
-    private fun setSubtag(stack: ItemStack, tag: Tag) {
-        stack.orCreateTag.apply {
+    private fun setSubtag(stack: ItemStack, tag: NbtElement) {
+        stack.orCreateNbt.apply {
             put(identifier.toString(), tag)
         }
     }

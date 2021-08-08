@@ -15,29 +15,29 @@ import net.minecraft.nbt.*
 
 @InternalSerializationApi
 class TagEncoder(config: NbtFormatConfig) : BaseTagEncoder(config) {
-    override var root: Tag = EndTag.INSTANCE
+    override var root: NbtElement = NbtNull.INSTANCE
 
     // Currently, primitive encodings directly call addTag("PRIMITIVE", tag)
-    override fun addTag(name: String?, tag: Tag) {
+    override fun addTag(name: String?, tag: NbtElement) {
         root = tag
     }
 
-    override val propogate: Tag.() -> Unit = { root = this }
+    override val propogate: NbtElement.() -> Unit = { root = this }
 }
 
 @InternalSerializationApi
 @ExperimentalSerializationApi
-open class TagClassEncoder(config: NbtFormatConfig, level: Int, onEnd: (Tag) -> Unit = {}) : BaseTagEncoder(config, level, onEnd) {
-    override var root = CompoundTag()
-    override fun addTag(name: String?, tag: Tag) {
+open class TagClassEncoder(config: NbtFormatConfig, level: Int, onEnd: (NbtElement) -> Unit = {}) : BaseTagEncoder(config, level, onEnd) {
+    override var root = NbtCompound()
+    override fun addTag(name: String?, tag: NbtElement) {
         root.put(name, tag)
     }
 }
 
 @InternalSerializationApi
-class TagListEncoder(config: NbtFormatConfig, level: Int, onEnd: (Tag) -> Unit) : BaseTagEncoder(config, level, onEnd) {
-    override val root = ListTag()
-    override fun addTag(name: String?, tag: Tag) {
+class TagListEncoder(config: NbtFormatConfig, level: Int, onEnd: (NbtElement) -> Unit) : BaseTagEncoder(config, level, onEnd) {
+    override val root = NbtList()
+    override fun addTag(name: String?, tag: NbtElement) {
         if (name != config.classDiscriminator) {
             root.add(name!!.toInt(), tag)
         }
@@ -46,12 +46,12 @@ class TagListEncoder(config: NbtFormatConfig, level: Int, onEnd: (Tag) -> Unit) 
 
 @InternalSerializationApi
 @ExperimentalSerializationApi
-class TagMapEncoder(config: NbtFormatConfig, level: Int, onEnd: (Tag) -> Unit = {}) : BaseTagEncoder(config, level, onEnd) {
-    override var root = CompoundTag()
+class TagMapEncoder(config: NbtFormatConfig, level: Int, onEnd: (NbtElement) -> Unit = {}) : BaseTagEncoder(config, level, onEnd) {
+    override var root = NbtCompound()
     private var theKey = ""
     private var isKey = true
 
-    override fun addTag(name: String?, tag: Tag) {
+    override fun addTag(name: String?, tag: NbtElement) {
         //println("Boop $name '$theKey' $tag (${tag::class})")
         if (name != config.classDiscriminator) {
             if (isKey) {
@@ -68,14 +68,14 @@ class TagMapEncoder(config: NbtFormatConfig, level: Int, onEnd: (Tag) -> Unit = 
 @ExperimentalSerializationApi
 open class TaglessEncoder(config: NbtFormatConfig) : AbstractEncoder() {
     override val serializersModule = config.serializersModule
-    lateinit var root: Tag
-    override fun encodeInt(value: Int) { root = IntTag.of(value) }
-    override fun encodeString(value: String) { root = StringTag.of(value) }
-    override fun encodeBoolean(value: Boolean) { root = ByteTag.of(value) }
-    override fun encodeDouble(value: Double) { root = DoubleTag.of(value) }
-    override fun encodeByte(value: Byte) { root = ByteTag.of(value) }
-    override fun encodeChar(value: Char) { root = StringTag.of(value.toString()) }
-    override fun encodeFloat(value: Float) { root = FloatTag.of(value) }
-    override fun encodeLong(value: Long) { root = LongTag.of(value) }
-    override fun encodeShort(value: Short) { root = ShortTag.of(value) }
+    lateinit var root: NbtElement
+    override fun encodeInt(value: Int) { root = NbtInt.of(value) }
+    override fun encodeString(value: String) { root = NbtString.of(value) }
+    override fun encodeBoolean(value: Boolean) { root = NbtByte.of(value) }
+    override fun encodeDouble(value: Double) { root = NbtDouble.of(value) }
+    override fun encodeByte(value: Byte) { root = NbtByte.of(value) }
+    override fun encodeChar(value: Char) { root = NbtString.of(value.toString()) }
+    override fun encodeFloat(value: Float) { root = NbtFloat.of(value) }
+    override fun encodeLong(value: Long) { root = NbtLong.of(value) }
+    override fun encodeShort(value: Short) { root = NbtShort.of(value) }
 }

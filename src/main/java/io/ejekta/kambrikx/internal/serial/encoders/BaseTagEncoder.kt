@@ -15,13 +15,13 @@ import net.minecraft.nbt.*
 abstract class BaseTagEncoder(
     @JvmField protected val config: NbtFormatConfig,
     private var level: Int = 0,
-    open val onEnd: (Tag) -> Unit = {},
+    open val onEnd: (NbtElement) -> Unit = {},
 ) : NamedValueEncoder() {
 
-    abstract val root: Tag
-    abstract fun addTag(name: String?, tag: Tag)
+    abstract val root: NbtElement
+    abstract fun addTag(name: String?, tag: NbtElement)
 
-    open val propogate: Tag.() -> Unit = {
+    open val propogate: NbtElement.() -> Unit = {
         addTag(currentTagOrNull, this)
     }
 
@@ -39,7 +39,7 @@ abstract class BaseTagEncoder(
             StructureKind.CLASS -> TagClassEncoder(config, level + 1, propogate).also {
                 if (encodePolymorphic) {
                     encodePolymorphic = false
-                    it.addTag(config.classDiscriminator, StringTag.of(descriptor.serialName))
+                    it.addTag(config.classDiscriminator, NbtString.of(descriptor.serialName))
                 }
             }
             StructureKind.MAP -> TagMapEncoder(config, level + 1, propogate)
@@ -92,23 +92,23 @@ abstract class BaseTagEncoder(
         return config.encodeDefault
     }
 
-    fun encodeNbtTag(tag: Tag) {
+    fun encodeNbtTag(tag: NbtElement) {
         addTag(popTag(), tag)
     }
-    override fun encodeTaggedInt(tag: String, value: Int) { addTag(tag, IntTag.of(value)) }
-    override fun encodeTaggedString(tag: String, value: String) { addTag(tag, StringTag.of(value)) }
-    override fun encodeTaggedBoolean(tag: String, value: Boolean) { addTag(tag, ByteTag.of(value)) }
-    override fun encodeTaggedDouble(tag: String, value: Double) { addTag(tag, DoubleTag.of(value)) }
-    override fun encodeTaggedByte(tag: String, value: Byte) { addTag(tag, ByteTag.of(value)) }
-    override fun encodeTaggedChar(tag: String, value: Char) { addTag(tag, StringTag.of(value.toString())) }
-    override fun encodeTaggedFloat(tag: String, value: Float) { addTag(tag, FloatTag.of(value)) }
-    override fun encodeTaggedLong(tag: String, value: Long) { addTag(tag, LongTag.of(value)) }
-    override fun encodeTaggedShort(tag: String, value: Short) { addTag(tag, ShortTag.of(value)) }
+    override fun encodeTaggedInt(tag: String, value: Int) { addTag(tag, NbtInt.of(value)) }
+    override fun encodeTaggedString(tag: String, value: String) { addTag(tag, NbtString.of(value)) }
+    override fun encodeTaggedBoolean(tag: String, value: Boolean) { addTag(tag, NbtByte.of(value)) }
+    override fun encodeTaggedDouble(tag: String, value: Double) { addTag(tag, NbtDouble.of(value)) }
+    override fun encodeTaggedByte(tag: String, value: Byte) { addTag(tag, NbtByte.of(value)) }
+    override fun encodeTaggedChar(tag: String, value: Char) { addTag(tag, NbtString.of(value.toString())) }
+    override fun encodeTaggedFloat(tag: String, value: Float) { addTag(tag, NbtFloat.of(value)) }
+    override fun encodeTaggedLong(tag: String, value: Long) { addTag(tag, NbtLong.of(value)) }
+    override fun encodeTaggedShort(tag: String, value: Short) { addTag(tag, NbtShort.of(value)) }
 
     @OptIn(ExperimentalSerializationApi::class)
     override fun encodeTaggedEnum(tag: String, enumDescriptor: SerialDescriptor, ordinal: Int) {
         val element = enumDescriptor.getElementName(ordinal)
-        addTag(tag, StringTag.of(element))
+        addTag(tag, NbtString.of(element))
     }
 
     override fun encodeTaggedNull(tag: String) {

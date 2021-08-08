@@ -17,11 +17,11 @@ abstract class BaseTagDecoder(
     var level: Int = 0
 ) : NamedValueDecoder() {
 
-    abstract val root: Tag
+    abstract val root: NbtElement
 
-    private fun currentTag(): Tag = currentTagOrNull?.let { readTag(it) } ?: root
+    private fun currentTag(): NbtElement = currentTagOrNull?.let { readTag(it) } ?: root
 
-    open fun readTag(name: String): Tag {
+    open fun readTag(name: String): NbtElement {
         return root
     }
 
@@ -44,7 +44,7 @@ abstract class BaseTagDecoder(
     @ExperimentalSerializationApi
     private fun <T : Any> getPolymorphicDeserializer(ser: DeserializationStrategy<T>): DeserializationStrategy<out T> {
         val abs = ser as AbstractPolymorphicSerializer<T>
-        val typed = (currentTag() as? CompoundTag ?: return ser).getString(config.classDiscriminator)
+        val typed = (currentTag() as? NbtCompound ?: return ser).getString(config.classDiscriminator)
         if (typed == "") {
             throw SerializationException("Tried to get the polymorphic serializer in ${currentTag()} but failed!")
         }
@@ -69,20 +69,20 @@ abstract class BaseTagDecoder(
         return TagMapDecoder(config, level, currentTag()).decodeSerializableValue(actualSerializer)
     }
 
-    fun decodeNbtTag(): Tag = readTag(popTag())
-    override fun decodeTaggedInt(tag: String): Int = (readTag(tag) as IntTag).int
-    override fun decodeTaggedString(tag: String): String = (readTag(tag) as StringTag).asString()
-    override fun decodeTaggedBoolean(tag: String): Boolean = (readTag(tag) as ByteTag).byte > 0
-    override fun decodeTaggedDouble(tag: String): Double = (readTag(tag) as DoubleTag).double
-    override fun decodeTaggedByte(tag: String): Byte = (readTag(tag) as ByteTag).byte
-    override fun decodeTaggedChar(tag: String): Char = (readTag(tag) as StringTag).asString().first()
-    override fun decodeTaggedFloat(tag: String): Float = (readTag(tag) as FloatTag).float
-    override fun decodeTaggedLong(tag: String): Long = (readTag(tag) as LongTag).long
-    override fun decodeTaggedShort(tag: String): Short = (readTag(tag) as ShortTag).short
+    fun decodeNbtTag(): NbtElement = readTag(popTag())
+    override fun decodeTaggedInt(tag: String): Int = (readTag(tag) as NbtInt).intValue()
+    override fun decodeTaggedString(tag: String): String = (readTag(tag) as NbtString).asString()
+    override fun decodeTaggedBoolean(tag: String): Boolean = (readTag(tag) as NbtByte).byteValue() > 0
+    override fun decodeTaggedDouble(tag: String): Double = (readTag(tag) as NbtDouble).doubleValue()
+    override fun decodeTaggedByte(tag: String): Byte = (readTag(tag) as NbtByte).byteValue()
+    override fun decodeTaggedChar(tag: String): Char = (readTag(tag) as NbtString).asString().first()
+    override fun decodeTaggedFloat(tag: String): Float = (readTag(tag) as NbtFloat).floatValue()
+    override fun decodeTaggedLong(tag: String): Long = (readTag(tag) as NbtLong).longValue()
+    override fun decodeTaggedShort(tag: String): Short = (readTag(tag) as NbtShort).shortValue()
 
     @OptIn(ExperimentalSerializationApi::class)
     override fun decodeTaggedEnum(tag: String, enumDescriptor: SerialDescriptor): Int {
-        return enumDescriptor.getElementIndex((readTag(tag) as StringTag).asString())
+        return enumDescriptor.getElementIndex((readTag(tag) as NbtString).asString())
     }
 
     override fun decodeTaggedNull(tag: String): Nothing? = null
