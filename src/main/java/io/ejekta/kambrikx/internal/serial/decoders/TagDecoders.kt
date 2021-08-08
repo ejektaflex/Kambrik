@@ -23,11 +23,11 @@ import net.minecraft.nbt.*
 open class TagDecoder(
     config: NbtFormatConfig,
     level: Int,
-    final override var root: Tag
+    final override var root: NbtElement
 ) : BaseTagDecoder(config, level) {
 
-    override fun readTag(name: String): Tag {
-        return EndTag.INSTANCE
+    override fun readTag(name: String): NbtElement {
+        return NbtNull.INSTANCE
     }
 
     override fun decodeElementIndex(descriptor: SerialDescriptor): Int {
@@ -40,14 +40,14 @@ open class TagDecoder(
 open class TagClassDecoder(
     config: NbtFormatConfig,
     level: Int,
-    override var root: Tag
+    override var root: NbtElement
 ) : BaseTagDecoder(config, level) {
     private var position = 0
 
-    private val tagCompound: CompoundTag
-        get() = root as CompoundTag
+    private val tagCompound: NbtCompound
+        get() = root as NbtCompound
 
-    override fun readTag(name: String): Tag {
+    override fun readTag(name: String): NbtElement {
         return tagCompound.get(name)!!
     }
 
@@ -67,11 +67,11 @@ open class TagClassDecoder(
 open class TagListDecoder(
     config: NbtFormatConfig,
     level: Int,
-    override var root: Tag
+    override var root: NbtElement
 ) : BaseTagDecoder(config, level) {
 
-    private val tagList: ListTag
-        get() = root as ListTag
+    private val tagList: NbtList
+        get() = root as NbtList
 
     private val size = tagList.size
     private var currentIndex = -1
@@ -97,17 +97,17 @@ open class TagListDecoder(
 open class TagMapDecoder(
     config: NbtFormatConfig,
     level: Int,
-    override var root: Tag
+    override var root: NbtElement
 ) : BaseTagDecoder(config, level) {
 
-    private val tagCompound: CompoundTag
-        get() = root as CompoundTag
+    private val tagCompound: NbtCompound
+        get() = root as NbtCompound
 
     private val keys = tagCompound.keys.toList()
     private val size: Int = keys.size * 2
     private var position = -1
 
-    override fun readTag(name: String): Tag = if (position % 2 == 0) StringTag.of(name) else tagCompound.get(name)!!
+    override fun readTag(name: String): NbtElement = if (position % 2 == 0) NbtString.of(name) else tagCompound.get(name)!!
 
     override fun elementName(desc: SerialDescriptor, index: Int): String = keys[index / 2]
 
@@ -129,7 +129,7 @@ open class TagMapDecoder(
 open class TaglessDecoder(
     config: NbtFormatConfig,
     level: Int,
-    override var root: Tag
+    override var root: NbtElement
 ) : BaseTagDecoder(config, level) { // May need to push a tag in init {} but doesn't seem so, so far
     init { pushTag("PRIMITIVE") }
     override fun decodeElementIndex(descriptor: SerialDescriptor): Int = 0

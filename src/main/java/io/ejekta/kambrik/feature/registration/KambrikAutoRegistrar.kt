@@ -4,6 +4,7 @@ import io.ejekta.kambrik.internal.KambrikMarker
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry
 import net.minecraft.block.Block
+import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.enchantment.Enchantment
@@ -17,13 +18,13 @@ import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.sound.SoundEvent
 import net.minecraft.util.Identifier
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.registry.Registry
 import net.minecraft.village.VillagerType
 import net.minecraft.world.gen.carver.Carver
 import net.minecraft.world.gen.carver.CarverConfig
 import net.minecraft.world.gen.feature.Feature
 import net.minecraft.world.gen.feature.FeatureConfig
-import java.util.function.Supplier
 
 
 @Suppress("UNCHECKED_CAST")
@@ -59,8 +60,8 @@ interface KambrikAutoRegistrar : KambrikMarker {
 
     infix fun String.forSoundEvent(event: SoundEvent): SoundEvent = forRegistration(Registry.SOUND_EVENT, event)
 
-    fun <T : BlockEntity>String.forBlockEntity(block: Block, entity: () -> T): BlockEntityType<T>? {
-        return BlockEntityType.Builder.create(Supplier(entity), block).build(null).also {
+    fun <T : BlockEntity>String.forBlockEntity(block: Block, factory: (pos: BlockPos, state: BlockState) -> T): BlockEntityType<T>? {
+        return BlockEntityType.Builder.create(factory, block).build(null).also {
             forRegistration(Registry.BLOCK_ENTITY_TYPE, it)
         }
     }

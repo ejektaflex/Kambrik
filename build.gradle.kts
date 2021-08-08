@@ -13,8 +13,8 @@ plugins {
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
+	//sourceCompatibility = JavaVersion.VERSION_1_8
+	//targetCompatibility = JavaVersion.VERSION_1_8
 	withSourcesJar()
 	withJavadocJar()
 }
@@ -60,14 +60,14 @@ dependencies {
 	mappings("net.fabricmc:yarn:${yarnMappings}:v2")
 	modImplementation("net.fabricmc:fabric-loader:${loaderVersion}")
 
-	modApi("org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0")
-	include("org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0")
-	modApi("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
-	include("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
+	modApi("org.jetbrains.kotlinx:kotlinx-serialization-core:1.2.2")
+	include("org.jetbrains.kotlinx:kotlinx-serialization-core:1.2.2")
+	modApi("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
+	include("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
 
 	implementation("com.google.code.findbugs:jsr305:3.0.2")
 
-	modImplementation(group = "net.fabricmc", name = "fabric-language-kotlin", version = "1.4.30+build.2")
+	modImplementation(group = "net.fabricmc", name = "fabric-language-kotlin", version = "1.6.3+kotlin.1.5.21")
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricVersion}")
@@ -160,6 +160,6 @@ tasks.getByName<ProcessResources>("processResources") {
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
-		jvmTarget = "1.8"
+		//jvmTarget = "1.8"
 	}
 }

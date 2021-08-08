@@ -10,13 +10,9 @@ import io.ejekta.kambrik.KambrikMod
 import io.ejekta.kambrik.api.command.suggestionList
 import io.ejekta.kambrik.api.logging.KambrikMarkers
 import io.ejekta.kambrik.testing.TestMsg
-import io.ejekta.kambrikx.api.serial.nbt.NbtFormat
-import kotlinx.serialization.json.Json
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.command.argument.IdentifierArgumentType.getIdentifier
-import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.LongArrayTag
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
 import net.minecraft.util.registry.Registry

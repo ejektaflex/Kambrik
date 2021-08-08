@@ -55,7 +55,7 @@ fun Box.positionInDirection(dir: Direction): Double {
 
 fun Box.longestAxisLength(): Double {
     val size = getSize()
-    return enumValues<Direction.Axis>().maxBy {
+    return enumValues<Direction.Axis>().maxByOrNull {
         size.getComponentAlongAxis(it)
     }!!.let { size.getComponentAlongAxis(it) }
 }

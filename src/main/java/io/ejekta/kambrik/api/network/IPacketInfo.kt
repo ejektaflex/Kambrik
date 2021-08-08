@@ -8,7 +8,7 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import net.minecraft.nbt.Tag
+import net.minecraft.nbt.NbtElement
 import net.minecraft.util.Identifier
 
 interface IPacketInfo<S> {
@@ -17,11 +17,11 @@ interface IPacketInfo<S> {
         get() = NbtFormat.Default
     @Transient val serial: () -> KSerializer<S>
 
-    fun serializePacket(s: S): Tag {
+    fun serializePacket(s: S): NbtElement {
         return format.encodeToTag(serial(), s)
     }
 
-    fun deserializePacket(tag: Tag): S {
+    fun deserializePacket(tag: NbtElement): S {
         return format.decodeFromTag(serial(), tag)
     }
 

@@ -44,7 +44,7 @@ class NbtFormatConfig {
 
     var writePolymorphic = true
 
-    var nullTag: Tag = StringTag.of("\$NULL")
+    var nullTag: NbtElement = NbtString.of("\$NULL")
 
     var encodeDefault = false
 
@@ -68,20 +68,20 @@ open class NbtFormat internal constructor(val config: NbtFormatConfig) : SerialF
             // Contextual
 
             // Tags
-            contextual(Tag::class, DynTagSerializer)
-            contextual(CompoundTag::class, DynTagSerializer())
-            contextual(IntTag::class, DynTagSerializer())
-            contextual(StringTag::class, DynTagSerializer())
-            contextual(DoubleTag::class, DynTagSerializer())
-            contextual(ByteTag::class, DynTagSerializer())
-            contextual(FloatTag::class, DynTagSerializer())
-            contextual(LongTag::class, DynTagSerializer())
-            contextual(ShortTag::class, DynTagSerializer())
+            contextual(NbtElement::class, DynTagSerializer)
+            contextual(NbtCompound::class, DynTagSerializer())
+            contextual(NbtInt::class, DynTagSerializer())
+            contextual(NbtString::class, DynTagSerializer())
+            contextual(NbtDouble::class, DynTagSerializer())
+            contextual(NbtByte::class, DynTagSerializer())
+            contextual(NbtFloat::class, DynTagSerializer())
+            contextual(NbtLong::class, DynTagSerializer())
+            contextual(NbtShort::class, DynTagSerializer())
 
             // Complex Tags
-            contextual(LongArrayTag::class, DynTagSerializer())
-            contextual(IntArrayTag::class, DynTagSerializer())
-            contextual(ListTag::class, DynTagSerializer())
+            contextual(NbtLongArray::class, DynTagSerializer())
+            contextual(NbtIntArray::class, DynTagSerializer())
+            contextual(NbtList::class, DynTagSerializer())
 
             // Built in data classes
             contextual(BlockPos::class, BlockPosSerializer)
@@ -97,7 +97,7 @@ open class NbtFormat internal constructor(val config: NbtFormatConfig) : SerialF
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    fun <T> encodeToTag(serializer: SerializationStrategy<T>, obj: T): Tag {
+    fun <T> encodeToTag(serializer: SerializationStrategy<T>, obj: T): NbtElement {
         return when (serializer.descriptor.kind) {
             is PrimitiveKind -> {
                 val enc = TaglessEncoder(config)
@@ -116,16 +116,16 @@ open class NbtFormat internal constructor(val config: NbtFormatConfig) : SerialF
     inline fun <reified T> encodeToTag(obj: T) = encodeToTag(EmptySerializersModule.serializer(), obj)
 
     @OptIn(ExperimentalSerializationApi::class)
-    fun <T> decodeFromTag(deserializer: DeserializationStrategy<T>, tag: Tag): T {
+    fun <T> decodeFromTag(deserializer: DeserializationStrategy<T>, tag: NbtElement): T {
         val decoder = when (tag) {
-            is CompoundTag, is ListTag -> TagDecoder(config, 0, tag)
+            is NbtCompound, is NbtList -> TagDecoder(config, 0, tag)
             else -> TaglessDecoder(config, 0, tag)
         }
         return decoder.decodeSerializableValue(deserializer)
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    inline fun <reified T> decodeFromTag(tag: Tag) = decodeFromTag<T>(EmptySerializersModule.serializer(), tag)
+    inline fun <reified T> decodeFromTag(tag: NbtElement) = decodeFromTag<T>(EmptySerializersModule.serializer(), tag)
 
 }
 

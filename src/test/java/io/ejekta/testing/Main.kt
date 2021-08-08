@@ -58,7 +58,7 @@ data class Person(val name: String, val money: Money)
 
 
 @Serializable
-data class Holder(val tag: @Contextual Tag)
+data class Holder(val tag: @Contextual NbtElement)
 
 @Serializable
 data class Nullie(val a: Int? = 1, val b: Int? = 10)
@@ -68,7 +68,7 @@ fun main(args: Array<String>) {
     val u = Nullie(a = 10, b = null)
 
     val config = NbtFormat {
-        nullTag = StringTag.of("NULL")
+        nullTag = NbtString.of("NULL")
     }
 
     val result = config.encodeToTag(Nullie.serializer(), u)
@@ -88,9 +88,9 @@ fun main(args: Array<String>) {
 
 /*
     @Serializable
-    data class Holder(val tag: @Contextual Tag)
+    data class Holder(val tag: @Contextual NbtElement)
 
-    val t = CompoundTag().apply {
+    val t = NbtCompound().apply {
         putString("Hai", "There")
         putByte("Yo", 1)
         putByte("Ma", 3)
@@ -99,7 +99,7 @@ fun main(args: Array<String>) {
 
     val u = Holder(t)
 
-    //val result = NbtFormat.Default.encodeToTag(CompoundTagSerializer(), t)
+    //val result = NbtFormat.Default.encodeToTag(NbtCompoundSerializer(), t)
     //*
     val result = NbtFormat.Default.encodeToTag(Holder.serializer(), u)
     println(result.toString())

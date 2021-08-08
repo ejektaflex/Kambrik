@@ -4,7 +4,7 @@ import net.minecraft.block.BlockState
 import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 
@@ -19,10 +19,11 @@ interface IBlockEntityDropSaved {
         if (pos == null) return
         val be = world?.getBlockEntity(pos) ?: return
         val stack = getItemToSaveTo(world, pos, state, player).apply {
-            if (tag == null) {
-                tag = CompoundTag()
+            if (nbt == null) {
+                nbt = NbtCompound()
             }
-            tag!!.put("BlockEntityTag", be.toTag(CompoundTag()))
+
+            nbt!!.put("BlockEntityTag", be.writeNbt(NbtCompound()))
         }
         val entity = ItemEntity(
             world,
