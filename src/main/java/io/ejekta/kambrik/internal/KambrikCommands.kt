@@ -9,7 +9,7 @@ import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.KambrikMod
 import io.ejekta.kambrik.api.command.suggestionList
 import io.ejekta.kambrik.api.logging.KambrikMarkers
-import io.ejekta.kambrik.testing.TestMsg
+//import io.ejekta.kambrik.testing.TestMsg
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.command.argument.IdentifierArgumentType.getIdentifier
@@ -29,6 +29,7 @@ object KambrikCommands : CommandRegistrationCallback {
                             boolArg("enabled") runs {
                                 val marker = getString(it, "marker")
                                 val enabled = getBool(it, "enabled")
+                                /*
                                 KambrikMod.config.edit {
                                     if (enabled == KambrikMarkers.Registry[marker]) {
                                         markers.remove(marker)
@@ -36,6 +37,8 @@ object KambrikCommands : CommandRegistrationCallback {
                                         markers[marker] = enabled
                                     }
                                 }
+
+                                 */
                                 KambrikMod.configureLoggerFilters()
                                 1
                             }
@@ -70,7 +73,7 @@ object KambrikCommands : CommandRegistrationCallback {
     fun test(ctx: CommandContext<ServerCommandSource>): Int {
         try {
 
-            TestMsg(100).sendToClient(ctx.source.player)
+            //TestMsg(100).sendToClient(ctx.source.player)
 
         } catch (e: Exception) {
             //e.printStackTrace()
