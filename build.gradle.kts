@@ -6,15 +6,15 @@ import java.util.Date
 plugins {
 	//id 'com.github.johnrengelman.shadow' version '6.1.0'
 	kotlin("jvm") version "1.5.21"
-	kotlin("plugin.serialization") version "1.5.21"
+	//kotlin("plugin.serialization") version "1.5.21"
 	id("fabric-loom") version "0.8-SNAPSHOT"
 	`maven-publish`
 	signing
 }
 
 java {
-	//sourceCompatibility = JavaVersion.VERSION_1_8
-	//targetCompatibility = JavaVersion.VERSION_1_8
+	sourceCompatibility = JavaVersion.VERSION_16
+	targetCompatibility = JavaVersion.VERSION_16
 	withSourcesJar()
 	withJavadocJar()
 }
@@ -160,6 +160,6 @@ tasks.getByName<ProcessResources>("processResources") {
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
-		//jvmTarget = "1.8"
+		jvmTarget = "16"
 	}
 }
