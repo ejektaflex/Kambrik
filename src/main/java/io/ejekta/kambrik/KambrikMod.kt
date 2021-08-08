@@ -9,6 +9,7 @@ import io.ejekta.kambrik.internal.KambrikCommands
 import io.ejekta.kambrik.internal.KambrikInternalConfig
 import io.ejekta.kambrik.internal.KambrikMarker
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
+import io.ejekta.kambrik.testing.TestMsg
 import kotlinx.serialization.json.Json
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
@@ -53,6 +54,8 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
             KambrikRegistrar.doRegistrationFor(it)
         }
         CommandRegistrationCallback.EVENT.register(KambrikCommands)
+
+        TestMsg.Handler.register()
     }
 
     private fun handleCustomEntryData() {

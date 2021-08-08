@@ -9,6 +9,7 @@ import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.KambrikMod
 import io.ejekta.kambrik.api.command.suggestionList
 import io.ejekta.kambrik.api.logging.KambrikMarkers
+import io.ejekta.kambrik.testing.TestMsg
 import io.ejekta.kambrikx.api.serial.nbt.NbtFormat
 import kotlinx.serialization.json.Json
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
@@ -73,7 +74,7 @@ object KambrikCommands : CommandRegistrationCallback {
     fun test(ctx: CommandContext<ServerCommandSource>): Int {
         try {
 
-
+            TestMsg(100).sendToClient(ctx.source.player)
 
         } catch (e: Exception) {
             //e.printStackTrace()
