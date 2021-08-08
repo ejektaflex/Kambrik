@@ -4,7 +4,7 @@ import io.ejekta.kambrik.api.network.client.ClientMsg
 import io.ejekta.kambrik.api.network.client.ClientMsgHandler
 import kotlinx.serialization.Serializable
 import net.minecraft.util.Identifier
-
+/*
 @Serializable
 class TestMsg(val num: Int) : ClientMsg<TestMsg>(Handler) {
 
@@ -13,9 +13,10 @@ class TestMsg(val num: Int) : ClientMsg<TestMsg>(Handler) {
     }
 
     companion object {
+
         val Handler = ClientMsgHandler(
             Identifier("a", "b") to { TestMsg.serializer() }
         )
     }
 }
-
+*/

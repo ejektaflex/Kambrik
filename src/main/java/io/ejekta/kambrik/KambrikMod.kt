@@ -9,7 +9,7 @@ import io.ejekta.kambrik.internal.KambrikCommands
 import io.ejekta.kambrik.internal.KambrikInternalConfig
 import io.ejekta.kambrik.internal.KambrikMarker
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
-import io.ejekta.kambrik.testing.TestMsg
+//import io.ejekta.kambrik.testing.TestMsg
 import kotlinx.serialization.json.Json
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
@@ -29,6 +29,7 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
 
     fun idOf(unique: String) = Identifier(ID, unique)
 
+    /*
     val config = KambrikConfigFile(
         FabricLoader.getInstance().configDir,
         "kambrik.json",
@@ -40,6 +41,7 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
         KambrikInternalConfig.serializer(),
         ::KambrikInternalConfig
     )
+     */
 
     override fun onPreLaunch() {
         Logger.info("Kambrik Says Hello!")
@@ -55,7 +57,7 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
         }
         CommandRegistrationCallback.EVENT.register(KambrikCommands)
 
-        TestMsg.Handler.register()
+        //TestMsg.Handler.register()
     }
 
     private fun handleCustomEntryData() {
@@ -80,9 +82,12 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
 
     fun configureLoggerFilters() {
 
+        /*
         config.read().markers.let {
             KambrikMarkers.handleContainerMarkers(it)
         }
+
+         */
 
         val ctx = LogManager.getContext(false) as LoggerContext
         ctx.reconfigure()
