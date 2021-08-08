@@ -5,9 +5,9 @@ import java.util.Date
 
 plugins {
 	//id 'com.github.johnrengelman.shadow' version '6.1.0'
-	kotlin("jvm") version "1.4.30"
-	kotlin("plugin.serialization") version "1.4.30"
-	id("fabric-loom") version "0.6-SNAPSHOT"
+	kotlin("jvm") version "1.5.21"
+	kotlin("plugin.serialization") version "1.5.21"
+	id("fabric-loom") version "0.8-SNAPSHOT"
 	`maven-publish`
 	signing
 }
@@ -46,11 +46,7 @@ version = buildVersion
 
 repositories {
 	mavenCentral()
-	jcenter()
 	maven(url = "https://kotlin.bintray.com/kotlinx")
-	maven(url = "http://maven.fabricmc.net/") {
-		name = "Fabric"
-	}
 	maven(url = "https://maven.terraformersmc.com/") {
 		name = "Mod Menu"
 	}
