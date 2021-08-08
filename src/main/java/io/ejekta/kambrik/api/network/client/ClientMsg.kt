@@ -14,7 +14,9 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 
 @Serializable
-open class ClientMsg<M : ClientMsg<M>>(@Transient val info: IPacketInfo<M> = dummy()) : KambrikMessage, IPacketInfo<M> by info {
+open class ClientMsg<M : ClientMsg<M>>(
+    @Transient val handle: ClientMsgHandler<M> = ClientMsgHandler.dummy()
+) : KambrikMessage, IPacketInfo<M> by handle {
 
     data class ClientMsgContext(
         val client: MinecraftClient,

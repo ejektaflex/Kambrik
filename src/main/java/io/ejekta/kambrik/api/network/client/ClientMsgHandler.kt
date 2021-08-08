@@ -33,4 +33,11 @@ open class ClientMsgHandler<M : ClientMsg<M>>(private val info: IPacketInfo<M>) 
             data.onClientReceived(ClientMsg.ClientMsgContext(client, handler, buf, responseSender))
         }
     }
+
+    companion object {
+        fun <T : ClientMsg<T>> dummy(): ClientMsgHandler<T> {
+            return ClientMsgHandler(IPacketInfo.dummy())
+        }
+    }
+
 }
