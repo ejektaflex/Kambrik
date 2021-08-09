@@ -77,7 +77,9 @@ object KambrikCommands : CommandRegistrationCallback {
 
             //TestMsg(100).sendToClient(ctx.source.player)
 
-            NetworkLinker.sendClientMsg(TestMsg(100), ctx.source.player)
+            //NetworkLinker.sendClientMsg(TestMsg(100), ctx.source.player)
+
+            TestMsg(100).sendToClient(ctx.source.player)
 
         } catch (e: Exception) {
             //e.printStackTrace()

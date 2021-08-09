@@ -1,6 +1,7 @@
 package io.ejekta.kambrik.api.network.client
 
 import io.ejekta.kambrik.api.network.KambrikMessage
+import io.ejekta.kambrik.api.network.NetworkLinker
 import kotlinx.serialization.Serializable
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.minecraft.client.MinecraftClient
@@ -23,7 +24,7 @@ abstract class ClientMsg<M : ClientMsg<M>>() : KambrikMessage {
     }
 
     fun sendToClient(player: ServerPlayerEntity) {
-        //NetworkLinker.sendClientMsg(this as M, player)
+        NetworkLinker.sendClientMsg(this as M, player)
     }
 
 }
