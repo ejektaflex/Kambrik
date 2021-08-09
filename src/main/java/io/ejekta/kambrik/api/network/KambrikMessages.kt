@@ -8,23 +8,36 @@ import kotlin.reflect.KClass
 object KambrikMessages {
 
     val clientLinks = mutableMapOf<KClass<*>, ClientNetworkLink<*>>()
+    val serverLinks = mutableMapOf<KClass<*>, ServerNetworkLink<*>>()
 
-    inline fun <reified S : ClientMsg> registerClientMessage(ser: KSerializer<S>, id: Identifier): ClientNetworkLink<S> {
-        val linkage = ClientNetworkLink(id, ser)
-
+    inline fun <reified M : Any> registerMessage(linkMaker: () -> INetworkLink<M>, reg: MutableMap<KClass<*>, INetworkLink<M>>) : INetworkLink<M> {
+        val linkage = linkMaker()
         val result = linkage.register()
 
         if (!result) {
-            throw Exception("Cannot register $id! This global channel already exists.")
+            throw Exception("Cannot register ${linkage.id}! This global channel already exists.")
         }
 
-        clientLinks[S::class] = linkage
+        reg[M::class] = linkage
         return linkage
     }
 
-    internal fun <M : ClientMsg> sendClientMsg(msg: M, players: Collection<ServerPlayerEntity>) {
-        val link = clientLinks[msg::class] as? ClientNetworkLink<M> ?: throw Exception("Unable to send message! Has it been registered?")
+    inline fun <reified C : ClientMsg> registerClientMessage(ser: KSerializer<C>, id: Identifier): INetworkLink<C> {
+        return registerMessage({ ClientNetworkLink(id, ser) }, clientLinks as MutableMap<KClass<*>, INetworkLink<C>>)
+    }
+
+    inline fun <reified S : ServerMsg> registerServerMessage(ser: KSerializer<S>, id: Identifier): INetworkLink<S> {
+        return registerMessage({ ServerNetworkLink(id, ser) }, serverLinks as MutableMap<KClass<*>, INetworkLink<S>>)
+    }
+
+    internal fun <C : ClientMsg> sendClientMsg(msg: C, players: Collection<ServerPlayerEntity>) {
+        val link = clientLinks[msg::class] as? ClientNetworkLink<C> ?: throw Exception("Unable to send message! Has it been registered?")
         link.send(msg, players)
+    }
+
+    internal fun <S : ServerMsg> sendServerMsg(msg: S) {
+        val link = serverLinks[msg::class] as? ServerNetworkLink<S> ?: throw Exception("Unable to send message! Has it been registered?")
+        link.send(msg)
     }
 
 }
