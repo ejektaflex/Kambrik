@@ -23,8 +23,8 @@ open class ClientNetworkLink<M : ClientMsg<M>>(
     ) : ClientPlayNetworking.PlayChannelHandler,
     IKambrikMsgHandler {
 
-    override fun register() {
-        ClientPlayNetworking.registerGlobalReceiver(id, ::receive)
+    override fun register(): Boolean {
+        return ClientPlayNetworking.registerGlobalReceiver(id, ::receive)
     }
 
     private fun serializePacket(m: M): NbtElement {

@@ -8,28 +8,18 @@ import net.minecraft.util.Identifier
 
 @Serializable
 class TestMsg(val num: Int) : ClientMsg<TestMsg>() {
-
     override fun onClientReceived(ctx: ClientMsgContext) {
         println("Got num!: $num")
     }
 }
 
 /*
+    ### To register the message:
+    KambrikMessages.registerClientMessage(TestMsg.serializer(), Identifier("kambrik", "test_msg"))
 
-We need: Serializer for ser/deser on both ends
-We need: Identifier for sending/reg receiver, NOT for serialization
+    ### To use the message:
+    TestMsg(100).sendTo(some_player)
 
-
-network.link<TestMsg>( TestMsg.serializer(), Identifier("a", "b") )
-
-network.send(TestMsg(100))
-// or
-TestMsg(100).sendToClient()
-
-network holds the packetinfo for ser/deser
-
-WHEN SENDING, look up the sent class and grab it's serializer
-
-
-
+    ### We can also automatically serialize some Minecraft data classes. you do it like so:
+    class AnotherTestMsg(@Contextual val pos: BlockPos)
  */

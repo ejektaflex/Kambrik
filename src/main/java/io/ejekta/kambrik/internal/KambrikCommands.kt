@@ -9,7 +9,6 @@ import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.KambrikMod
 import io.ejekta.kambrik.api.command.suggestionList
 import io.ejekta.kambrik.api.logging.KambrikMarkers
-import io.ejekta.kambrik.api.network.NetworkLinker
 import io.ejekta.kambrik.testing.TestMsg
 //import io.ejekta.kambrik.testing.TestMsg
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
