@@ -9,6 +9,8 @@ import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.KambrikMod
 import io.ejekta.kambrik.api.command.suggestionList
 import io.ejekta.kambrik.api.logging.KambrikMarkers
+import io.ejekta.kambrik.api.network.NetworkLinker
+import io.ejekta.kambrik.testing.TestMsg
 //import io.ejekta.kambrik.testing.TestMsg
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
@@ -74,6 +76,8 @@ object KambrikCommands : CommandRegistrationCallback {
         try {
 
             //TestMsg(100).sendToClient(ctx.source.player)
+
+            NetworkLinker.sendClientMsg(TestMsg(100), ctx.source.player)
 
         } catch (e: Exception) {
             //e.printStackTrace()

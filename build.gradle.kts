@@ -6,7 +6,7 @@ import java.util.Date
 plugins {
 	//id 'com.github.johnrengelman.shadow' version '6.1.0'
 	kotlin("jvm") version "1.5.21"
-	//kotlin("plugin.serialization") version "1.5.21"
+	kotlin("plugin.serialization") version "1.5.20"
 	id("fabric-loom") version "0.8-SNAPSHOT"
 	`maven-publish`
 	signing
