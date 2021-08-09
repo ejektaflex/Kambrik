@@ -1,7 +1,5 @@
-package io.ejekta.kambrik.api.network.client
+package io.ejekta.kambrik.api.network
 
-import io.ejekta.kambrik.api.network.KambrikMessage
-import io.ejekta.kambrik.api.network.KambrikMessages
 import kotlinx.serialization.Serializable
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.minecraft.client.MinecraftClient
@@ -10,21 +8,25 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 
 @Serializable
-abstract class ClientMsg() : KambrikMessage {
+abstract class ClientMsg() {
 
-    data class ClientMsgContext(
+    data class MsgContext(
         val client: MinecraftClient,
         val handler: ClientPlayNetworkHandler,
         val buf: PacketByteBuf,
         val responseSender: PacketSender
     )
 
-    open fun onClientReceived(ctx: ClientMsgContext) {
+    open fun onClientReceived(ctx: MsgContext) {
         // Executes on client thread
     }
 
     fun sendToClient(player: ServerPlayerEntity) {
-        KambrikMessages.sendClientMsg(this, player)
+        KambrikMessages.sendClientMsg(this, listOf(player))
+    }
+
+    fun sendToClients(players: Collection<ServerPlayerEntity>) {
+        KambrikMessages.sendClientMsg(this, players)
     }
 
 }
