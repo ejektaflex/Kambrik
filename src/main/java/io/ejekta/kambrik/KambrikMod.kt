@@ -4,11 +4,13 @@ import io.ejekta.kambrik.Kambrik.Logger
 import io.ejekta.kambrik.api.file.KambrikConfigFile
 import io.ejekta.kambrik.api.file.KambrikParseFailMode
 import io.ejekta.kambrik.api.logging.KambrikMarkers
+import io.ejekta.kambrik.api.network.NetworkLinker
 import io.ejekta.kambrik.ext.toMap
 import io.ejekta.kambrik.internal.KambrikCommands
 import io.ejekta.kambrik.internal.KambrikInternalConfig
 import io.ejekta.kambrik.internal.KambrikMarker
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
+import io.ejekta.kambrik.testing.TestMsg
 //import io.ejekta.kambrik.testing.TestMsg
 import kotlinx.serialization.json.Json
 import net.fabricmc.api.ModInitializer
@@ -58,6 +60,9 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
         CommandRegistrationCallback.EVENT.register(KambrikCommands)
 
         //TestMsg.Handler.register()
+
+        NetworkLinker.linkClientMsg(TestMsg.serializer(), Identifier("a", "b"))
+
     }
 
     private fun handleCustomEntryData() {
