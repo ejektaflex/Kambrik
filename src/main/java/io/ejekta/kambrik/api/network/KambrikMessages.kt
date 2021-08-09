@@ -9,14 +9,20 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 import kotlin.reflect.KClass
 
-object NetworkLinker {
+object KambrikMessages {
 
     val typeLinks = mutableMapOf<KClass<*>, ClientNetworkLink<*>>()
 
     @OptIn(ExperimentalStdlibApi::class)
-    inline fun <reified S : ClientMsg<S>> linkClientMsg(ser: KSerializer<S>, id: Identifier): ClientNetworkLink<S> {
+    inline fun <reified S : ClientMsg<S>> registerClientMessage(ser: KSerializer<S>, id: Identifier): ClientNetworkLink<S> {
         val linkage = ClientNetworkLink(id, ser)
-        linkage.register()
+
+        val result = linkage.register()
+
+        if (!result) {
+            throw Exception("Cannot register $id! This global channel already exists.")
+        }
+
         typeLinks[S::class] = linkage
         return linkage
     }
