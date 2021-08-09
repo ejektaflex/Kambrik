@@ -10,7 +10,7 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 
 @Serializable
-abstract class ClientMsg<M : ClientMsg<M>>() : KambrikMessage {
+abstract class ClientMsg() : KambrikMessage {
 
     data class ClientMsgContext(
         val client: MinecraftClient,
@@ -24,7 +24,7 @@ abstract class ClientMsg<M : ClientMsg<M>>() : KambrikMessage {
     }
 
     fun sendToClient(player: ServerPlayerEntity) {
-        KambrikMessages.sendClientMsg(this as M, player)
+        KambrikMessages.sendClientMsg(this, player)
     }
 
 }

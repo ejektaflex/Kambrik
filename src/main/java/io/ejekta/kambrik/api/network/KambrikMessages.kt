@@ -14,7 +14,7 @@ object KambrikMessages {
     val typeLinks = mutableMapOf<KClass<*>, ClientNetworkLink<*>>()
 
     @OptIn(ExperimentalStdlibApi::class)
-    inline fun <reified S : ClientMsg<S>> registerClientMessage(ser: KSerializer<S>, id: Identifier): ClientNetworkLink<S> {
+    inline fun <reified S : ClientMsg> registerClientMessage(ser: KSerializer<S>, id: Identifier): ClientNetworkLink<S> {
         val linkage = ClientNetworkLink(id, ser)
 
         val result = linkage.register()
@@ -27,7 +27,7 @@ object KambrikMessages {
         return linkage
     }
 
-    fun <M : ClientMsg<M>> sendClientMsg(msg: M, player: ServerPlayerEntity) {
+    fun <M : ClientMsg> sendClientMsg(msg: M, player: ServerPlayerEntity) {
         val link = typeLinks[msg::class]!! as ClientNetworkLink<M>
         println("Link: $link")
         link.send(msg, player)
