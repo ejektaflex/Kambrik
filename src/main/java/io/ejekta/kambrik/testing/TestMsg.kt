@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 import net.minecraft.util.Identifier
 
 @Serializable
-class TestMsg(val num: Int) : ClientMsg<TestMsg>() {
+class TestMsg(val num: Int) : ClientMsg() {
     override fun onClientReceived(ctx: ClientMsgContext) {
         println("Got num!: $num")
     }
