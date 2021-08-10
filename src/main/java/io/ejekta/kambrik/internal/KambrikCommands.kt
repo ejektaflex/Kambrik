@@ -18,7 +18,7 @@ import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
 import net.minecraft.util.registry.Registry
 
-object KambrikCommands : CommandRegistrationCallback {
+internal object KambrikCommands : CommandRegistrationCallback {
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>, dedicated: Boolean) {
         Kambrik.Command.addCommand(KambrikMod.ID, dispatcher) {
             "logging" {

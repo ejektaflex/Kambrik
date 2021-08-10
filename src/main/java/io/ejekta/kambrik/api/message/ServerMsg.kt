@@ -27,6 +27,4 @@ abstract class ServerMsg() {
         Kambrik.Message.sendServerMsg(this)
     }
 
-    fun send() = sendToServer()
-
 }

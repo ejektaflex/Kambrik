@@ -17,18 +17,13 @@ class KambrikMessageApi {
     @PublishedApi
     internal inline fun <reified M : Any> registerMessage(
         linkMaker: () -> INetworkLink<M>,
-        reg: MutableMap<KClass<*>, INetworkLink<M>>,
-        clientOnly: Boolean = false
+        reg: MutableMap<KClass<*>, INetworkLink<M>>
     ) : INetworkLink<M> {
         val linkage = linkMaker()
         val result = linkage.register()
 
-        if (clientOnly && FabricLoader.getInstance().environmentType == EnvType.CLIENT) {
-
-        }
-
         if (!result) {
-            //throw Exception("Cannot register ${linkage.id}! This global channel already exists.")
+            throw Exception("Cannot register ${linkage.id}! This global channel already exists.")
         }
 
         reg[M::class] = linkage
