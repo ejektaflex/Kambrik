@@ -10,6 +10,7 @@ import io.ejekta.kambrik.KambrikMod
 import io.ejekta.kambrik.api.command.suggestionList
 import io.ejekta.kambrik.api.logging.KambrikMarkers
 import io.ejekta.kambrik.testing.TestMsg
+import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager
 //import io.ejekta.kambrik.testing.TestMsg
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
@@ -70,6 +71,10 @@ object KambrikCommands : CommandRegistrationCallback {
             }
 
         }
+
+
+
+
     }
 
     fun test(ctx: CommandContext<ServerCommandSource>): Int {

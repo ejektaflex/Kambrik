@@ -9,24 +9,21 @@ import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionProvider
 import io.ejekta.kambrik.api.command.types.PlayerCommand
 import io.ejekta.kambrik.ext.addAll
+import net.minecraft.command.CommandSource
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 
+internal typealias ArgDsl<S, T> = KambrikArgBuilder<S, T>.() -> Unit
 
-internal typealias ServerLiteralArg = LiteralArgumentBuilder<ServerCommandSource>
-internal typealias ServerRequiredArg = RequiredArgumentBuilder<ServerCommandSource, *>
-internal typealias ArgDsl<T> = KambrikArgBuilder<T>.() -> Unit
-internal typealias ReqArgDsl<A> = KambrikArgBuilder<ServerRequiredArg>.(value: A) -> Unit
-
-fun suggestionList(func: () -> List<String>): SuggestionProvider<ServerCommandSource> {
-    return SuggestionProvider<ServerCommandSource> { context, builder ->
+fun <SRC : CommandSource> KambrikArgBuilder<SRC, *>.suggestionList(func: () -> List<String>): SuggestionProvider<SRC> {
+    return SuggestionProvider<SRC> { context, builder ->
         builder.addAll(func())
         builder.buildFuture()
     }
 }
 
-fun suggestionListTooltipped(func: () -> List<Pair<String, Message>>): SuggestionProvider<ServerCommandSource> {
-    return SuggestionProvider<ServerCommandSource> { _, builder ->
+fun <SRC : CommandSource> KambrikArgBuilder<SRC, *>.suggestionListTooltipped(func: () -> List<Pair<String, Message>>): SuggestionProvider<SRC> {
+    return SuggestionProvider<SRC> { _, builder ->
         for ((item, msg) in func()) {
             builder.suggest(item, msg)
         }
@@ -38,6 +35,6 @@ fun playerCommand(player: CommandContext<ServerCommandSource>.(player: ServerPla
     return PlayerCommand(player)
 }
 
-fun CommandContext<ServerCommandSource>.getString(name: String): String = StringArgumentType.getString(this, name)
-fun CommandContext<ServerCommandSource>.getInt(name: String): Int = IntegerArgumentType.getInteger(this, name)
+fun <SRC : CommandSource> CommandContext<SRC>.getString(name: String): String = StringArgumentType.getString(this, name)
+fun <SRC : CommandSource> CommandContext<SRC>.getInt(name: String): Int = IntegerArgumentType.getInteger(this, name)
 
