@@ -2,6 +2,8 @@ package io.ejekta.kambrik.api.message
 
 import io.ejekta.kambrik.Kambrik
 import kotlinx.serialization.Serializable
+import net.fabricmc.api.EnvType
+import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.ClientPlayNetworkHandler
@@ -11,6 +13,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 @Serializable
 abstract class ClientMsg() {
 
+    @Environment(EnvType.CLIENT)
     data class MsgContext(
         val client: MinecraftClient,
         val handler: ClientPlayNetworkHandler,
@@ -18,6 +21,7 @@ abstract class ClientMsg() {
         val responseSender: PacketSender
     )
 
+    @Environment(EnvType.CLIENT)
     open fun onClientReceived(ctx: MsgContext) {
         // Executes on client thread
     }

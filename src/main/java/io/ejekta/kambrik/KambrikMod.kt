@@ -8,6 +8,7 @@ import io.ejekta.kambrik.internal.KambrikCommands
 import io.ejekta.kambrik.internal.KambrikMarker
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import io.ejekta.kambrik.testing.TestMsg
+import net.fabricmc.api.EnvType
 //import io.ejekta.kambrik.testing.TestMsg
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
@@ -56,6 +57,8 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
         CommandRegistrationCallback.EVENT.register(KambrikCommands)
 
         //TestMsg.Handler.register()
+
+
 
         Kambrik.Message.registerClientMessage(TestMsg.serializer(), Identifier("a", "b"))
 
