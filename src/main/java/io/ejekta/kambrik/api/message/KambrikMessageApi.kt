@@ -1,6 +1,10 @@
 package io.ejekta.kambrik.api.message
 
+import io.ejekta.kambrik.ext.wrapToPacketByteBuf
 import kotlinx.serialization.KSerializer
+import net.fabricmc.api.EnvType
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 import kotlin.reflect.KClass
@@ -10,12 +14,20 @@ class KambrikMessageApi {
     val clientLinks = mutableMapOf<KClass<*>, ClientNetworkLink<*>>()
     val serverLinks = mutableMapOf<KClass<*>, ServerNetworkLink<*>>()
 
-    inline fun <reified M : Any> registerMessage(linkMaker: () -> INetworkLink<M>, reg: MutableMap<KClass<*>, INetworkLink<M>>) : INetworkLink<M> {
+    inline fun <reified M : Any> registerMessage(
+        linkMaker: () -> INetworkLink<M>,
+        reg: MutableMap<KClass<*>, INetworkLink<M>>,
+        clientOnly: Boolean = false
+    ) : INetworkLink<M> {
         val linkage = linkMaker()
         val result = linkage.register()
 
+        if (clientOnly && FabricLoader.getInstance().environmentType == EnvType.CLIENT) {
+
+        }
+
         if (!result) {
-            throw Exception("Cannot register ${linkage.id}! This global channel already exists.")
+            //throw Exception("Cannot register ${linkage.id}! This global channel already exists.")
         }
 
         reg[M::class] = linkage
