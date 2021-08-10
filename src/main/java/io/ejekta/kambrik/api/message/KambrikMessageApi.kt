@@ -1,11 +1,11 @@
-package io.ejekta.kambrik.api.network
+package io.ejekta.kambrik.api.message
 
 import kotlinx.serialization.KSerializer
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 import kotlin.reflect.KClass
 
-object KambrikMessages {
+class KambrikMessageApi {
 
     val clientLinks = mutableMapOf<KClass<*>, ClientNetworkLink<*>>()
     val serverLinks = mutableMapOf<KClass<*>, ServerNetworkLink<*>>()

@@ -1,5 +1,6 @@
-package io.ejekta.kambrik.api.network
+package io.ejekta.kambrik.api.message
 
+import io.ejekta.kambrik.Kambrik
 import kotlinx.serialization.Serializable
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.minecraft.network.PacketByteBuf
@@ -23,7 +24,7 @@ abstract class ServerMsg() {
     }
 
     fun sendToServer() {
-        KambrikMessages.sendServerMsg(this)
+        Kambrik.Message.sendServerMsg(this)
     }
 
     fun send() = sendToServer()
