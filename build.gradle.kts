@@ -8,7 +8,7 @@ plugins {
 	kotlin("jvm") version "1.5.30-RC"
 
 	// if IR backend error occurs, for some reason toggling the KSX plugin fixes it. -_-
-	kotlin("plugin.serialization") version "1.5.21"
+	kotlin("plugin.serialization") version "1.5.20"
 
 	id("fabric-loom") version "0.8-SNAPSHOT"
 	`maven-publish`
@@ -163,8 +163,13 @@ tasks.getByName<ProcessResources>("processResources") {
 	}
 }
 
+tasks.withType<JavaCompile> {
+	//this.
+}
+
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
 		jvmTarget = "16"
+		useOldBackend = false
 	}
 }

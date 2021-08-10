@@ -18,6 +18,7 @@ import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint
 import net.fabricmc.loader.api.metadata.CustomValue
 import net.minecraft.item.Items
 import net.minecraft.util.Identifier
+import net.minecraft.util.math.BlockPos
 import org.apache.logging.log4j.*
 import org.apache.logging.log4j.core.Filter
 import org.apache.logging.log4j.core.Logger
@@ -67,7 +68,7 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
 
         Kambrik.Command.addClientCommand("cambric") {
             executes {
-                TellServerHello(Items.ACACIA_LOG).sendToServer()
+                TellServerHello(BlockPos(5, 10, 15)).sendToServer()
 
                 1
             }
