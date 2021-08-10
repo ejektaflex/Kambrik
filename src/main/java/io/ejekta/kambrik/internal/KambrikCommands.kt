@@ -4,14 +4,11 @@ import com.mojang.brigadier.Command
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.BoolArgumentType.getBool
 import com.mojang.brigadier.arguments.StringArgumentType.getString
-import com.mojang.brigadier.context.CommandContext
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.KambrikMod
 import io.ejekta.kambrik.api.command.suggestionList
 import io.ejekta.kambrik.api.logging.KambrikMarkers
-import io.ejekta.kambrik.testing.TellServerHello
 import io.ejekta.kambrik.testing.TestMsg
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager
 //import io.ejekta.kambrik.testing.TestMsg
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
@@ -25,12 +22,11 @@ object KambrikCommands : CommandRegistrationCallback {
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>, dedicated: Boolean) {
         Kambrik.Command.addCommand(KambrikMod.ID, dispatcher) {
             "logging" {
-                val currMarkers = suggestionList { KambrikMarkers.Registry.map { "\"" + it.key + "\"" }.sorted() }
-
                 "markers" {
-                    stringArg("marker", items = currMarkers) {
+                    val currMarkers = suggestionList { KambrikMarkers.Registry.map { "\"" + it.key + "\"" }.sorted() }
+                    argString("marker", items = currMarkers) {
                         "set" {
-                            boolArg("enabled") runs {
+                            argBool("enabled") runs {
                                 val marker = getString(it, "marker")
                                 val enabled = getBool(it, "enabled")
                                 /*
@@ -54,7 +50,7 @@ object KambrikCommands : CommandRegistrationCallback {
 
             "dump" {
                 val dumpables = suggestionList { Registry.REGISTRIES.toList().map { it.key.value.toString() } }
-                identifierArg("dump_what", items = dumpables) runs dump()
+                argIdentifier("dump_what", items = dumpables) runs dump()
             }
 
             if (FabricLoader.getInstance().isDevelopmentEnvironment) {

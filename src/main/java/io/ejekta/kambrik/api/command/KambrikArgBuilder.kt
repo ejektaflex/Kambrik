@@ -58,25 +58,25 @@ class KambrikArgBuilder<SRC : CommandSource, A : ArgumentBuilder<SRC, *>>(val ar
         return KambrikArgBuilder(arg.executes(command) as A)
     }
 
-    fun stringArg(
+    fun argString(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
     ) = argument(string(), word, items, func)
 
-    fun intArg(
+    fun argInt(
         word: String, range: IntRange? = null,
         items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
     ) = argument(if (range != null) integer(range.first, range.last) else integer(), word, items, func)
 
-    fun floatArg(
+    fun argFloat(
         word: String, range: ClosedFloatingPointRange<Float>? = null,
         items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
     ) = argument(if (range != null) FloatArgumentType.floatArg(range.start, range.endInclusive) else FloatArgumentType.floatArg(), word, items, func)
 
-    fun boolArg(
+    fun argBool(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
     ) = argument(bool(), word, items, func)
 
-    fun identifierArg(
+    fun argIdentifier(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
     ) = argument(identifier(), word, items, func)
 
