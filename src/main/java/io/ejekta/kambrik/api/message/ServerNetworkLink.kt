@@ -12,7 +12,7 @@ import net.minecraft.server.network.ServerPlayNetworkHandler
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 
-open class ServerNetworkLink<M : ServerMsg>(
+class ServerNetworkLink<M : ServerMsg>(
 
     override val id: Identifier,
     override val ser: KSerializer<M>

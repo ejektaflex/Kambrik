@@ -3,8 +3,6 @@ package io.ejekta.kambrik.api.command
 import com.mojang.brigadier.Message
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
-import com.mojang.brigadier.builder.LiteralArgumentBuilder
-import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionProvider
 import io.ejekta.kambrik.api.command.types.PlayerCommand
@@ -13,7 +11,7 @@ import net.minecraft.command.CommandSource
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 
-internal typealias ArgDsl<S, T> = KambrikArgBuilder<S, T>.() -> Unit
+typealias ArgDsl<S, T> = KambrikArgBuilder<S, T>.() -> Unit
 
 fun <SRC : CommandSource> KambrikArgBuilder<SRC, *>.suggestionList(func: () -> List<String>): SuggestionProvider<SRC> {
     return SuggestionProvider<SRC> { context, builder ->
