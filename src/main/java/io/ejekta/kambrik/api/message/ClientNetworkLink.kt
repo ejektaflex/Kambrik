@@ -15,7 +15,7 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 
-open class ClientNetworkLink<M : ClientMsg>(
+class ClientNetworkLink<M : ClientMsg>(
 
     override val id: Identifier,
     override val ser: KSerializer<M>

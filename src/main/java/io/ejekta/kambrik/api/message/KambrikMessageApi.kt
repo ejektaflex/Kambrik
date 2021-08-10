@@ -1,10 +1,6 @@
 package io.ejekta.kambrik.api.message
 
-import io.ejekta.kambrik.ext.wrapToPacketByteBuf
 import kotlinx.serialization.KSerializer
-import net.fabricmc.api.EnvType
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
-import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 import kotlin.reflect.KClass
