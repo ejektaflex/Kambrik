@@ -1,10 +1,13 @@
 package io.ejekta.kambrik.api.command
 
+import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.Message
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionProvider
+import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.api.command.types.PlayerCommand
 import io.ejekta.kambrik.ext.addAll
 import net.minecraft.command.CommandSource
@@ -12,6 +15,13 @@ import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 
 typealias ArgDsl<S, T> = KambrikArgBuilder<S, T>.() -> Unit
+
+fun <SRC : CommandSource> CommandDispatcher<SRC>.addCommand(
+    baseCommandName: String,
+    func: ArgDsl<SRC, LiteralArgumentBuilder<SRC>>
+) {
+    Kambrik.Command.addSourcedCommand(baseCommandName, this, func)
+}
 
 fun <SRC : CommandSource> KambrikArgBuilder<SRC, *>.suggestionList(func: () -> List<String>): SuggestionProvider<SRC> {
     return SuggestionProvider<SRC> { context, builder ->

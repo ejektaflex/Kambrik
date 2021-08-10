@@ -3,24 +3,31 @@ package io.ejekta.kambrik.internal
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.BoolArgumentType.getBool
+import com.mojang.brigadier.arguments.IntegerArgumentType.getInteger
 import com.mojang.brigadier.arguments.StringArgumentType.getString
+import com.mojang.brigadier.arguments.StringArgumentType.string
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.KambrikMod
+import io.ejekta.kambrik.api.command.addCommand
 import io.ejekta.kambrik.api.command.suggestionList
+import io.ejekta.kambrik.api.command.suggestionListTooltipped
 import io.ejekta.kambrik.api.logging.KambrikMarkers
+import io.ejekta.kambrik.ext.addAll
 import io.ejekta.kambrik.testing.TestMsg
 //import io.ejekta.kambrik.testing.TestMsg
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.command.argument.IdentifierArgumentType.getIdentifier
 import net.minecraft.item.Items
+import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
 import net.minecraft.util.registry.Registry
 
 internal object KambrikCommands : CommandRegistrationCallback {
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>, dedicated: Boolean) {
-        Kambrik.Command.addCommand(KambrikMod.ID, dispatcher) {
+
+        dispatcher.addCommand(KambrikMod.ID) {
             "logging" {
                 "markers" {
                     val currMarkers = suggestionList { KambrikMarkers.Registry.map { "\"" + it.key + "\"" }.sorted() }
