@@ -5,12 +5,16 @@ import io.ejekta.kambrik.api.file.KambrikFileApi
 import io.ejekta.kambrik.api.logging.KambrikLoggingApi
 import io.ejekta.kambrik.api.message.KambrikMessageApi
 import io.ejekta.kambrik.api.structure.KambrikStructureApi
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource
+import net.minecraft.server.command.ServerCommandSource
 import org.apache.logging.log4j.LogManager
 
 
 object Kambrik {
 
-    val Command = KambrikCommandApi()
+    val Command = KambrikCommandApi<ServerCommandSource>()
+
+    val CommandClientSide = KambrikCommandApi<FabricClientCommandSource>()
 
     val Structure = KambrikStructureApi()
 
