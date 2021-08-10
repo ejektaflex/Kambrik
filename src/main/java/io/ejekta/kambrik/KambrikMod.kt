@@ -1,5 +1,6 @@
 package io.ejekta.kambrik
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import io.ejekta.kambrik.Kambrik.Logger
 import io.ejekta.kambrik.api.logging.KambrikMarkers
 import io.ejekta.kambrik.api.message.KambrikMessageApi
@@ -12,6 +13,7 @@ import io.ejekta.kambrik.testing.TestMsg
 import net.fabricmc.api.EnvType
 //import io.ejekta.kambrik.testing.TestMsg
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint
@@ -60,6 +62,9 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
         CommandRegistrationCallback.EVENT.register(KambrikCommands)
 
         //TestMsg.Handler.register()
+
+
+
 
 
 

@@ -20,7 +20,7 @@ class KambrikCommandApi internal constructor() {
         return c.hasPermissionLevel(2) || (c.entity is PlayerEntity && c.player.isCreative)
     }
 
-    private fun <SRC : CommandSource> addSourcedCommand(
+    internal fun <SRC : CommandSource> addSourcedCommand(
         baseCommandName: String,
         toDispatcher: CommandDispatcher<SRC>,
         func: ArgDsl<SRC, LiteralArgumentBuilder<SRC>>
