@@ -14,6 +14,7 @@ import io.ejekta.kambrik.testing.TestMsg
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.command.argument.IdentifierArgumentType.getIdentifier
+import net.minecraft.item.Items
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
 import net.minecraft.util.registry.Registry
@@ -74,11 +75,9 @@ object KambrikCommands : CommandRegistrationCallback {
     fun test(ctx: CommandContext<ServerCommandSource>): Int {
         try {
 
-            //TestMsg(100).sendToClient(ctx.source.player)
-
-            //NetworkLinker.sendClientMsg(TestMsg(100), ctx.source.player)
-
-            TestMsg(100).sendToClient(ctx.source.player)
+            TestMsg(
+                Items.BUCKET
+            ).sendToClient(ctx.source.player)
 
         } catch (e: Exception) {
             //e.printStackTrace()

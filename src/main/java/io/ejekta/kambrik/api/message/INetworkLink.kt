@@ -1,4 +1,4 @@
-package io.ejekta.kambrik.api.network
+package io.ejekta.kambrik.api.message
 
 import io.ejekta.kambrikx.api.serial.nbt.NbtFormat
 import kotlinx.serialization.KSerializer

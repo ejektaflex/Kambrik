@@ -2,7 +2,7 @@ package io.ejekta.kambrik
 
 import io.ejekta.kambrik.Kambrik.Logger
 import io.ejekta.kambrik.api.logging.KambrikMarkers
-import io.ejekta.kambrik.api.network.KambrikMessages
+import io.ejekta.kambrik.api.message.KambrikMessageApi
 import io.ejekta.kambrik.ext.toMap
 import io.ejekta.kambrik.internal.KambrikCommands
 import io.ejekta.kambrik.internal.KambrikMarker
@@ -57,7 +57,7 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
 
         //TestMsg.Handler.register()
 
-        KambrikMessages.registerClientMessage(TestMsg.serializer(), Identifier("a", "b"))
+        Kambrik.Message.registerClientMessage(TestMsg.serializer(), Identifier("a", "b"))
 
     }
 
