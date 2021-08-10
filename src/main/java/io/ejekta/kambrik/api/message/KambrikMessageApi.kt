@@ -14,7 +14,8 @@ class KambrikMessageApi {
     val clientLinks = mutableMapOf<KClass<*>, ClientNetworkLink<*>>()
     val serverLinks = mutableMapOf<KClass<*>, ServerNetworkLink<*>>()
 
-    inline fun <reified M : Any> registerMessage(
+    @PublishedApi
+    internal inline fun <reified M : Any> registerMessage(
         linkMaker: () -> INetworkLink<M>,
         reg: MutableMap<KClass<*>, INetworkLink<M>>,
         clientOnly: Boolean = false

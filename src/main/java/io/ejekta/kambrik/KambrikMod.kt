@@ -7,6 +7,7 @@ import io.ejekta.kambrik.ext.toMap
 import io.ejekta.kambrik.internal.KambrikCommands
 import io.ejekta.kambrik.internal.KambrikMarker
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
+import io.ejekta.kambrik.testing.TellServerHello
 import io.ejekta.kambrik.testing.TestMsg
 import net.fabricmc.api.EnvType
 //import io.ejekta.kambrik.testing.TestMsg
@@ -15,6 +16,7 @@ import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint
 import net.fabricmc.loader.api.metadata.CustomValue
+import net.minecraft.item.Items
 import net.minecraft.util.Identifier
 import org.apache.logging.log4j.*
 import org.apache.logging.log4j.core.Filter
@@ -61,7 +63,15 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
 
 
         Kambrik.Message.registerClientMessage(TestMsg.serializer(), Identifier("a", "b"))
+        Kambrik.Message.registerServerMessage(TellServerHello.serializer(), Identifier("a", "c"))
 
+        Kambrik.Command.addClientCommand("cambric") {
+            executes {
+                TellServerHello(Items.ACACIA_LOG).sendToServer()
+
+                1
+            }
+        }
     }
 
     private fun handleCustomEntryData() {

@@ -9,7 +9,7 @@ import net.minecraft.item.Item
 @Serializable
 class TellServerHello(@Contextual val item: Item) : ServerMsg() {
     override fun onServerReceived(ctx: MsgContext) {
-        println("Got item! default stack is: ${item.defaultStack}")
+        println("Hello! Got item! default stack is: ${item.defaultStack}")
     }
 }
 
