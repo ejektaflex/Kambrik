@@ -16,9 +16,9 @@ import net.minecraft.server.network.ServerPlayerEntity
 
 typealias ArgDsl<S, T> = KambrikArgBuilder<S, T>.() -> Unit
 
-fun <SRC : CommandSource> CommandDispatcher<SRC>.addCommand(
+fun CommandDispatcher<ServerCommandSource>.addCommand(
     baseCommandName: String,
-    func: ArgDsl<SRC, LiteralArgumentBuilder<SRC>>
+    func: ArgDsl<ServerCommandSource, LiteralArgumentBuilder<ServerCommandSource>>
 ) {
     Kambrik.Command.addSourcedCommand(baseCommandName, this, func)
 }
