@@ -16,17 +16,12 @@ open class RegistryObjectSerializer<T>(private val reg: Registry<T>, serialName:
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(serialName, PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: T) {
-        encoder.doStructure(ItemRefSerializer.descriptor) {
-            encodeStringElement(ItemRefSerializer.descriptor, 0, reg.getId(value)?.toString()
-                ?: throw SerializationException("Could not save identifier, as this object is not registered!: $value"))
-        }
+        encoder.encodeString(reg.getId(value).toString())
     }
 
     override fun deserialize(decoder: Decoder): T {
-        return decoder.doStructure(ItemRefSerializer.descriptor) {
-            val id = decodeStringElement(ItemRefSerializer.descriptor, 0)
-            reg[Identifier(id)] ?: throw SerializationException("Could not find saved identifier!: $id")
-        }
+        val id = decoder.decodeString()
+        return reg[Identifier(id)] ?: throw SerializationException("Could not find saved identifier!: $id")
     }
 
 }
