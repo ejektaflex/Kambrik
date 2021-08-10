@@ -9,6 +9,7 @@ import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.KambrikMod
 import io.ejekta.kambrik.api.command.suggestionList
 import io.ejekta.kambrik.api.logging.KambrikMarkers
+import io.ejekta.kambrik.testing.TellServerHello
 import io.ejekta.kambrik.testing.TestMsg
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager
 //import io.ejekta.kambrik.testing.TestMsg
@@ -63,26 +64,21 @@ object KambrikCommands : CommandRegistrationCallback {
                         Kambrik.Logger.info(KambrikMarkers.Rendering, "Hello! Rendering")
                         1
                     }
-                    executes {
-                        test(it)
-                        1
-                    }
+                    executes(test())
                 }
             }
 
         }
 
 
-
-
     }
 
-    fun test(ctx: CommandContext<ServerCommandSource>): Int {
+    fun test() = Command<ServerCommandSource> {
         try {
 
             TestMsg(
                 Items.BUCKET
-            ).sendToClient(ctx.source.player)
+            ).sendToClient(it.source.player)
 
         } catch (e: Exception) {
             //e.printStackTrace()
@@ -93,7 +89,7 @@ object KambrikCommands : CommandRegistrationCallback {
             }
         }
 
-        return 1
+        1
     }
 
     private fun dump() = Command<ServerCommandSource> {

@@ -12,9 +12,7 @@ import org.apache.logging.log4j.LogManager
 
 object Kambrik {
 
-    val Command = KambrikCommandApi<ServerCommandSource>()
-
-    val CommandClientSide = KambrikCommandApi<FabricClientCommandSource>()
+    val Command = KambrikCommandApi()
 
     val Structure = KambrikStructureApi()
 
