@@ -5,9 +5,11 @@ import java.util.Date
 
 plugins {
 	//id 'com.github.johnrengelman.shadow' version '6.1.0'
-	kotlin("jvm") version "1.5.21"
+	kotlin("jvm") version "1.5.30-RC"
+
 	// if IR backend error occurs, for some reason toggling the KSX plugin fixes it. -_-
-	kotlin("plugin.serialization") version "1.5.20"
+	kotlin("plugin.serialization") version "1.5.30-RC"
+
 	id("fabric-loom") version "0.8-SNAPSHOT"
 	`maven-publish`
 	signing
@@ -159,8 +161,3 @@ tasks.getByName<ProcessResources>("processResources") {
 	}
 }
 
-tasks.withType<KotlinCompile> {
-	kotlinOptions {
-		jvmTarget = "16"
-	}
-}
