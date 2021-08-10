@@ -12,16 +12,20 @@ import io.ejekta.kambrik.api.command.addCommand
 import io.ejekta.kambrik.api.command.suggestionList
 import io.ejekta.kambrik.api.command.suggestionListTooltipped
 import io.ejekta.kambrik.api.logging.KambrikMarkers
+import io.ejekta.kambrik.api.message.ClientMsg
 import io.ejekta.kambrik.ext.addAll
 import io.ejekta.kambrik.testing.TestMsg
+import kotlinx.serialization.Serializable
 //import io.ejekta.kambrik.testing.TestMsg
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.command.argument.IdentifierArgumentType.getIdentifier
 import net.minecraft.item.Items
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.registry.Registry
 
 internal object KambrikCommands : CommandRegistrationCallback {
