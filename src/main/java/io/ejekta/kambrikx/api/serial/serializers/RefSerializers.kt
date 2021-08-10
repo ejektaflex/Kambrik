@@ -28,10 +28,12 @@ open class RegistryObjectSerializer<T>(private val reg: Registry<T>, serialName:
 
 }
 
-@Serializer(forClass = Item::class)
+// Commenting these two lines out causes it to compile
+
+//@Serializer(forClass = Item::class)
 object ItemRefSerializer : RegistryObjectSerializer<Item>(Registry.ITEM, "ref.yarn.Item")
 
-@Serializer(forClass = Block::class)
+//@Serializer(forClass = Block::class)
 object BlockRefSerializer : RegistryObjectSerializer<Block>(Registry.BLOCK, "ref.yarn.Block")
 
 
