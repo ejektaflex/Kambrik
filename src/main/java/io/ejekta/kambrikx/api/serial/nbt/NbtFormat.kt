@@ -13,6 +13,7 @@ import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.plus
 import kotlinx.serialization.modules.polymorphic
+import net.minecraft.block.Block
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.*
@@ -90,6 +91,7 @@ open class NbtFormat internal constructor(val config: NbtFormatConfig) : SerialF
 
         val ReferenceSerializers = SerializersModule {
             contextual(Item::class, ItemRefSerializer)
+            contextual(Block::class, BlockRefSerializer)
         }
 
         val Default = NbtFormat(NbtFormatConfig())

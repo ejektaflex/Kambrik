@@ -8,10 +8,12 @@ import kotlinx.serialization.Serializer
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import net.minecraft.block.Block
 import net.minecraft.item.Item
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 
+@OptIn(ExperimentalSerializationApi::class)
 open class RegistryObjectSerializer<T>(private val reg: Registry<T>, serialName: String) : KSerializer<T> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(serialName, PrimitiveKind.STRING)
 
@@ -26,8 +28,11 @@ open class RegistryObjectSerializer<T>(private val reg: Registry<T>, serialName:
 
 }
 
-@OptIn(ExperimentalSerializationApi::class)
 @Serializer(forClass = Item::class)
 object ItemRefSerializer : RegistryObjectSerializer<Item>(Registry.ITEM, "ref.yarn.Item")
+
+@Serializer(forClass = Block::class)
+object BlockRefSerializer : RegistryObjectSerializer<Block>(Registry.BLOCK, "ref.yarn.Block")
+
 
 
