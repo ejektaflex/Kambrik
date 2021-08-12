@@ -9,6 +9,7 @@ import kotlinx.serialization.Serializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import net.minecraft.item.ItemStack
@@ -18,8 +19,7 @@ import net.minecraft.nbt.NbtElement
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
-
-
+import kotlin.reflect.typeOf
 
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -116,10 +116,10 @@ object BlockPosSerializer : KSerializer<BlockPos> {
 
     override fun deserialize(decoder: Decoder): BlockPos {
         return decoder.doStructure(descriptor) {
-            val x = decodeIntElement(descriptor, 0)
-            val y = decodeIntElement(descriptor, 1)
-            val z = decodeIntElement(descriptor, 2)
-            BlockPos(x, y, z)
+            val els = (0 until 3).map {
+                decodeIntElement(descriptor, decodeElementIndex(descriptor))
+            }
+            BlockPos(els[0], els[1], els[2])
         }
     }
 }
@@ -147,7 +147,7 @@ object BoxSerializer : KSerializer<Box> {
 
     override fun deserialize(decoder: Decoder): Box {
         return decoder.doStructure(descriptor) {
-            (0 until 6).map { decodeDoubleElement(descriptor, it) }.let {
+            (0 until 6).map { decodeDoubleElement(descriptor, decodeElementIndex(descriptor)) }.let {
                 Box(it[0], it[1], it[2], it[3], it[4], it[5])
             }
         }

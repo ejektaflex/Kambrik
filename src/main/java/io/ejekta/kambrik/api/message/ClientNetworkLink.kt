@@ -1,24 +1,20 @@
 package io.ejekta.kambrik.api.message
 
-import io.ejekta.kambrik.ext.unwrapToTag
-import io.ejekta.kambrik.ext.wrapToPacketByteBuf
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.json.Json
 import net.fabricmc.api.EnvType
-import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
-import net.fabricmc.fabric.api.networking.v1.PacketSender
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.network.ClientPlayNetworkHandler
-import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 
 class ClientNetworkLink<M : ClientMsg>(
 
     override val id: Identifier,
-    override val ser: KSerializer<M>
+    override val ser: KSerializer<M>,
+    override val json: Json = INetworkLink.defaultJson
 
     ) : INetworkLink<M> {
 
@@ -27,7 +23,7 @@ class ClientNetworkLink<M : ClientMsg>(
             return true // fake it w/o registering on Server
         }
         return ClientPlayNetworking.registerGlobalReceiver(id) { client, handler, buf, responseSender ->
-            val contents = buf.unwrapToTag()
+            val contents = buf.readString()
             val data = deserializePacket(contents)
             client.execute {
                 data.onClientReceived(ClientMsg.MsgContext(client, handler, buf, responseSender))
@@ -40,7 +36,9 @@ class ClientNetworkLink<M : ClientMsg>(
             ServerPlayNetworking.send(
                 player,
                 id,
-                serializePacket(msg).wrapToPacketByteBuf()
+                PacketByteBufs.create().apply {
+                    writeString(serializePacket(msg))
+                }
             )
         }
     }
