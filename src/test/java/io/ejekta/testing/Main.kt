@@ -4,6 +4,7 @@ package io.ejekta.testing
 import io.ejekta.kambrik.ext.wrapToPacketByteBuf
 import io.ejekta.kambrikx.api.serial.nbt.NbtFormat
 import kotlinx.serialization.Contextual
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -13,76 +14,58 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
 import net.minecraft.nbt.*
 import net.minecraft.text.LiteralText
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Box
 import java.text.SimpleDateFormat
 import java.util.*
 
-val serMod = SerializersModule {
 
-    polymorphic(Vehicle::class) {
-        subclass(Car::class, Car.serializer())
+
+
+fun <T> doJsonCycle(ser: KSerializer<T>, obj: T) {
+    val json = Json {
+        serializersModule = NbtFormat.Default.serializersModule
     }
 
-    polymorphic(Money::class) {
-        subclass(Wallet::class, Wallet.serializer())
-    }
-
-    include(NbtFormat.BuiltInSerializers)
-    //include(NbtFormat.ReferenceSerializers)
-
+    val c = json.encodeToString(ser, obj)
+    println("OBJ -> JSN: $c")
+    val d = json.decodeFromString(ser, c)
+    println("JSN: -> OBJ: $d")
 }
 
-val NbtFormatTest = NbtFormat {
-    serializersModule = serMod
-    writePolymorphic = true
-}
-
-@Serializable
-abstract class Vehicle(val typed: String)
-
-@Serializable
-data class Car(val wheels: Int) : Vehicle("Automobile") {
-    override fun toString(): String {
-        return "Car[wheels=$wheels, typed=$typed]"
-    }
-}
-
-interface Money
-
-@Serializable
-data class Wallet(val amount: Double) : Money
-
-
-@Serializable
-data class Person(val name: String, val money: Money)
-
-
-
-@Serializable
-data class Holder(val tag: @Contextual NbtElement)
-
-@Serializable
-data class Nullie(val a: Int? = 1, val b: Int? = 10)
-
-fun main(args: Array<String>) {
-
-    val u = Nullie(a = 10, b = null)
-
+fun <T> doNbtCycle(ser: KSerializer<T>, obj: T) {
     val config = NbtFormat {
         nullTag = NbtString.of("NULL")
     }
 
-    val result = config.encodeToTag(Nullie.serializer(), u)
-    val asString = result.toString()
-    println(asString)
+    val a = config.encodeToTag(ser, obj)
+    println("OBJ -> NBT: $a")
+    val b = config.decodeFromTag(ser, a)
+    println("NBT -> OBJ: $b")
+}
 
-    println(
-        StringNbtReader.parse(asString)
-    )
 
-    val result2 = config.decodeFromTag(Nullie.serializer(), result)
+@Serializable
+data class InnerInt(val its: Int)
 
-    println(result2)
+@Serializable
+data class Doot(val pos: @Contextual Box, val int: InnerInt)
 
+
+fun main(args: Array<String>) {
+
+    val u = Doot(Box(1.0, 2.0, 3.0, 12.0, 15.0, 18.0), InnerInt(30))
+
+    try {
+        doJsonCycle(Doot.serializer(), u)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+
+    try {
+        doNbtCycle(Doot.serializer(), u)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 
 }
 

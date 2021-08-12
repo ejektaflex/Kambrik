@@ -3,7 +3,9 @@ package io.ejekta.kambrik.api.message
 import io.ejekta.kambrik.ext.unwrapToTag
 import io.ejekta.kambrik.ext.wrapToPacketByteBuf
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.json.Json
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.network.PacketByteBuf
@@ -15,7 +17,8 @@ import net.minecraft.util.Identifier
 class ServerNetworkLink<M : ServerMsg>(
 
     override val id: Identifier,
-    override val ser: KSerializer<M>
+    override val ser: KSerializer<M>,
+    override val json: Json = INetworkLink.defaultJson
 
     ) : INetworkLink<M>, ServerPlayNetworking.PlayChannelHandler {
 
@@ -30,7 +33,7 @@ class ServerNetworkLink<M : ServerMsg>(
         buf: PacketByteBuf,
         responseSender: PacketSender
     ) {
-        val contents = buf.unwrapToTag()
+        val contents = buf.readString()
         val data = deserializePacket(contents)
         server.execute {
             data.onServerReceived(ServerMsg.MsgContext(server, player, handler, buf, responseSender))
@@ -40,7 +43,9 @@ class ServerNetworkLink<M : ServerMsg>(
     fun send(msg: M) {
         ClientPlayNetworking.send(
             id,
-            serializePacket(msg).wrapToPacketByteBuf()
+            PacketByteBufs.create().apply {
+                writeString(serializePacket(msg))
+            }
         )
     }
 
