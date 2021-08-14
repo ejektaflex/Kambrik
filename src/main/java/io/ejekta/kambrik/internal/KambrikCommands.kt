@@ -3,29 +3,25 @@ package io.ejekta.kambrik.internal
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.BoolArgumentType.getBool
-import com.mojang.brigadier.arguments.IntegerArgumentType.getInteger
 import com.mojang.brigadier.arguments.StringArgumentType.getString
-import com.mojang.brigadier.arguments.StringArgumentType.string
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.KambrikMod
+import io.ejekta.kambrik.api.command.KambrikArgBuilder
 import io.ejekta.kambrik.api.command.addCommand
 import io.ejekta.kambrik.api.command.suggestionList
-import io.ejekta.kambrik.api.command.suggestionListTooltipped
 import io.ejekta.kambrik.api.logging.KambrikMarkers
-import io.ejekta.kambrik.api.message.ClientMsg
-import io.ejekta.kambrik.ext.addAll
+import io.ejekta.kambrik.ext.identifier
 import io.ejekta.kambrik.testing.TestMsg
-import kotlinx.serialization.Serializable
 //import io.ejekta.kambrik.testing.TestMsg
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.command.argument.IdentifierArgumentType.getIdentifier
 import net.minecraft.item.Items
-import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.tag.*
 import net.minecraft.text.LiteralText
-import net.minecraft.util.math.BlockPos
+import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 
 internal object KambrikCommands : CommandRegistrationCallback {
@@ -60,8 +56,18 @@ internal object KambrikCommands : CommandRegistrationCallback {
             }
 
             "dump" {
-                val dumpables = suggestionList { Registry.REGISTRIES.toList().map { it.key.value.toString() } }
-                argIdentifier("dump_what", items = dumpables) runs dump()
+                "registry" {
+                    val dumpables = suggestionList { Registry.REGISTRIES.toList().map { it.key.value.toString() } }
+                    argIdentifier("dump_what", items = dumpables) runs dumpRegistry()
+                }
+
+                "tags" {
+                    "blocks" { tagQueryDump({ BlockTags.getTagGroup().tags }) { it.identifier } }
+                    "entity_types" { tagQueryDump({ EntityTypeTags.getTagGroup().tags }) { it.identifier } }
+                    "game_events" { tagQueryDump({ GameEventTags.getTagGroup().tags }) { it.id } }
+                    "fluids" { tagQueryDump({ FluidTags.getTagGroup().tags }) { it.identifier } }
+                    "items" { tagQueryDump({ ItemTags.getTagGroup().tags }) { it.identifier } }
+                }
             }
 
             if (FabricLoader.getInstance().isDevelopmentEnvironment) {
@@ -80,6 +86,61 @@ internal object KambrikCommands : CommandRegistrationCallback {
 
     }
 
+    private fun <T, R : Comparable<R>> KambrikArgBuilder<ServerCommandSource, LiteralArgumentBuilder<ServerCommandSource>>.tagQueryDump(
+        inTags: () -> Map<Identifier, Tag<T>>,
+        idGetter: (T) -> R
+    ) {
+        executes {
+            dumpTagListing(inTags(), idGetter).run(it)
+        }
+        argIdentifier("tag_id", items = suggestionList { inTags().keys.toList() }) {
+            executes {
+                val computedTags = inTags()
+                var results = 0
+                val queryId = getIdentifier(it, "tag_id")
+                val foundItem = computedTags.keys.find { id -> id == queryId }
+                if (foundItem == null) {
+                    it.source.sendError(LiteralText("Tag does not exist."))
+                } else {
+                    dumpTagListing(computedTags.filter { entry -> entry.key == queryId }, idGetter).run(it)
+                    results = computedTags.size
+                }
+
+                results
+            }
+        }
+    }
+
+    private fun <T, R : Comparable<R>> dumpTagListing(inTags: Map<Identifier, Tag<T>>, idGetter: (T) -> R) = Command<ServerCommandSource> {
+        for ((id, tag) in inTags.toSortedMap { a, b -> a.compareTo(b) }) {
+            Kambrik.Logger.info("[TAG] $id")
+            for (item in tag.values().sortedBy(idGetter)) {
+                Kambrik.Logger.info("  * [ID] ${idGetter(item)}")
+            }
+        }
+        1
+    }
+
+
+    private fun dumpRegistry() = Command<ServerCommandSource> {
+
+        val what = getIdentifier(it, "dump_what")
+
+        if (Registry.REGISTRIES.containsId(what)) {
+            val reg = Registry.REGISTRIES[what]!!
+            Kambrik.Logger.info("Contents of registry '$what':")
+            reg.ids.forEach { id ->
+                Kambrik.Logger.info("  * [ID] $id")
+            }
+            it.source.sendFeedback(LiteralText("Dumped contents of '$what' to log."), false)
+        } else {
+            it.source.sendError(LiteralText("There is no registry with that name."))
+        }
+
+        1
+    }
+
+
     fun test() = Command<ServerCommandSource> {
         try {
 
@@ -94,24 +155,6 @@ internal object KambrikCommands : CommandRegistrationCallback {
             e.stackTrace.forEach { element ->
                 Kambrik.Logger.error(element)
             }
-        }
-
-        1
-    }
-
-    private fun dump() = Command<ServerCommandSource> {
-
-        val what = getIdentifier(it, "dump_what")
-
-        if (Registry.REGISTRIES.containsId(what)) {
-            val reg = Registry.REGISTRIES[what]!!
-            Kambrik.Logger.info("Contents of registry '$what':")
-            reg.ids.forEach { id ->
-                Kambrik.Logger.info(id)
-            }
-            it.source.sendFeedback(LiteralText("Dumped contents of '$what' to log."), false)
-        } else {
-            it.source.sendError(LiteralText("There is no registry with that name."))
         }
 
         1
