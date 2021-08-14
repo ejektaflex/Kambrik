@@ -45,7 +45,7 @@ class KambrikArgBuilder<SRC : CommandSource, A : ArgumentBuilder<SRC, *>>(val ar
         val req = KambrikArgBuilder<SRC, RequiredArgumentBuilder<SRC, *>>(RequiredArgumentBuilder.argument(word, type)).apply(func)
 
         items?.let {
-            req.arg.suggests(items)
+            req.arg.suggests(it)
         }
 
         req.finalize()
@@ -53,10 +53,7 @@ class KambrikArgBuilder<SRC : CommandSource, A : ArgumentBuilder<SRC, *>>(val ar
         return req.arg
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun executes(command: Command<SRC>?): KambrikArgBuilder<SRC, A> {
-        return KambrikArgBuilder(arg.executes(command) as A)
-    }
+
 
     fun argString(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
@@ -84,8 +81,17 @@ class KambrikArgBuilder<SRC : CommandSource, A : ArgumentBuilder<SRC, *>>(val ar
         literal(this, func)
     }
 
+    @Suppress("UNCHECKED_CAST")
+    override fun executes(command: Command<SRC>?): KambrikArgBuilder<SRC, A> {
+        return KambrikArgBuilder(arg.executes(command) as A)
+    }
+
     infix fun String.runs(cmd: Command<SRC>) {
         this { this.executes(cmd) }
+    }
+
+    infix fun runs(cmd: Command<SRC>) {
+        executes(cmd)
     }
 
     infix fun RequiredArgumentBuilder<SRC, *>.runs(cmd: Command<SRC>) {

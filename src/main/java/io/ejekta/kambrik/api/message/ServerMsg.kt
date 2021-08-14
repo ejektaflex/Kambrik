@@ -12,7 +12,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 abstract class ServerMsg() {
 
     data class MsgContext(
-        val client: MinecraftServer,
+        val server: MinecraftServer,
         val player: ServerPlayerEntity,
         val handler: ServerPlayNetworkHandler,
         val buf: PacketByteBuf,

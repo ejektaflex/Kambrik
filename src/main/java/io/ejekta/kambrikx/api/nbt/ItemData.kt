@@ -43,7 +43,13 @@ abstract class ItemData<T> {
     }
 
     operator fun get(stack: ItemStack): T {
+        // We should not be grabbing NBT if it's an empty item
+        if (stack == ItemStack.EMPTY) {
+            throw error("Item is an empty itemstack, so NBT data cannot be trusted")
+        }
+
         val tag = getSubtag(stack)
+
         return try {
             format.decodeFromTag(ser, tag)
         } catch (e: SerializationException) {
