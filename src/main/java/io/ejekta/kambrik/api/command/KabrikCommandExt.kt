@@ -23,9 +23,9 @@ fun CommandDispatcher<ServerCommandSource>.addCommand(
     Kambrik.Command.addSourcedCommand(baseCommandName, this, func)
 }
 
-fun <SRC : CommandSource> KambrikArgBuilder<SRC, *>.suggestionList(func: () -> List<String>): SuggestionProvider<SRC> {
+fun <SRC : CommandSource> KambrikArgBuilder<SRC, *>.suggestionList(func: () -> List<Any>): SuggestionProvider<SRC> {
     return SuggestionProvider<SRC> { context, builder ->
-        builder.addAll(func())
+        builder.addAll(func().map { it.toString() })
         builder.buildFuture()
     }
 }
