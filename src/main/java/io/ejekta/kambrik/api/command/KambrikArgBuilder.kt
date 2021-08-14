@@ -13,6 +13,8 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.suggestion.SuggestionProvider
 import com.mojang.brigadier.tree.CommandNode
 import net.minecraft.command.CommandSource
+import net.minecraft.command.argument.BlockPosArgumentType
+import net.minecraft.command.argument.ColorArgumentType
 import net.minecraft.command.argument.IdentifierArgumentType.identifier
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
@@ -53,29 +55,36 @@ class KambrikArgBuilder<SRC : CommandSource, A : ArgumentBuilder<SRC, *>>(val ar
         return req.arg
     }
 
-
-
-    fun argString(
+    fun argBlockPos(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
-    ) = argument(string(), word, items, func)
+    ) = argument(BlockPosArgumentType.blockPos(), word, items, func)
 
-    fun argInt(
-        word: String, range: IntRange? = null,
-        items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
-    ) = argument(if (range != null) integer(range.first, range.last) else integer(), word, items, func)
+    fun argBool(
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
+    ) = argument(bool(), word, items, func)
+
+    fun argColor(
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
+    ) = argument(ColorArgumentType.color(), word, items, func)
 
     fun argFloat(
         word: String, range: ClosedFloatingPointRange<Float>? = null,
         items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
     ) = argument(if (range != null) FloatArgumentType.floatArg(range.start, range.endInclusive) else FloatArgumentType.floatArg(), word, items, func)
 
-    fun argBool(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
-    ) = argument(bool(), word, items, func)
-
     fun argIdentifier(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
     ) = argument(identifier(), word, items, func)
+
+    fun argInt(
+        word: String, range: IntRange? = null,
+        items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
+    ) = argument(if (range != null) integer(range.first, range.last) else integer(), word, items, func)
+
+    fun argString(
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
+    ) = argument(string(), word, items, func)
+
 
     operator fun String.invoke(func: ArgDsl<SRC, LiteralArgumentBuilder<SRC>>) {
         literal(this, func)

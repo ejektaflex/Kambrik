@@ -1,4 +1,4 @@
-package io.ejekta.kambrik.api.command.types
+package io.ejekta.kambrik.api.command.commands
 
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.context.CommandContext
