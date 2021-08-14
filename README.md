@@ -4,18 +4,19 @@ A lightweight Kotlin library mod for Fabric.
 Meant to simplify development through various means.
 
 Kambrik Currently Offers: 
-* Automatic Registration of Items, Blocks, Enchantments, etc.
+* Simplified Registration of Items, Blocks, Enchantments, etc.
 * Command DSL for simple command creation
+* A Message API for sending data over the network and back
 * Extension methods for common, reusable functionality
 
 
 Experimental Features:
-* Simple Kotlin <=> NBT conversion with Kotlinx Serialization
+* Simple Object <=> NBT conversion with Kotlinx Serialization
 
 
 Upcoming Features:
-* Simple Packet creation
-* Automatic Packet serialization
+* A Text builder DSL
+* A GUI drawing DSL
 
 
 Experimental library features will be put into `kambrikx` until they mature.
