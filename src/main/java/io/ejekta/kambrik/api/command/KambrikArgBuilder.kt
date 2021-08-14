@@ -19,7 +19,7 @@ import net.minecraft.command.argument.IdentifierArgumentType.identifier
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 
-class KambrikArgBuilder<SRC : CommandSource, A : ArgumentBuilder<SRC, *>>(val arg: A) :
+class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
     ArgumentBuilder<SRC, KambrikArgBuilder<SRC, A>>() {
 
     private val subArgs = mutableListOf<KambrikArgBuilder<SRC, *>>()
