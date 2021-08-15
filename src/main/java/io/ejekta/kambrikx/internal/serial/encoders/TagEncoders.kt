@@ -1,17 +1,10 @@
 package io.ejekta.kambrikx.internal.serial.encoders
 
 import io.ejekta.kambrik.internal.KambrikExperimental
-import io.ejekta.kambrikx.api.serial.nbt.NbtFormatConfig
+import io.ejekta.kambrikx.api.serial.NbtFormatConfig
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
-import kotlinx.serialization.SerializationStrategy
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.AbstractEncoder
-import kotlinx.serialization.encoding.CompositeEncoder
-import kotlinx.serialization.modules.EmptySerializersModule
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.serializer
 import net.minecraft.nbt.*
 
 @KambrikExperimental

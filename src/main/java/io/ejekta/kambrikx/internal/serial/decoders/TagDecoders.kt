@@ -1,22 +1,11 @@
 package io.ejekta.kambrikx.internal.serial.decoders
 
 import io.ejekta.kambrik.internal.KambrikExperimental
-import io.ejekta.kambrikx.api.serial.nbt.NbtFormatConfig
-import io.ejekta.kambrikx.internal.serial.encoders.BaseTagEncoder
-import io.ejekta.kambrikx.internal.serial.encoders.TagClassEncoder
-import io.ejekta.kambrikx.internal.serial.encoders.TagListEncoder
-import io.ejekta.kambrikx.internal.serial.encoders.TagMapEncoder
+import io.ejekta.kambrikx.api.serial.NbtFormatConfig
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.SerialKind
-import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.CompositeDecoder
-import kotlinx.serialization.encoding.CompositeEncoder
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.contentOrNull
 import net.minecraft.nbt.*
 
 @KambrikExperimental

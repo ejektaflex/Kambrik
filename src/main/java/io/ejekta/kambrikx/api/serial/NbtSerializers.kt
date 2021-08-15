@@ -17,7 +17,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import net.minecraft.nbt.NbtElement
 
-
+@KambrikExperimental
 @Serializer(forClass = NbtElement::class)
 object TagSerializer : KSerializer<NbtElement> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("TagSerializer", PrimitiveKind.STRING)
