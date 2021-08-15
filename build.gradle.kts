@@ -170,6 +170,5 @@ tasks.withType<JavaCompile> {
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
 		jvmTarget = "16"
-		useOldBackend = false
 	}
 }
