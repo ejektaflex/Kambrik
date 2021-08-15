@@ -9,7 +9,6 @@ import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtElement
 import net.minecraft.util.Identifier
 
-@KambrikExperimental
 abstract class ItemData<T> {
 
     abstract val identifier: Identifier
