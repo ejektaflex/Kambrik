@@ -1,4 +1,4 @@
-package io.ejekta.kambrikx.ext.internal
+package io.ejekta.kambrik.ext.internal
 
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.CompositeDecoder

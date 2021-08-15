@@ -1,5 +1,6 @@
 package io.ejekta.kambrikx.internal.serial.decoders
 
+import io.ejekta.kambrik.internal.KambrikExperimental
 import io.ejekta.kambrikx.api.serial.nbt.NbtFormatConfig
 import io.ejekta.kambrikx.internal.serial.encoders.BaseTagEncoder
 import io.ejekta.kambrikx.internal.serial.encoders.TagClassEncoder
@@ -18,9 +19,10 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
 import net.minecraft.nbt.*
 
+@KambrikExperimental
 @ExperimentalSerializationApi
 @InternalSerializationApi
-open class TagDecoder(
+internal class TagDecoder(
     config: NbtFormatConfig,
     level: Int,
     final override var root: NbtElement
@@ -35,9 +37,10 @@ open class TagDecoder(
     }
 }
 
+@KambrikExperimental
 @ExperimentalSerializationApi
 @InternalSerializationApi
-open class TagClassDecoder(
+internal class TagClassDecoder(
     config: NbtFormatConfig,
     level: Int,
     override var root: NbtElement
@@ -62,9 +65,10 @@ open class TagClassDecoder(
     }
 }
 
+@KambrikExperimental
 @InternalSerializationApi
 @OptIn(ExperimentalSerializationApi::class)
-open class TagListDecoder(
+internal class TagListDecoder(
     config: NbtFormatConfig,
     level: Int,
     override var root: NbtElement
@@ -92,9 +96,10 @@ open class TagListDecoder(
     override fun endStructure(descriptor: SerialDescriptor) { }
 }
 
+@KambrikExperimental
 @InternalSerializationApi
 @OptIn(ExperimentalSerializationApi::class)
-open class TagMapDecoder(
+internal class TagMapDecoder(
     config: NbtFormatConfig,
     level: Int,
     override var root: NbtElement
@@ -124,9 +129,10 @@ open class TagMapDecoder(
     override fun endStructure(descriptor: SerialDescriptor) {  }
 }
 
+@KambrikExperimental
 @InternalSerializationApi
 @OptIn(ExperimentalSerializationApi::class)
-open class TaglessDecoder(
+internal class TaglessDecoder(
     config: NbtFormatConfig,
     level: Int,
     override var root: NbtElement

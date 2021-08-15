@@ -1,8 +1,9 @@
 @file:Suppress("EXPERIMENTAL_API_USAGE")
 
-package io.ejekta.kambrikx.api.serial.serializers
+package io.ejekta.kambrikx.api.serial
 
 import io.ejekta.kambrik.ext.toTag
+import io.ejekta.kambrik.internal.KambrikExperimental
 import io.ejekta.kambrikx.internal.serial.decoders.BaseTagDecoder
 import io.ejekta.kambrikx.internal.serial.encoders.BaseTagEncoder
 import kotlinx.serialization.InternalSerializationApi
@@ -29,7 +30,7 @@ object TagSerializer : KSerializer<NbtElement> {
     }
 }
 
-
+@KambrikExperimental
 @OptIn(InternalSerializationApi::class)
 @Serializer(forClass = NbtElement::class)
 object DynTagSerializer : KSerializer<NbtElement> {

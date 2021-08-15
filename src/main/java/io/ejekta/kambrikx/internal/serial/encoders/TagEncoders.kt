@@ -1,5 +1,6 @@
 package io.ejekta.kambrikx.internal.serial.encoders
 
+import io.ejekta.kambrik.internal.KambrikExperimental
 import io.ejekta.kambrikx.api.serial.nbt.NbtFormatConfig
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
@@ -13,8 +14,9 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
 import net.minecraft.nbt.*
 
+@KambrikExperimental
 @InternalSerializationApi
-class TagEncoder(config: NbtFormatConfig) : BaseTagEncoder(config) {
+internal class TagEncoder(config: NbtFormatConfig) : BaseTagEncoder(config) {
     override var root: NbtElement = NbtNull.INSTANCE
 
     // Currently, primitive encodings directly call addTag("PRIMITIVE", tag)
@@ -25,17 +27,19 @@ class TagEncoder(config: NbtFormatConfig) : BaseTagEncoder(config) {
     override val propogate: NbtElement.() -> Unit = { root = this }
 }
 
+@KambrikExperimental
 @InternalSerializationApi
 @ExperimentalSerializationApi
-open class TagClassEncoder(config: NbtFormatConfig, level: Int, onEnd: (NbtElement) -> Unit = {}) : BaseTagEncoder(config, level, onEnd) {
+internal class TagClassEncoder(config: NbtFormatConfig, level: Int, onEnd: (NbtElement) -> Unit = {}) : BaseTagEncoder(config, level, onEnd) {
     override var root = NbtCompound()
     override fun addTag(name: String?, tag: NbtElement) {
         root.put(name, tag)
     }
 }
 
+@KambrikExperimental
 @InternalSerializationApi
-class TagListEncoder(config: NbtFormatConfig, level: Int, onEnd: (NbtElement) -> Unit) : BaseTagEncoder(config, level, onEnd) {
+internal class TagListEncoder(config: NbtFormatConfig, level: Int, onEnd: (NbtElement) -> Unit) : BaseTagEncoder(config, level, onEnd) {
     override val root = NbtList()
     override fun addTag(name: String?, tag: NbtElement) {
         if (name != config.classDiscriminator) {
@@ -44,9 +48,10 @@ class TagListEncoder(config: NbtFormatConfig, level: Int, onEnd: (NbtElement) ->
     }
 }
 
+@KambrikExperimental
 @InternalSerializationApi
 @ExperimentalSerializationApi
-class TagMapEncoder(config: NbtFormatConfig, level: Int, onEnd: (NbtElement) -> Unit = {}) : BaseTagEncoder(config, level, onEnd) {
+internal class TagMapEncoder(config: NbtFormatConfig, level: Int, onEnd: (NbtElement) -> Unit = {}) : BaseTagEncoder(config, level, onEnd) {
     override var root = NbtCompound()
     private var theKey = ""
     private var isKey = true
@@ -64,9 +69,10 @@ class TagMapEncoder(config: NbtFormatConfig, level: Int, onEnd: (NbtElement) -> 
     }
 }
 
+@KambrikExperimental
 @InternalSerializationApi
 @ExperimentalSerializationApi
-open class TaglessEncoder(config: NbtFormatConfig) : AbstractEncoder() {
+internal class TaglessEncoder(config: NbtFormatConfig) : AbstractEncoder() {
     override val serializersModule = config.serializersModule
     lateinit var root: NbtElement
     override fun encodeInt(value: Int) { root = NbtInt.of(value) }

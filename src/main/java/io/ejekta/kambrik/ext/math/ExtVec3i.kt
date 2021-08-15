@@ -1,4 +1,4 @@
-package io.ejekta.kambrikx.ext.vector
+package io.ejekta.kambrik.ext.math
 
 import net.minecraft.util.math.Vec3i
 
@@ -9,4 +9,3 @@ operator fun Vec3i.times(other: Vec3i): Vec3i {
 operator fun Vec3i.times(num: Int): Vec3i {
     return Vec3i(x * num, y * num, z * num)
 }
-

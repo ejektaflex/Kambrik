@@ -1,13 +1,15 @@
 package io.ejekta.kambrikx.api.nbt
 
 import io.ejekta.kambrik.Kambrik
-import io.ejekta.kambrikx.api.serial.nbt.NbtFormat
+import io.ejekta.kambrik.internal.KambrikExperimental
+import io.ejekta.kambrikx.api.serial.NbtFormat
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtElement
 import net.minecraft.util.Identifier
 
+@KambrikExperimental
 abstract class ItemData<T> {
 
     abstract val identifier: Identifier

@@ -1,8 +1,8 @@
-package io.ejekta.kambrikx.api.serial.nbt
+package io.ejekta.kambrikx.api.serial
 
 import io.ejekta.kambrik.Kambrik
-import io.ejekta.kambrik.KambrikMod
-import io.ejekta.kambrikx.api.serial.serializers.*
+import io.ejekta.kambrik.internal.KambrikExperimental
+import io.ejekta.kambrik.api.serial.serializers.*
 import io.ejekta.kambrikx.internal.serial.decoders.TagDecoder
 import io.ejekta.kambrikx.internal.serial.decoders.TaglessDecoder
 import io.ejekta.kambrikx.internal.serial.encoders.TagEncoder
@@ -12,14 +12,13 @@ import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.plus
-import kotlinx.serialization.modules.polymorphic
 import net.minecraft.block.Block
 import net.minecraft.item.Item
-import net.minecraft.item.ItemStack
 import net.minecraft.nbt.*
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 
+@KambrikExperimental
 @OptIn(InternalSerializationApi::class)
 class NbtFormatConfig {
 
@@ -51,6 +50,7 @@ class NbtFormatConfig {
 
 }
 
+@KambrikExperimental
 @OptIn(InternalSerializationApi::class)
 open class NbtFormat internal constructor(val config: NbtFormatConfig) : SerialFormat {
 
