@@ -1,4 +1,4 @@
-package io.ejekta.kambrikx.api.nbt
+package io.ejekta.kambrik.api.serial
 
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.internal.KambrikExperimental
@@ -18,10 +18,11 @@ abstract class ItemData<T> {
 
     abstract val default: () -> T
 
-    private val defaultTag: NbtElement
-        get() = format.encodeToTag(ser, default())
+    abstract val defaultTag: NbtElement
 
-    open val format: NbtFormat = NbtFormat.Default
+    abstract fun encode(value: T): NbtElement
+
+    abstract fun decode(nbt: NbtElement): T
 
     fun of(stack: ItemStack) = get(stack)
 
@@ -53,7 +54,7 @@ abstract class ItemData<T> {
         val tag = getSubtag(stack)
 
         return try {
-            format.decodeFromTag(ser, tag)
+            decode(tag)
         } catch (e: SerializationException) {
             Kambrik.Logger.error("Failed to decode leaf '$identifier' in stack $stack (type: ${stack.item::class.simpleName})")
             default().also { set(stack, it) }
@@ -61,7 +62,7 @@ abstract class ItemData<T> {
     }
 
     operator fun set(stack: ItemStack, value: T) {
-        val tag = format.encodeToTag(ser, value)
+        val tag = encode(value)
         setSubtag(stack, tag)
     }
 

@@ -1,9 +1,8 @@
 package io.ejekta.kambrik.api.message
 
-import io.ejekta.kambrikx.api.serial.nbt.NbtFormat
+import io.ejekta.kambrik.Kambrik
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
-import net.minecraft.nbt.NbtElement
 import net.minecraft.util.Identifier
 
 interface INetworkLink<M> {
@@ -24,7 +23,7 @@ interface INetworkLink<M> {
 
     companion object {
         val defaultJson = Json {
-            serializersModule = NbtFormat.Default.serializersModule
+            serializersModule = Kambrik.Serial.DefaultSerializers
         }
     }
 

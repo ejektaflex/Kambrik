@@ -2,7 +2,6 @@ package io.ejekta.kambrikx.api.serial
 
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.internal.KambrikExperimental
-import io.ejekta.kambrik.api.serial.serializers.*
 import io.ejekta.kambrikx.internal.serial.decoders.TagDecoder
 import io.ejekta.kambrikx.internal.serial.decoders.TaglessDecoder
 import io.ejekta.kambrikx.internal.serial.encoders.TagEncoder
@@ -12,11 +11,7 @@ import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.plus
-import net.minecraft.block.Block
-import net.minecraft.item.Item
 import net.minecraft.nbt.*
-import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Box
 
 @KambrikExperimental
 @OptIn(InternalSerializationApi::class)
@@ -38,8 +33,8 @@ class NbtFormatConfig {
 
     @ExperimentalSerializationApi
     var serializersModule: SerializersModule = SerializersModule {
-        include(NbtFormat.BuiltInSerializers)
-        include(NbtFormat.ReferenceSerializers)
+        include(Kambrik.Serial.DefaultSerializers)
+        include(Kambrik.Serial.NbtSerializers)
     }
 
     var writePolymorphic = true
@@ -60,42 +55,7 @@ open class NbtFormat internal constructor(val config: NbtFormatConfig) : SerialF
     override val serializersModule = EmptySerializersModule + config.serializersModule
 
     companion object {
-
-        @Suppress("UNCHECKED_CAST")
-        val BuiltInSerializers = SerializersModule {
-
-            // Polymorphic
-
-            // Contextual
-
-            // Tags
-            contextual(NbtElement::class, DynTagSerializer)
-            contextual(NbtCompound::class, DynTagSerializer())
-            contextual(NbtInt::class, DynTagSerializer())
-            contextual(NbtString::class, DynTagSerializer())
-            contextual(NbtDouble::class, DynTagSerializer())
-            contextual(NbtByte::class, DynTagSerializer())
-            contextual(NbtFloat::class, DynTagSerializer())
-            contextual(NbtLong::class, DynTagSerializer())
-            contextual(NbtShort::class, DynTagSerializer())
-
-            // Complex Tags
-            contextual(NbtLongArray::class, DynTagSerializer())
-            contextual(NbtIntArray::class, DynTagSerializer())
-            contextual(NbtList::class, DynTagSerializer())
-
-            // Built in data classes
-            contextual(BlockPos::class, BlockPosSerializer)
-            contextual(Box::class, BoxSerializer)
-        }
-
-        val ReferenceSerializers = SerializersModule {
-            contextual(Item::class, ItemRefSerializer)
-            contextual(Block::class, BlockRefSerializer)
-        }
-
         val Default = NbtFormat(NbtFormatConfig())
-
     }
 
     @OptIn(ExperimentalSerializationApi::class)
