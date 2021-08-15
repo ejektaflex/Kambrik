@@ -1,25 +1,15 @@
-package io.ejekta.kambrikx.api.serial.serializers
+package io.ejekta.kambrik.api.serial.serializers
 
-import io.ejekta.kambrik.ext.toMap
-import io.ejekta.kambrikx.ext.internal.doCollection
-import io.ejekta.kambrikx.ext.internal.doStructure
+import io.ejekta.kambrik.ext.internal.doStructure
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializer
-import kotlinx.serialization.builtins.MapSerializer
-import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.*
-import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NbtCompound
-import net.minecraft.nbt.StringNbtReader
-import net.minecraft.nbt.NbtElement
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
-import kotlin.reflect.typeOf
 
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -33,70 +23,6 @@ object IdentitySer : KSerializer<Identifier> {
         return Identifier(decoder.decodeString())
     }
 }
-
-@OptIn(ExperimentalSerializationApi::class)
-@Serializer(forClass = ItemStack::class)
-object ItemStackSer : KSerializer<ItemStack> {
-    private fun getDesc(): SerialDescriptor {
-        return PrimitiveSerialDescriptor("ItemStack", PrimitiveKind.STRING)
-    }
-    override val descriptor: SerialDescriptor = getDesc()
-    override fun serialize(encoder: Encoder, value: ItemStack) {
-        encoder.encodeSerializableValue(TagSerializer, value.writeNbt(NbtCompound()))
-    }
-    override fun deserialize(decoder: Decoder): ItemStack {
-        val tag = decoder.decodeSerializableValue(TagSerializer) as NbtCompound
-        return ItemStack.fromNbt(tag)
-    }
-}
-
-@OptIn(ExperimentalSerializationApi::class)
-@Serializer(forClass = ItemStack::class)
-class ItemStackSerTwo : KSerializer<ItemStack> {
-    private fun getDesc(): SerialDescriptor {
-        return serialDescriptor<Map<String, NbtElement>>()
-    }
-    override val descriptor: SerialDescriptor = getDesc()
-    override fun serialize(encoder: Encoder, value: ItemStack) {
-        //encoder.encodeSerializableValue(TagSerializer, value.toTag(NbtCompound()) as NbtElement)
-        val tagged = value.writeNbt(NbtCompound())
-        val mapped = tagged.toMap()
-        encoder.encodeSerializableValue(
-            MapSerializer(String.serializer(), TagSerializer),
-            mapped
-        )
-    }
-    override fun deserialize(decoder: Decoder): ItemStack {
-        val tag = decoder.decodeSerializableValue(TagSerializer) as NbtCompound
-        return ItemStack.fromNbt(tag)
-    }
-}
-
-@OptIn(ExperimentalSerializationApi::class)
-@Serializer(forClass = ItemStack::class)
-class ItemStackSerThree : KSerializer<ItemStack> {
-    private fun getDesc(): SerialDescriptor {
-        return serialDescriptor<Map<String, NbtElement>>()
-    }
-    override val descriptor: SerialDescriptor = getDesc()
-    override fun serialize(encoder: Encoder, value: ItemStack) {
-        //encoder.encodeSerializableValue(TagSerializer, value.toTag(NbtCompound()) as NbtElement)
-        val mapped = value.writeNbt(NbtCompound()).toMap()
-        MapSerializer(String.serializer(), TagSerializer).serialize(encoder, mapped)
-    }
-    override fun deserialize(decoder: Decoder): ItemStack {
-        val tag = decoder.decodeSerializableValue(TagSerializer) as NbtCompound
-        return ItemStack.fromNbt(tag)
-    }
-}
-
-
-
-
-
-
-
-
 
 @Serializer(forClass = BlockPos::class)
 object BlockPosSerializer : KSerializer<BlockPos> {

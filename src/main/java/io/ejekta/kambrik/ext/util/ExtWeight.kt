@@ -1,4 +1,4 @@
-package io.ejekta.kambrikx.ext.util
+package io.ejekta.kambrik.ext.util
 
 fun <T : Any> List<T>.weightedRandomBy(func: T.() -> Int): T {
     val mapped = map { it to func(it) }.toMap()

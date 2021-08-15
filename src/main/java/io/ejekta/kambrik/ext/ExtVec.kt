@@ -1,4 +1,4 @@
-package io.ejekta.kambrikx.ext.vector
+package io.ejekta.kambrik.ext
 
 import net.minecraft.util.math.Vec3d
 import kotlin.math.max

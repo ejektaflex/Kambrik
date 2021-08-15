@@ -1,6 +1,7 @@
 package io.ejekta.kambrikx.internal.serial.decoders
 
 import io.ejekta.kambrik.Kambrik
+import io.ejekta.kambrik.internal.KambrikExperimental
 import io.ejekta.kambrikx.api.serial.nbt.NbtFormat
 import io.ejekta.kambrikx.api.serial.nbt.NbtFormatConfig
 import kotlinx.serialization.*
@@ -11,8 +12,9 @@ import kotlinx.serialization.internal.NamedValueDecoder
 import kotlinx.serialization.modules.SerializersModule
 import net.minecraft.nbt.*
 
+@KambrikExperimental
 @InternalSerializationApi
-abstract class BaseTagDecoder(
+internal abstract class BaseTagDecoder(
     @JvmField protected val config: NbtFormatConfig,
     var level: Int = 0
 ) : NamedValueDecoder() {
