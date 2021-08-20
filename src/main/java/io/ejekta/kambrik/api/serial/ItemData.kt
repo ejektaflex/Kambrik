@@ -5,11 +5,14 @@ import io.ejekta.kambrik.internal.KambrikExperimental
 import io.ejekta.kambrikx.api.serial.NbtFormat
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.modules.SerializersModule
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtElement
 import net.minecraft.util.Identifier
 
 abstract class ItemData<T> {
+
+    abstract val serializersModule: SerializersModule
 
     abstract val identifier: Identifier
 

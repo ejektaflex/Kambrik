@@ -10,6 +10,7 @@ import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.overwriteWith
 import kotlinx.serialization.modules.plus
 import net.minecraft.nbt.*
 
@@ -34,8 +35,7 @@ class NbtFormatConfig {
     @ExperimentalSerializationApi
     var serializersModule: SerializersModule = SerializersModule {
         include(Kambrik.Serial.DefaultSerializers)
-        include(Kambrik.Serial.NbtSerializers)
-    }
+    } overwriteWith Kambrik.Serial.NbtSerializers
 
     var writePolymorphic = true
 

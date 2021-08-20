@@ -7,10 +7,23 @@ import kotlinx.serialization.Serializer
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.nbt.StringNbtReader
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 
+@OptIn(ExperimentalSerializationApi::class)
+@Serializer(forClass = NbtCompound::class)
+object SimpleNbtSerializer : KSerializer<NbtCompound> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("NbtCompound", PrimitiveKind.STRING)
+    override fun serialize(encoder: Encoder, value: NbtCompound) {
+        encoder.encodeString(value.toString())
+    }
+    override fun deserialize(decoder: Decoder): NbtCompound {
+        return StringNbtReader.parse(decoder.decodeString())
+    }
+}
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializer(forClass = Identifier::class)

@@ -1,29 +1,20 @@
 @file:Suppress("EXPERIMENTAL_API_USAGE")
 package io.ejekta.testing
 
-import io.ejekta.kambrik.ext.wrapToPacketByteBuf
-import io.ejekta.kambrikx.api.serial.nbt.NbtFormat
+import io.ejekta.kambrik.Kambrik
+import io.ejekta.kambrik.internal.KambrikExperimental
+import io.ejekta.kambrikx.api.serial.NbtFormat
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
-import net.minecraft.nbt.*
-import net.minecraft.text.LiteralText
-import net.minecraft.util.math.BlockPos
+import net.minecraft.nbt.NbtString
 import net.minecraft.util.math.Box
-import java.text.SimpleDateFormat
-import java.util.*
-
-
 
 
 fun <T> doJsonCycle(ser: KSerializer<T>, obj: T) {
     val json = Json {
-        serializersModule = NbtFormat.Default.serializersModule
+        serializersModule = Kambrik.Serial.DefaultSerializers
     }
 
     val c = json.encodeToString(ser, obj)
@@ -32,6 +23,7 @@ fun <T> doJsonCycle(ser: KSerializer<T>, obj: T) {
     println("JSN: -> OBJ: $d")
 }
 
+@OptIn(KambrikExperimental::class)
 fun <T> doNbtCycle(ser: KSerializer<T>, obj: T) {
     val config = NbtFormat {
         nullTag = NbtString.of("NULL")
