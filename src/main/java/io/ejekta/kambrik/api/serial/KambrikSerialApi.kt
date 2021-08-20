@@ -1,15 +1,14 @@
 package io.ejekta.kambrik.api.serial
 
-import io.ejekta.kambrik.api.serial.serializers.BlockPosSerializer
-import io.ejekta.kambrik.api.serial.serializers.BlockRefSerializer
-import io.ejekta.kambrik.api.serial.serializers.BoxSerializer
-import io.ejekta.kambrik.api.serial.serializers.ItemRefSerializer
+import io.ejekta.kambrik.api.serial.serializers.*
 import kotlinx.serialization.modules.SerializersModule
 import net.minecraft.block.Block
 import net.minecraft.item.Item
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 
+@Suppress("PropertyName")
 class KambrikSerialApi {
 
     val DefaultSerializers = SerializersModule {
@@ -19,6 +18,8 @@ class KambrikSerialApi {
         // Referential serializers
         contextual(Item::class, ItemRefSerializer)
         contextual(Block::class, BlockRefSerializer)
+        // Simple NBT Compound serializer
+        contextual(NbtCompound::class, SimpleNbtSerializer)
     }
 
 }
