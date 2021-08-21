@@ -16,6 +16,7 @@ import net.minecraft.command.CommandSource
 import net.minecraft.command.argument.BlockPosArgumentType
 import net.minecraft.command.argument.ColorArgumentType
 import net.minecraft.command.argument.IdentifierArgumentType.identifier
+import net.minecraft.command.argument.NumberRangeArgumentType.intRange
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 
@@ -80,6 +81,10 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
         word: String, range: IntRange? = null,
         items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
     ) = argument(if (range != null) integer(range.first, range.last) else integer(), word, items, func)
+
+    fun argIntRange(
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
+    ) = argument(intRange(), word, items, func)
 
     fun argString(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
