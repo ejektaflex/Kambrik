@@ -27,15 +27,25 @@ data class KambrikConfigFile<T>(val location: Path, val name: String, val format
             try {
                 format.decodeFromString(serializer, contents)
             } catch (e: Exception) {
-                Kambrik.Logger.error("Kambrik could not correctly load config data at: $location => $name, reason: ${e.message}")
-                Kambrik.Logger.error("Kambrik is set to ${mode.name} this file data for safety")
+                Kambrik.Logger.warn("Kambrik could not correctly load config data at: $location => $name, reason: ${e.message}")
+                Kambrik.Logger.warn("Kambrik is set to ${mode.name} this file data for safety")
+
                 e.printStackTrace()
 
-                if (mode == KambrikParseFailMode.OVERWRITE) {
-                    write()
+                return when (mode) {
+                    KambrikParseFailMode.LEAVE -> {
+                        Kambrik.Logger.warn("File will be left alone and default data will be loaded instead.")
+                        default()
+                    }
+                    KambrikParseFailMode.OVERWRITE -> {
+                        Kambrik.Logger.warn("File will be overwritten with default data and loaded instead.")
+                        write()
+                        default()
+                    }
+                    KambrikParseFailMode.ERROR -> {
+                        throw Exception("Game cannot proceed until the structure of the file has been fixed.")
+                    }
                 }
-
-                return default()
             }
         }
     }
@@ -54,3 +64,4 @@ data class KambrikConfigFile<T>(val location: Path, val name: String, val format
     }
 
 }
+

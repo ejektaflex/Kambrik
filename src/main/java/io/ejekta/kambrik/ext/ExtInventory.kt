@@ -3,7 +3,7 @@ package io.ejekta.kambrik.ext
 import net.minecraft.item.ItemStack
 import kotlin.math.min
 
-fun List<ItemStack>.collect(amount: Int, func: ItemStack.() -> Boolean): Map<ItemStack, Int>? {
+fun List<ItemStack>.collect(amount: Int, func: ItemStack.() -> Boolean): Map<ItemStack, Int> {
     val selected = mutableMapOf<ItemStack, Int>()
     var needed = amount
     for (stack in filter(func)) {
@@ -17,7 +17,7 @@ fun List<ItemStack>.collect(amount: Int, func: ItemStack.() -> Boolean): Map<Ite
             return selected
         }
     }
-    return null
+    return selected
 }
 
 
