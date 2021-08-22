@@ -11,12 +11,12 @@ operator fun NbtCompound.iterator(): Iterator<Pair<String, NbtElement>> {
 }
 
 fun NbtCompound.toMap(): Map<String, NbtElement> {
-    return keys.map { it to get(it)!! }.toMap()
+    return keys.associateWith { get(it)!! }
 }
 
 fun Map<String, NbtElement>.toNbtCompound(): NbtCompound {
     return NbtCompound().apply {
-        this@toNbtCompound.forEach { key, tag ->
+        this@toNbtCompound.forEach { (key, tag) ->
             put(key, tag)
         }
     }
