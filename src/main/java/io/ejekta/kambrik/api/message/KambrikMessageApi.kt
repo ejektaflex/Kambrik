@@ -5,7 +5,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 import kotlin.reflect.KClass
 
-class KambrikMessageApi {
+class KambrikMessageApi internal constructor() {
 
     @PublishedApi
     internal val clientLinks = mutableMapOf<KClass<*>, ClientNetworkLink<*>>()
