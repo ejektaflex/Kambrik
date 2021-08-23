@@ -13,6 +13,7 @@ import io.ejekta.kambrik.api.command.suggestionList
 import io.ejekta.kambrik.api.logging.KambrikMarkers
 import io.ejekta.kambrik.ext.identifier
 import io.ejekta.kambrik.testing.TestMsg
+import io.ejekta.kambrikx.api.text.textLiteral
 //import io.ejekta.kambrik.testing.TestMsg
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
@@ -21,6 +22,7 @@ import net.minecraft.item.Items
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.tag.*
 import net.minecraft.text.LiteralText
+import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 
@@ -77,7 +79,8 @@ internal object KambrikCommands : CommandRegistrationCallback {
                         Kambrik.Logger.info(KambrikMarkers.Rendering, "Hello! Rendering")
                         1
                     }
-                    executes(test())
+                    this runs test()
+                    "text" runs text()
                 }
             }
 
@@ -156,6 +159,23 @@ internal object KambrikCommands : CommandRegistrationCallback {
                 Kambrik.Logger.error(element)
             }
         }
+
+        1
+    }
+
+    fun text() = Command<ServerCommandSource> {
+
+        val test = textLiteral("doot") {
+            root.formatted(Formatting.GOLD)
+            +textLiteral(" derp") {
+                root.formatted(Formatting.AQUA)
+            }
+        }
+
+        it.source.sendFeedback(test, false)
+
+        println(test)
+        println(test.string)
 
         1
     }
