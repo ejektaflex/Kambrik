@@ -1,4 +1,4 @@
-package io.ejekta.kambrikx.api.text
+package io.ejekta.kambrik.api.text
 
 import net.minecraft.text.*
 import net.minecraft.util.Formatting

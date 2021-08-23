@@ -13,7 +13,7 @@ import io.ejekta.kambrik.api.command.suggestionList
 import io.ejekta.kambrik.api.logging.KambrikMarkers
 import io.ejekta.kambrik.ext.identifier
 import io.ejekta.kambrik.testing.TestMsg
-import io.ejekta.kambrikx.api.text.textLiteral
+import io.ejekta.kambrik.api.text.textLiteral
 //import io.ejekta.kambrik.testing.TestMsg
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
