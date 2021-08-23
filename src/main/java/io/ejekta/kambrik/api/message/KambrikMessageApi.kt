@@ -7,8 +7,11 @@ import kotlin.reflect.KClass
 
 class KambrikMessageApi {
 
-    val clientLinks = mutableMapOf<KClass<*>, ClientNetworkLink<*>>()
-    val serverLinks = mutableMapOf<KClass<*>, ServerNetworkLink<*>>()
+    @PublishedApi
+    internal val clientLinks = mutableMapOf<KClass<*>, ClientNetworkLink<*>>()
+
+    @PublishedApi
+    internal val serverLinks = mutableMapOf<KClass<*>, ServerNetworkLink<*>>()
 
     @PublishedApi
     internal inline fun <reified M : Any> registerMessage(
