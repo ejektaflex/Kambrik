@@ -17,9 +17,14 @@ import net.minecraft.command.argument.BlockPosArgumentType
 import net.minecraft.command.argument.ColorArgumentType
 import net.minecraft.command.argument.IdentifierArgumentType.identifier
 import net.minecraft.command.argument.NumberRangeArgumentType.intRange
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 
+/**
+ * Nearly the entirety of Kambrik's Command DSL
+ * @see [Command DSL Docs](https://kambrik.ejekta.io/apis/stable/Command)
+ */
 class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
     ArgumentBuilder<SRC, KambrikArgBuilder<SRC, A>>() {
 
@@ -32,6 +37,17 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
         return arg
     }
 
+    /**
+     * A basic requirement for executing commands.
+     * Adding `requires(::hasBasicCreativePermission)` restricts the command to Level 2 Ops and Creative mode players
+     */
+    fun hasBasicCreativePermission(c: ServerCommandSource): Boolean {
+        return c.hasPermissionLevel(2) || (c.entity is PlayerEntity && c.player.isCreative)
+    }
+
+    /**
+     * Specifies a literal argument.
+     */
     fun literal(word: String, func: ArgDsl<SRC, LiteralArgumentBuilder<SRC>> = {}): LiteralArgumentBuilder<SRC> {
         val req = KambrikArgBuilder<SRC, LiteralArgumentBuilder<SRC>>(LiteralArgumentBuilder.literal(word)).apply(func)
         req.finalize()
@@ -39,6 +55,9 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
         return req.arg
     }
 
+    /**
+     * Specifies a generic required argument.
+     */
     fun <T> argument(
         type: ArgumentType<T>,
         word: String,
@@ -90,19 +109,28 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
     ) = argument(string(), word, items, func)
 
-
+    /**
+     * A shortcut for creating a literal argument.
+     * @see [literal]
+     */
     operator fun String.invoke(func: ArgDsl<SRC, LiteralArgumentBuilder<SRC>>) {
         literal(this, func)
     }
+
 
     @Suppress("UNCHECKED_CAST")
     override fun executes(command: Command<SRC>?): KambrikArgBuilder<SRC, A> {
         return KambrikArgBuilder(arg.executes(command) as A)
     }
 
+    /**
+     * Specifies a command to execute when the string literal is called.
+     */
     infix fun String.runs(cmd: Command<SRC>) {
         this { this.executes(cmd) }
     }
+
+    // Alternate shortcuts for `runs`.
 
     infix fun runs(cmd: Command<SRC>) {
         executes(cmd)
