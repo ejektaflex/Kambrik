@@ -10,8 +10,11 @@ import net.minecraft.client.network.ClientPlayNetworkHandler
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 
+/**
+ * This represents a serializable message that can be sent to a client.
+ */
 @Serializable
-abstract class ClientMsg() {
+abstract class ClientMsg {
 
     @Environment(EnvType.CLIENT)
     data class MsgContext(

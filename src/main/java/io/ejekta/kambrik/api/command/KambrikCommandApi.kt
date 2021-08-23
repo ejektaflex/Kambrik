@@ -16,8 +16,38 @@ import net.minecraft.server.command.ServerCommandSource
  */
 class KambrikCommandApi internal constructor() {
 
-    fun hasBasicCreativePermission(c: ServerCommandSource): Boolean {
-        return c.hasPermissionLevel(2) || (c.entity is PlayerEntity && c.player.isCreative)
+    /**
+     * Can be used to add a normal (serverside) command to the game.
+     *
+     * @param baseCommandName The name of the command. The first word you type. e.g. `kambrik` becomes `/kambrik`.
+     * @param toDispatcher The dispatcher of this command. This is provided in a [CommandRegistrationCallback][net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback]
+     * @param func The [Command DSL](https://kambrik.ejekta.io/apis/stable/Command.html) describing your function.
+     */
+    fun addCommand(
+        baseCommandName: String,
+        toDispatcher: CommandDispatcher<ServerCommandSource>,
+        func: ArgDsl<ServerCommandSource, LiteralArgumentBuilder<ServerCommandSource>>
+    ) {
+        addSourcedCommand(baseCommandName, toDispatcher, func)
+    }
+
+    // Can be called to register a clientside only command
+    /**
+     * Can be used to add a clientside only command to the game
+     *
+     * @see [ClientCommandManager]
+     *
+     * @param baseCommandName The name of the command. The first word you type. e.g. `kambrik` becomes `/kambrik`.
+     * @param toDispatcher The dispatcher of this command. This is provided in a [CommandRegistrationCallback][net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback]
+     * @param func The [Command DSL](https://kambrik.ejekta.io/apis/stable/Command.html) describing your function.
+     */
+    fun addClientCommand(
+        baseCommandName: String,
+        func: ArgDsl<FabricClientCommandSource, LiteralArgumentBuilder<FabricClientCommandSource>>
+    ) {
+        if (FabricLoader.getInstance().environmentType == EnvType.CLIENT) {
+            addSourcedCommand<FabricClientCommandSource>(baseCommandName, ClientCommandManager.DISPATCHER, func)
+        }
     }
 
     internal fun <SRC> addSourcedCommand(
@@ -31,24 +61,4 @@ class KambrikCommandApi internal constructor() {
             ).apply(func).finalize()
         )
     }
-
-    // Meant to be called from inside of a CommandRegistrationCallback event
-    fun addCommand(
-        baseCommandName: String,
-        toDispatcher: CommandDispatcher<ServerCommandSource>,
-        func: ArgDsl<ServerCommandSource, LiteralArgumentBuilder<ServerCommandSource>>
-    ) {
-        addSourcedCommand(baseCommandName, toDispatcher, func)
-    }
-
-    // Can be called to register a clientside only command
-    fun addClientCommand(
-        baseCommandName: String,
-        func: ArgDsl<FabricClientCommandSource, LiteralArgumentBuilder<FabricClientCommandSource>>
-    ) {
-        if (FabricLoader.getInstance().environmentType == EnvType.CLIENT) {
-            addSourcedCommand<FabricClientCommandSource>(baseCommandName, ClientCommandManager.DISPATCHER, func)
-        }
-    }
-
 }

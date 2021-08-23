@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import net.fabricmc.loom.task.RemapSourcesJarTask
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.net.URL
 
 plugins {
 	//id 'com.github.johnrengelman.shadow' version '6.1.0'
@@ -15,7 +16,9 @@ plugins {
 	signing
 
 	`idea`
+	id("org.jetbrains.dokka") version "1.5.0"
 }
+
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_16
@@ -172,4 +175,29 @@ tasks.withType<KotlinCompile> {
 	kotlinOptions {
 		jvmTarget = "16"
 	}
+}
+
+tasks.dokkaHtml.configure {
+	outputDirectory.set(buildDir.resolve("dokka"))
+
+	moduleName.set("KambrikDokka")
+
+	dokkaSourceSets {
+		configureEach {
+			skipEmptyPackages.set(true)
+			sourceLink {
+				localDirectory.set(file("src/main/java"))
+
+				noJdkLink.set(true)
+
+				remoteUrl.set(
+					URL(
+						"https://github.com/ejektaflex/Kambrik/tree/master/src/main/java"
+					)
+				)
+				remoteLineSuffix.set("#L")
+			}
+		}
+	}
+
 }
