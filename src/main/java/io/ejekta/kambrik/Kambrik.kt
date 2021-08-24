@@ -1,13 +1,11 @@
 package io.ejekta.kambrik
 
-import io.ejekta.kambrik.api.command.KambrikCommandApi
-import io.ejekta.kambrik.api.file.KambrikFileApi
-import io.ejekta.kambrik.api.logging.KambrikLoggingApi
-import io.ejekta.kambrik.api.message.KambrikMessageApi
-import io.ejekta.kambrik.api.serial.KambrikSerialApi
-import io.ejekta.kambrik.api.structure.KambrikStructureApi
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource
-import net.minecraft.server.command.ServerCommandSource
+import io.ejekta.kambrik.command.KambrikCommandApi
+import io.ejekta.kambrik.file.KambrikFileApi
+import io.ejekta.kambrik.logging.KambrikLoggingApi
+import io.ejekta.kambrik.message.KambrikMessageApi
+import io.ejekta.kambrik.serial.KambrikSerialApi
+import io.ejekta.kambrik.structure.KambrikStructureApi
 import org.apache.logging.log4j.LogManager
 
 

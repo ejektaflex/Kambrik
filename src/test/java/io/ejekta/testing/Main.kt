@@ -3,7 +3,7 @@ package io.ejekta.testing
 
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.internal.KambrikExperimental
-import io.ejekta.kambrikx.api.serial.NbtFormat
+import io.ejekta.kambrikx.serial.NbtFormat
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable

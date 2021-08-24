@@ -1,7 +1,7 @@
 {
 	"required": true,
 	"minVersion": "0.8",
-	"package": "io.ejekta.kambrik.mixins",
+	"package": "io.ejekta.kambrik.internal.mixins",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
 		"StructurePoolAccessor"
