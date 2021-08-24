@@ -22,13 +22,13 @@
     "preLaunch": [
       {
         "adapter": "kotlin",
-        "value": "io.ejekta.kambrik.KambrikMod"
+        "value": "io.ejekta.kambrik.internal.KambrikMod"
       }
     ],
     "main": [
       {
         "adapter": "kotlin",
-        "value": "io.ejekta.kambrik.KambrikMod"
+        "value": "io.ejekta.kambrik.internal.KambrikMod"
       }
     ]
   },
