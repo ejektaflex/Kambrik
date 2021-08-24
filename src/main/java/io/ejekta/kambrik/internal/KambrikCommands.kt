@@ -18,9 +18,12 @@ import io.ejekta.kambrik.api.text.textLiteral
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.command.argument.IdentifierArgumentType.getIdentifier
+import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.tag.*
+import net.minecraft.text.ClickEvent
+import net.minecraft.text.HoverEvent
 import net.minecraft.text.LiteralText
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
@@ -165,10 +168,10 @@ internal object KambrikCommands : CommandRegistrationCallback {
 
     fun text() = Command<ServerCommandSource> {
 
-        val test = textLiteral("doot") {
-            root.formatted(Formatting.GOLD)
-            +textLiteral(" derp") {
-                root.formatted(Formatting.AQUA)
+        val test = textLiteral("Hello World!") {
+            onHoverShowText {
+                +Formatting.ITALIC
+                +textLiteral("How are you?")
             }
         }
 

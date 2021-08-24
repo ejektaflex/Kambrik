@@ -1,5 +1,8 @@
 package io.ejekta.kambrik.api.text
 
+import net.minecraft.entity.Entity
+import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
 import net.minecraft.text.*
 import net.minecraft.util.Formatting
 import java.util.*
@@ -32,33 +35,89 @@ internal fun <T : BaseText> textBuilder(starterText: T, func: KambrikTextBuilder
 }
 
 class KambrikTextBuilder<T : BaseText>(
-    var root: T,
-    val baseStyle: Style = Style.EMPTY
+    var root: T
 ) {
-    operator fun BaseText.unaryPlus() {
-        root.append(this)
-    }
 
     fun format(vararg formats: Formatting) {
         root.formatted(*formats)
     }
 
     fun color(color: Int) {
-        changeStyle { withColor(TextColor.fromRgb(color)) }
+        root.style = root.style.withColor(TextColor.fromRgb(color))
     }
 
     fun onClick(event: ClickEvent) {
-        changeStyle { withClickEvent(event) }
+        root.style = root.style.withClickEvent(event)
     }
 
     fun onHover(event: HoverEvent) {
-        changeStyle { withHoverEvent(event) }
+        root.style = root.style.withHoverEvent(event)
+    }
+
+    fun onHoverShowItem(itemStack: ItemStack) {
+        onHover(
+            HoverEvent(
+                HoverEvent.Action.SHOW_ITEM,
+                HoverEvent.ItemStackContent(itemStack)
+            )
+        )
+    }
+
+    fun onHoverShowText(text: Text) {
+        onHover(
+            HoverEvent(
+                HoverEvent.Action.SHOW_TEXT,
+                text
+            )
+        )
+    }
+
+    fun onHoverShowText(inFunc: KambrikTextBuilder<LiteralText>.() -> Unit) {
+        onHover(
+            HoverEvent(
+                HoverEvent.Action.SHOW_TEXT,
+                textLiteral("", inFunc)
+            )
+        )
+    }
+
+    fun onHoverShowEntity(entity: Entity) {
+        onHover(
+            HoverEvent(
+                HoverEvent.Action.SHOW_ENTITY,
+                HoverEvent.EntityContent(entity.type, entity.uuid, entity.name)
+            )
+        )
     }
 
     fun newLine() = textLiteral("\n")
 
-    fun changeStyle(func: Style.() -> Unit) {
-        root.style = root.style.apply(func)
+    operator fun T.invoke(inFunc: KambrikTextBuilder<T>.() -> Unit): KambrikTextBuilder<T> {
+        return KambrikTextBuilder(this).apply(inFunc)
+    }
+
+    operator fun String.invoke(inFunc: KambrikTextBuilder<LiteralText>.() -> Unit): LiteralText {
+        return KambrikTextBuilder(LiteralText(this)).apply(inFunc).root
+    }
+
+    operator fun String.unaryPlus() {
+        root.append(this)
+    }
+
+    operator fun BaseText.unaryPlus() {
+        root.append(this)
+    }
+
+    operator fun Formatting.unaryPlus() {
+        format(this)
+    }
+
+    operator fun ClickEvent.unaryPlus() {
+        onClick(this)
+    }
+
+    operator fun HoverEvent.unaryPlus() {
+        onHover(this)
     }
 
 }
@@ -66,10 +125,25 @@ class KambrikTextBuilder<T : BaseText>(
 
 fun main() {
 
-    val test = textLiteral("doot") {
-        format(Formatting.GOLD)
-        +newLine()
+
+
+    val test = textLiteral("Hello World!") {
+        onHoverShowText {
+            +Formatting.ITALIC
+            +textLiteral("How are you?")
+        }
     }
+
+    /*
+    val text = LiteralText("Hello ")
+        .formatted(Formatting.GOLD, Formatting.ITALIC)
+        .append(
+            LiteralText(player.displayName)
+                .formatted(Formatting.AQUA)
+        )
+        .append(LiteralText(", how are you?"))
+
+     */
 
     println(test)
     println(test.string)
