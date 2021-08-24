@@ -2,7 +2,6 @@ package io.ejekta.kambrik.api.text
 
 import net.minecraft.entity.Entity
 import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
 import net.minecraft.text.*
 import net.minecraft.util.Formatting
 import java.util.*
@@ -76,32 +75,32 @@ class KambrikTextBuilder<T : BaseText>(
             color(value)
         }
 
-    var click: ClickEvent?
+    var clickEvent: ClickEvent?
         get() = root.style.clickEvent
         set(value) {
             root.style = root.style.withClickEvent(value)
         }
 
-    var hover: HoverEvent?
+    var hoverEvent: HoverEvent?
         get() = root.style.hoverEvent
         set(value) {
             root.style = root.style.withHoverEvent(value)
         }
 
     fun onHoverShowItem(itemStack: ItemStack) {
-        hover = HoverEvent(HoverEvent.Action.SHOW_ITEM, HoverEvent.ItemStackContent(itemStack))
+        hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ITEM, HoverEvent.ItemStackContent(itemStack))
     }
 
     fun onHoverShowText(text: Text) {
-        hover = HoverEvent(HoverEvent.Action.SHOW_TEXT, text)
+        hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, text)
     }
 
     fun onHoverShowText(inFunc: KambrikTextBuilder<LiteralText>.() -> Unit) {
-        hover = HoverEvent(HoverEvent.Action.SHOW_TEXT, textLiteral("", inFunc))
+        hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, textLiteral("", inFunc))
     }
 
     fun onHoverShowEntity(entity: Entity) {
-        hover = HoverEvent(HoverEvent.Action.SHOW_ENTITY, HoverEvent.EntityContent(entity.type, entity.uuid, entity.name))
+        hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ENTITY, HoverEvent.EntityContent(entity.type, entity.uuid, entity.name))
     }
 
     fun newLine() = textLiteral("\n")
@@ -127,11 +126,11 @@ class KambrikTextBuilder<T : BaseText>(
     }
 
     operator fun ClickEvent.unaryPlus() {
-        click = this
+        clickEvent = this
     }
 
     operator fun HoverEvent.unaryPlus() {
-        hover = this
+        hoverEvent = this
     }
 
 }
@@ -141,11 +140,17 @@ fun main() {
 
 
 
-    val test = textLiteral("Hello World!") {
-        onHoverShowText {
-            +Formatting.ITALIC
-            +textLiteral("How are you?")
+    val test = textLiteral("Hello ") {
+        +Formatting.GOLD; +Formatting.ITALIC
+        +"Joe" {
+            color = 0x55ff33
+            bold = true
+            italics = true
+            strikeThrough = false
+            obfuscated = false
+            +Formatting.AQUA
         }
+        +", how are you?"
     }
 
     /*
