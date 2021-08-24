@@ -46,48 +46,62 @@ class KambrikTextBuilder<T : BaseText>(
         root.style = root.style.withColor(TextColor.fromRgb(color))
     }
 
-    fun onClick(event: ClickEvent) {
-        root.style = root.style.withClickEvent(event)
-    }
+    var bold: Boolean
+        get() = root.style.isBold
+        set(value) {
+            format(Formatting.BOLD)
+        }
 
-    fun onHover(event: HoverEvent) {
-        root.style = root.style.withHoverEvent(event)
-    }
+    var italics: Boolean
+        get() = root.style.isItalic
+        set(value) {
+            format(Formatting.ITALIC)
+        }
+
+    var strikeThrough: Boolean
+        get() = root.style.isStrikethrough
+        set(value) {
+            format(Formatting.STRIKETHROUGH)
+        }
+
+    var obfuscated: Boolean
+        get() = root.style.isObfuscated
+        set(value) {
+            format(Formatting.OBFUSCATED)
+        }
+
+    var color: Int
+        get() = root.style.color?.rgb ?: 0x000000
+        set(value) {
+            color(value)
+        }
+
+    var click: ClickEvent?
+        get() = root.style.clickEvent
+        set(value) {
+            root.style = root.style.withClickEvent(value)
+        }
+
+    var hover: HoverEvent?
+        get() = root.style.hoverEvent
+        set(value) {
+            root.style = root.style.withHoverEvent(value)
+        }
 
     fun onHoverShowItem(itemStack: ItemStack) {
-        onHover(
-            HoverEvent(
-                HoverEvent.Action.SHOW_ITEM,
-                HoverEvent.ItemStackContent(itemStack)
-            )
-        )
+        hover = HoverEvent(HoverEvent.Action.SHOW_ITEM, HoverEvent.ItemStackContent(itemStack))
     }
 
     fun onHoverShowText(text: Text) {
-        onHover(
-            HoverEvent(
-                HoverEvent.Action.SHOW_TEXT,
-                text
-            )
-        )
+        hover = HoverEvent(HoverEvent.Action.SHOW_TEXT, text)
     }
 
     fun onHoverShowText(inFunc: KambrikTextBuilder<LiteralText>.() -> Unit) {
-        onHover(
-            HoverEvent(
-                HoverEvent.Action.SHOW_TEXT,
-                textLiteral("", inFunc)
-            )
-        )
+        hover = HoverEvent(HoverEvent.Action.SHOW_TEXT, textLiteral("", inFunc))
     }
 
     fun onHoverShowEntity(entity: Entity) {
-        onHover(
-            HoverEvent(
-                HoverEvent.Action.SHOW_ENTITY,
-                HoverEvent.EntityContent(entity.type, entity.uuid, entity.name)
-            )
-        )
+        hover = HoverEvent(HoverEvent.Action.SHOW_ENTITY, HoverEvent.EntityContent(entity.type, entity.uuid, entity.name))
     }
 
     fun newLine() = textLiteral("\n")
@@ -113,11 +127,11 @@ class KambrikTextBuilder<T : BaseText>(
     }
 
     operator fun ClickEvent.unaryPlus() {
-        onClick(this)
+        click = this
     }
 
     operator fun HoverEvent.unaryPlus() {
-        onHover(this)
+        hover = this
     }
 
 }
