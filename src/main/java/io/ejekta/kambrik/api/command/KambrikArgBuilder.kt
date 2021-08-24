@@ -17,9 +17,14 @@ import net.minecraft.command.argument.BlockPosArgumentType
 import net.minecraft.command.argument.ColorArgumentType
 import net.minecraft.command.argument.IdentifierArgumentType.identifier
 import net.minecraft.command.argument.NumberRangeArgumentType.intRange
+import net.minecraft.command.argument.PosArgument
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.predicate.NumberRange
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.util.Formatting
+import net.minecraft.util.Identifier
+import net.minecraft.util.math.BlockPos
 
 /**
  * Nearly the entirety of Kambrik's Command DSL
@@ -58,13 +63,13 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
     /**
      * Specifies a generic required argument.
      */
-    fun <T> argument(
-        type: ArgumentType<T>,
+    fun <ARG> argument(
+        type: ArgumentType<ARG>,
         word: String,
         items: SuggestionProvider<SRC>? = null,
-        func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
-    ): RequiredArgumentBuilder<SRC, *> {
-        val req = KambrikArgBuilder<SRC, RequiredArgumentBuilder<SRC, *>>(RequiredArgumentBuilder.argument(word, type)).apply(func)
+        func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, ARG>> = {}
+    ): RequiredArgumentBuilder<SRC, ARG> {
+        val req = KambrikArgBuilder<SRC, RequiredArgumentBuilder<SRC, ARG>>(RequiredArgumentBuilder.argument(word, type)).apply(func)
 
         items?.let {
             req.arg.suggests(it)
@@ -76,37 +81,37 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
     }
 
     fun argBlockPos(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, PosArgument>> = {}
     ) = argument(BlockPosArgumentType.blockPos(), word, items, func)
 
     fun argBool(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, Boolean>> = {}
     ) = argument(bool(), word, items, func)
 
     fun argColor(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, Formatting>> = {}
     ) = argument(ColorArgumentType.color(), word, items, func)
 
     fun argFloat(
         word: String, range: ClosedFloatingPointRange<Float>? = null,
-        items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
+        items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, Float>> = {}
     ) = argument(if (range != null) FloatArgumentType.floatArg(range.start, range.endInclusive) else FloatArgumentType.floatArg(), word, items, func)
 
     fun argIdentifier(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, Identifier>> = {}
     ) = argument(identifier(), word, items, func)
 
     fun argInt(
         word: String, range: IntRange? = null,
-        items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
+        items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, Int>> = {}
     ) = argument(if (range != null) integer(range.first, range.last) else integer(), word, items, func)
 
     fun argIntRange(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, NumberRange.IntRange>> = {}
     ) = argument(intRange(), word, items, func)
 
     fun argString(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, *>> = {}
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, String>> = {}
     ) = argument(string(), word, items, func)
 
     /**
