@@ -3,7 +3,7 @@ package io.ejekta.kambrik.internal.registration
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.ext.register
 import io.ejekta.kambrik.internal.KambrikMarker
-import io.ejekta.kambrik.feature.registration.KambrikAutoRegistrar
+import io.ejekta.kambrik.registration.KambrikAutoRegistrar
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry

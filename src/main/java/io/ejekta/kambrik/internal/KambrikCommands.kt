@@ -13,7 +13,6 @@ import io.ejekta.kambrik.logging.KambrikMarkers
 import io.ejekta.kambrik.ext.identifier
 import io.ejekta.kambrik.internal.testing.TestMsg
 import io.ejekta.kambrik.text.textLiteral
-//import io.ejekta.kambrik.internal.testing.TestMsg
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.command.argument.IdentifierArgumentType.getIdentifier

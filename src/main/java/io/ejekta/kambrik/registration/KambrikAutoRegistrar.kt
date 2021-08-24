@@ -1,4 +1,4 @@
-package io.ejekta.kambrik.feature.registration
+package io.ejekta.kambrik.registration
 
 import io.ejekta.kambrik.internal.KambrikMarker
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
