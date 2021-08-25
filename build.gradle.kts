@@ -11,7 +11,7 @@ plugins {
 	// if IR backend error occurs, for some reason toggling the KSX plugin fixes it. -_-
 	kotlin("plugin.serialization") version "1.5.20"
 
-	id("fabric-loom") version "0.8-SNAPSHOT"
+	id("fabric-loom") version "0.9-SNAPSHOT"
 	`maven-publish`
 	signing
 

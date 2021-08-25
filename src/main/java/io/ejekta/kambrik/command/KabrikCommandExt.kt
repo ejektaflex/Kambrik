@@ -11,6 +11,7 @@ import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.command.commands.PlayerCommand
 import io.ejekta.kambrik.ext.addAll
 import net.minecraft.command.CommandSource
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 
@@ -43,6 +44,20 @@ fun playerCommand(player: CommandContext<ServerCommandSource>.(player: ServerPla
     return PlayerCommand(player)
 }
 
+// Simple contextual arg getters
 fun <SRC : CommandSource> CommandContext<SRC>.getString(name: String): String = StringArgumentType.getString(this, name)
 fun <SRC : CommandSource> CommandContext<SRC>.getInt(name: String): Int = IntegerArgumentType.getInteger(this, name)
+
+fun KambrikArgBuilder<ServerCommandSource, *>.requiresCreative() {
+    requires { it.entity is PlayerEntity && it.player.isCreative }
+}
+
+fun KambrikArgBuilder<ServerCommandSource, *>.requiresOp(opLevel: Int = 4) {
+    requires { it.hasPermissionLevel(opLevel) }
+}
+
+
+fun KambrikArgBuilder<ServerCommandSource, *>.requiresCreativeOrOp(opLevel: Int = 4) {
+    requires { (it.entity is PlayerEntity && it.player.isCreative) || it.hasPermissionLevel(opLevel) }
+}
 

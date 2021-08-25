@@ -1,4 +1,4 @@
-package io.ejekta.kambrik.file
+package io.ejekta.kambrikx.file
 
 /**
  * Determines what to do when a file cannot be parsed correctly

@@ -2,6 +2,7 @@ package io.ejekta.kambrikx.ext.vector
 
 
 import io.ejekta.kambrik.ext.math.abs
+import io.ejekta.kambrik.ext.math.axisValue
 import io.ejekta.kambrik.ext.toVec3d
 import io.ejekta.kambrik.internal.KambrikExperimental
 import net.minecraft.util.math.Direction
@@ -13,10 +14,6 @@ import kotlin.math.abs
 // Same as dirMask, but uses an absolute positive unit vector
 fun Vec3d.axialMask(dir: Direction): Vec3d {
     return multiply(dir.toVec3d().abs())
-}
-
-fun Vec3d.axisValue(axis: Direction.Axis): Double {
-    return axis.choose(x, y, z)
 }
 
 // Masks a vector with a direction's unit vector

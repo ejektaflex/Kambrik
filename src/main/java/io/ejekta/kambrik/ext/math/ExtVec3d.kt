@@ -1,6 +1,7 @@
 package io.ejekta.kambrik.ext.math
 
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
 import net.minecraft.util.math.Vec3i
 import kotlin.math.round
@@ -34,6 +35,10 @@ fun Vec3d.toVec3i(): Vec3i {
 }
 
 // Other Functions
+
+fun Vec3d.axisValue(axis: Direction.Axis): Double {
+    return axis.choose(x, y, z)
+}
 
 fun Vec3d.abs(): Vec3d {
     return Vec3d(kotlin.math.abs(x), kotlin.math.abs(y), kotlin.math.abs(z))

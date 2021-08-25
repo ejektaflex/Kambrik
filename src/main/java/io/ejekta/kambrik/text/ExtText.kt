@@ -11,6 +11,10 @@ fun ServerCommandSource.sendError(text: KambrikTextBuilder<LiteralText>.() -> Un
     sendError(textLiteral("", text))
 }
 
+fun ServerCommandSource.sendFeedback(broadcastToOps: Boolean = false, text: KambrikTextBuilder<LiteralText>.() -> Unit) {
+    sendFeedback(textLiteral("", text), broadcastToOps)
+}
+
 fun MinecraftServer.broadcastChatMessage(messageType: MessageType = MessageType.CHAT, text: KambrikTextBuilder<LiteralText>.() -> Unit) {
     playerManager.broadcastChatMessage(textLiteral("", text), messageType, Util.NIL_UUID)
 }

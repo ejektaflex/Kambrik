@@ -39,14 +39,6 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
     }
 
     /**
-     * A basic requirement for executing commands.
-     * Adding `requires(::hasBasicCreativePermission)` restricts the command to Level 2 Ops and Creative mode players
-     */
-    fun hasBasicCreativePermission(c: ServerCommandSource): Boolean {
-        return c.hasPermissionLevel(2) || (c.entity is PlayerEntity && c.player.isCreative)
-    }
-
-    /**
      * Specifies a literal argument.
      */
     fun literal(word: String, func: ArgDsl<SRC, LiteralArgumentBuilder<SRC>> = {}): LiteralArgumentBuilder<SRC> {

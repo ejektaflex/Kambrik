@@ -1,4 +1,4 @@
-package io.ejekta.kambrik.ext
+package io.ejekta.kambrik.ext.fapi
 
 import net.fabricmc.loader.api.metadata.CustomValue
 
