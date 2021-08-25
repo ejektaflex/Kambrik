@@ -9,6 +9,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.StringNbtReader
+import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
@@ -97,6 +98,18 @@ object BlockPosSerializerOptimized : KSerializer<BlockPos> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("yarn.BlockPosOptimized", PrimitiveKind.LONG)
     override fun serialize(encoder: Encoder, value: BlockPos) = encoder.encodeLong(value.asLong())
     override fun deserialize(decoder: Decoder): BlockPos { return BlockPos.fromLong(decoder.decodeLong()) }
+}
+
+object TextSerializer : KSerializer<Text> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Identifier", PrimitiveKind.STRING)
+    override fun serialize(encoder: Encoder, value: Text) {
+        encoder.encodeString(Text.Serializer.toJson(value))
+    }
+
+    override fun deserialize(decoder: Decoder): Text {
+        val str = decoder.decodeString()
+        return Text.Serializer.fromJson(str) ?: throw Exception("Could not deserialize the given Text!")
+    }
 }
 
 

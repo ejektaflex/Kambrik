@@ -12,6 +12,8 @@ import io.ejekta.kambrik.command.suggestionList
 import io.ejekta.kambrik.logging.KambrikMarkers
 import io.ejekta.kambrik.ext.identifier
 import io.ejekta.kambrik.internal.testing.TestMsg
+import io.ejekta.kambrik.text.sendError
+import io.ejekta.kambrik.text.sendFeedback
 import io.ejekta.kambrik.text.textLiteral
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
@@ -19,7 +21,6 @@ import net.minecraft.command.argument.IdentifierArgumentType.getIdentifier
 import net.minecraft.item.Items
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.tag.*
-import net.minecraft.text.LiteralText
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
@@ -57,7 +58,9 @@ internal object KambrikCommands : CommandRegistrationCallback {
 
             "dump" {
                 "registry" {
-                    val dumpables = suggestionList { Registry.REGISTRIES.toList().map { it.key.value.toString() } }
+                    val dumpables = suggestionList {
+                        Registry.REGISTRIES.toList().map { it.key.value }
+                    }
                     argIdentifier("dump_what", items = dumpables) runs dumpRegistry()
                 }
 
@@ -101,7 +104,7 @@ internal object KambrikCommands : CommandRegistrationCallback {
                 val queryId = getIdentifier(it, "tag_id")
                 val foundItem = computedTags.keys.find { id -> id == queryId }
                 if (foundItem == null) {
-                    it.source.sendError(LiteralText("Tag does not exist."))
+                    it.source.sendError { +"Tag does not exist." }
                 } else {
                     dumpTagListing(computedTags.filter { entry -> entry.key == queryId }, idGetter).run(it)
                     results = computedTags.size
@@ -133,9 +136,9 @@ internal object KambrikCommands : CommandRegistrationCallback {
             reg.ids.forEach { id ->
                 Kambrik.Logger.info("  * [ID] $id")
             }
-            it.source.sendFeedback(LiteralText("Dumped contents of '$what' to log."), false)
+            it.source.sendFeedback { +"Dumped contents of '$what' to log." }
         } else {
-            it.source.sendError(LiteralText("There is no registry with that name."))
+            it.source.sendError { +"There is no registry with that name." }
         }
 
         1
@@ -150,8 +153,6 @@ internal object KambrikCommands : CommandRegistrationCallback {
             ).sendToClient(it.source.player)
 
         } catch (e: Exception) {
-            //e.printStackTrace()
-            //Kambrik.Logger.catching(e)
             Kambrik.Logger.error(e)
             e.stackTrace.forEach { element ->
                 Kambrik.Logger.error(element)

@@ -1,4 +1,4 @@
-package io.ejekta.kambrik.file
+package io.ejekta.kambrikx.file
 
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.ext.internal.assured
