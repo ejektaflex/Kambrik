@@ -8,6 +8,7 @@ import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import io.ejekta.kambrik.logging.KambrikMarkers
 import io.ejekta.kambrikx.data.config.ConfigDataRegistrar
 import io.ejekta.kambrikx.data.configData
+import kotlinx.serialization.Contextual
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
@@ -32,6 +33,12 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
         Logger.info("Kambrik Says Hello!")
         handleCustomEntryData()
         configureLoggerFilters()
+    }
+
+    var names: MutableList<String> by serverData(
+        Identifier("mymod", "my_names")
+    ) {
+        mutableListOf()
     }
 
     override fun onInitialize() {

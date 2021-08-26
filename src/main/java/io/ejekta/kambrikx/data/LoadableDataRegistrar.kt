@@ -1,5 +1,6 @@
 package io.ejekta.kambrikx.data
 
+import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.serial.serializers.IdentitySer
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.MapSerializer
@@ -11,14 +12,14 @@ abstract class LoadableDataRegistrar {
 
     internal data class DataRequest<T : Any>(val serializer: KSerializer<T>, val default: T) {
         val encoded: JsonElement
-            get() = DefaultJsonFormat.encodeToJsonElement(serializer, default)
+            get() = Kambrik.Serial.Format.encodeToJsonElement(serializer, default)
 
         fun encode(value: Any?): JsonElement {
-            return DefaultJsonFormat.encodeToJsonElement(serializer, value as? T ?: default)
+            return Kambrik.Serial.Format.encodeToJsonElement(serializer, value as? T ?: default)
         }
 
         fun decode(data: JsonElement): T {
-            return DefaultJsonFormat.decodeFromJsonElement(serializer, data)
+            return Kambrik.Serial.Format.decodeFromJsonElement(serializer, data)
         }
     }
 
@@ -47,13 +48,13 @@ abstract class LoadableDataRegistrar {
         if (!file.exists()) {
             file.createNewFile()
             file.writeText(
-                DefaultJsonFormat.encodeToString(resultSerializer, results)
+                Kambrik.Serial.Format.encodeToString(resultSerializer, results)
             )
         }
 
         val contents = file.readText()
 
-        results = DefaultJsonFormat.decodeFromString(resultSerializer, contents).toMutableMap()
+        results = Kambrik.Serial.Format.decodeFromString(resultSerializer, contents).toMutableMap()
 
         for ((reqId, reqData) in requests) {
             val result = results.getOrPut(reqId) {
@@ -77,7 +78,7 @@ abstract class LoadableDataRegistrar {
             outResults[objId] = data.encode(obj)
         }
 
-        val output = DefaultJsonFormat.encodeToString(resultSerializer, outResults)
+        val output = Kambrik.Serial.Format.encodeToString(resultSerializer, outResults)
 
         file.apply {
             if (!exists()) {
