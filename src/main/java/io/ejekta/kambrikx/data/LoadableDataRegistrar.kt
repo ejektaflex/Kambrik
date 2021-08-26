@@ -36,13 +36,13 @@ abstract class LoadableDataRegistrar {
 
     protected val toFlushObjects = mutableMapOf<Identifier, Any>()
 
-    fun <T : Any> request(key: Identifier, serializer: KSerializer<T>, default: T) {
+    open fun <T : Any> request(key: Identifier, serializer: KSerializer<T>, default: T) {
         requests[key] = DataRequest(serializer, default)
         //println("Requested $key and serializer $serializer")
     }
 
-    open fun loadResults() {
-        val file = getFile()
+    open fun loadResults(id: Identifier) {
+        val file = getFile(id)
 
         if (!file.exists()) {
             file.createNewFile()

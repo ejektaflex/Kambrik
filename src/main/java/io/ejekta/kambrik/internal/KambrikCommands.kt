@@ -192,7 +192,6 @@ internal object KambrikCommands : CommandRegistrationCallback {
                 Identifier("nope", "uhuh")
             )
 
-            ConfigDataRegistrar.saveResults(Identifier("kambrik", "dude"))
         } catch (e: Exception) {
             e.printStackTrace()
         }

@@ -6,6 +6,7 @@ import io.ejekta.kambrikx.data.server.ServerDataRegistrar
 import io.ejekta.kambrikx.data.serverData
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import io.ejekta.kambrik.logging.KambrikMarkers
+import io.ejekta.kambrikx.data.config.ConfigDataRegistrar
 import io.ejekta.kambrikx.data.configData
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
@@ -49,11 +50,12 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
         // Server data lifecycle management
 
         ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted {
-            ServerDataRegistrar.loadResults()
+            ServerDataRegistrar.loadResults(idOf("server_id"))
         })
 
         ServerLifecycleEvents.SERVER_STOPPING.register(ServerLifecycleEvents.ServerStopping {
             ServerDataRegistrar.saveResults(idOf("server_id"))
+            ConfigDataRegistrar.saveAllResults()
         })
 
     }

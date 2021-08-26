@@ -17,8 +17,8 @@ internal object ServerDataRegistrar : LoadableDataRegistrar() {
         return loadedObjects
     }
 
-    override fun loadResults() {
-        super.loadResults()
+    override fun loadResults(id: Identifier) {
+        super.loadResults(id)
         loaded = true
     }
 
