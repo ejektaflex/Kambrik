@@ -186,6 +186,9 @@ internal object KambrikCommands : CommandRegistrationCallback {
             it.source.sendFeedback { +id.toString() }
         }
 
+        KambrikMod.myIds.add(
+            Identifier("nope", "uhuh")
+        )
 
         1
     }

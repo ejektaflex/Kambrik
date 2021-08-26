@@ -1,4 +1,4 @@
-package io.ejekta.kambrik.internal.data
+package io.ejekta.kambrikx.data
 
 import io.ejekta.kambrik.serial.serializers.IdentitySer
 import kotlinx.serialization.json.Json

@@ -2,8 +2,8 @@ package io.ejekta.kambrik.internal
 
 import io.ejekta.kambrik.Kambrik.Logger
 import io.ejekta.kambrik.ext.fapi.toMap
-import io.ejekta.kambrik.internal.data.ServerDataRegistrar
-import io.ejekta.kambrik.internal.data.serverData
+import io.ejekta.kambrikx.data.server.ServerLoadableDataRegistrar
+import io.ejekta.kambrikx.data.serverData
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import io.ejekta.kambrik.logging.KambrikMarkers
 import net.fabricmc.api.ModInitializer
@@ -31,18 +31,25 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
         configureLoggerFilters()
     }
     
-    var myIds: List<Identifier> by serverData(Identifier("kambrik", "ids"), listOf())
+    var myIds: MutableList<Identifier> by serverData(Identifier("kambrik", "ids")) {
+        mutableListOf()
+    }
 
     override fun onInitialize() {
         FabricLoader.getInstance().getEntrypointContainers(ID, KambrikMarker::class.java).forEach {
-            Logger.debug("Got mod entrypoint: $it, ${it.entrypoint}, will do Kambrik init here")
-            Logger.debug("It came from: ${it.provider.metadata.id}")
+            Logger.debug("Got mod entrypoint: $it, ${it.entrypoint} from ${it.provider.metadata.id}, will do Kambrik init here")
             KambrikRegistrar.doRegistrationFor(it)
         }
         CommandRegistrationCallback.EVENT.register(KambrikCommands)
 
+        // Server data lifecycle management
+
         ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted {
-            ServerDataRegistrar.loadResults(it)
+            ServerLoadableDataRegistrar.loadResults()
+        })
+
+        ServerLifecycleEvents.SERVER_STOPPING.register(ServerLifecycleEvents.ServerStopping {
+            ServerLoadableDataRegistrar.saveResults()
         })
 
     }
