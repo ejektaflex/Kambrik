@@ -10,7 +10,7 @@ import java.io.File
 
 internal object ConfigDataRegistrar : LoadableDataRegistrar() {
 
-    val loadedModConfigs = mutableSetOf<String>()
+    private val loadedModConfigs = mutableSetOf<String>()
 
     // Do initial config file loading when the request is first made
     override fun <T : Any> request(key: Identifier, serializer: KSerializer<T>, default: T) {

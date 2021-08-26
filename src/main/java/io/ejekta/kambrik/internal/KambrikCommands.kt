@@ -83,7 +83,6 @@ internal object KambrikCommands : CommandRegistrationCallback {
                     }
                     this runs test()
                     "text" runs text()
-                    "server_data" runs testServerData()
                 }
             }
 
@@ -181,22 +180,5 @@ internal object KambrikCommands : CommandRegistrationCallback {
         1
     }
 
-    private fun testServerData() = Command<ServerCommandSource> {
-
-        try {
-            for (id in KambrikMod.myIds) {
-                it.source.sendFeedback { +id.toString() }
-            }
-
-            KambrikMod.myIds.add(
-                Identifier("nope", "uhuh")
-            )
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        1
-    }
 
 }

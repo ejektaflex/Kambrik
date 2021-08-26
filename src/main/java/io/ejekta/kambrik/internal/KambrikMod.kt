@@ -8,6 +8,7 @@ import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import io.ejekta.kambrik.logging.KambrikMarkers
 import io.ejekta.kambrikx.data.config.ConfigDataRegistrar
 import io.ejekta.kambrikx.data.configData
+import net.fabricmc.api.EnvType
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
@@ -32,10 +33,6 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
         handleCustomEntryData()
         configureLoggerFilters()
     }
-    
-    var myIds: MutableList<Identifier> by configData(Identifier("kambrik", "ids")) {
-        mutableListOf()
-    }
 
     override fun onInitialize() {
         // Auto Registration feature
@@ -55,7 +52,9 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
 
         ServerLifecycleEvents.SERVER_STOPPING.register(ServerLifecycleEvents.ServerStopping {
             ServerDataRegistrar.saveResults(idOf("server_id"))
-            ConfigDataRegistrar.saveAllResults()
+            if (FabricLoader.getInstance().environmentType != EnvType.CLIENT) {
+                ConfigDataRegistrar.saveAllResults()
+            }
         })
 
     }
