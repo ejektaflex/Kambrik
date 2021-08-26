@@ -17,7 +17,7 @@ class KambrikFileApi internal constructor() {
     fun getBaseFolder(modId: String): File {
         return getBaseFolderPath(modId).toFile().apply {
             if (!exists()) {
-                createNewFile()
+                mkdirs()
             }
         }
     }

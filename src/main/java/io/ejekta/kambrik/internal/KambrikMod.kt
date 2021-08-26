@@ -6,6 +6,7 @@ import io.ejekta.kambrikx.data.server.ServerDataRegistrar
 import io.ejekta.kambrikx.data.serverData
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import io.ejekta.kambrik.logging.KambrikMarkers
+import io.ejekta.kambrikx.data.configData
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
@@ -31,7 +32,7 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
         configureLoggerFilters()
     }
     
-    var myIds: MutableList<Identifier> by serverData(Identifier("kambrik", "ids")) {
+    var myIds: MutableList<Identifier> by configData(Identifier("kambrik", "ids")) {
         mutableListOf()
     }
 

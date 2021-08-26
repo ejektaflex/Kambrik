@@ -15,6 +15,7 @@ import io.ejekta.kambrik.internal.testing.TestMsg
 import io.ejekta.kambrik.text.sendError
 import io.ejekta.kambrik.text.sendFeedback
 import io.ejekta.kambrik.text.textLiteral
+import io.ejekta.kambrikx.data.config.ConfigDataRegistrar
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.command.argument.IdentifierArgumentType.getIdentifier
@@ -182,13 +183,19 @@ internal object KambrikCommands : CommandRegistrationCallback {
 
     private fun testServerData() = Command<ServerCommandSource> {
 
-        for (id in KambrikMod.myIds) {
-            it.source.sendFeedback { +id.toString() }
-        }
+        try {
+            for (id in KambrikMod.myIds) {
+                it.source.sendFeedback { +id.toString() }
+            }
 
-        KambrikMod.myIds.add(
-            Identifier("nope", "uhuh")
-        )
+            KambrikMod.myIds.add(
+                Identifier("nope", "uhuh")
+            )
+
+            ConfigDataRegistrar.saveResults(Identifier("kambrik", "dude"))
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         1
     }

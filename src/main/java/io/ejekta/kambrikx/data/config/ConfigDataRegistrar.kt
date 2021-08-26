@@ -18,11 +18,9 @@ internal object ConfigDataRegistrar : LoadableDataRegistrar() {
 
         val folder = Kambrik.File.getBaseFolder(namespace)
 
-        return File(folder, "${namespace}_config.json").apply {
-            if (!exists()) {
-                createNewFile()
-            }
-        }
+        println("FOLDER: $folder")
+
+        return File(folder, "${namespace}_config.json")
     }
 
     override fun getRelatedObjects(id: Identifier): Map<Identifier, Any> {
