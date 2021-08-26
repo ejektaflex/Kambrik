@@ -1,4 +1,4 @@
-package io.ejekta.kambrikx.keybind
+package io.ejekta.kambrikx.input.keybind
 
 import net.minecraft.client.util.InputUtil
 import org.lwjgl.glfw.GLFW
