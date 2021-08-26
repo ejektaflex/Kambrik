@@ -25,4 +25,10 @@ internal object ConfigDataRegistrar : LoadableDataRegistrar() {
         }
     }
 
+    override fun getRelatedObjects(id: Identifier): Map<Identifier, Any> {
+        return loadedObjects.filter {
+            id == null || id.namespace == it.key.namespace
+        }
+    }
+
 }

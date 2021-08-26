@@ -10,7 +10,11 @@ internal object ServerDataRegistrar : LoadableDataRegistrar() {
     var loaded = false
 
     override fun getFile(id: Identifier?): File {
-        return FabricLoader.getInstance().configDir.resolve("kambrik_data.json").toFile()
+        return FabricLoader.getInstance().configDir.resolve("kambrik_server_data.json").toFile()
+    }
+
+    override fun getRelatedObjects(id: Identifier): Map<Identifier, Any> {
+        return loadedObjects
     }
 
     override fun loadResults() {
@@ -18,8 +22,8 @@ internal object ServerDataRegistrar : LoadableDataRegistrar() {
         loaded = true
     }
 
-    override fun saveResults() {
-        super.saveResults()
+    override fun saveResults(id: Identifier) {
+        super.saveResults(id)
         loaded = false
     }
 

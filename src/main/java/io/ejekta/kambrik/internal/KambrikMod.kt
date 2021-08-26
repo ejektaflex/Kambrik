@@ -52,7 +52,7 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
         })
 
         ServerLifecycleEvents.SERVER_STOPPING.register(ServerLifecycleEvents.ServerStopping {
-            ServerDataRegistrar.saveResults()
+            ServerDataRegistrar.saveResults(idOf("server_id"))
         })
 
     }

@@ -5,11 +5,14 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.serializer
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.Identifier
+import kotlin.properties.ReadWriteProperty
+
 
 inline fun <reified T : Any> serverData(
     key: Identifier,
     serializer: KSerializer<T> = DefaultJsonFormat.serializersModule.serializer(),
     noinline default: () -> T,
-): ServerDataProperty<T> {
+): ReadWriteProperty<Any, T> {
     return ServerDataProperty(key, default, serializer)
 }
+

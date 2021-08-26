@@ -7,7 +7,7 @@ import kotlinx.serialization.json.JsonElement
 import net.minecraft.util.Identifier
 import java.io.File
 
-internal abstract class LoadableDataRegistrar {
+abstract class LoadableDataRegistrar {
 
     internal data class DataRequest<T : Any>(val serializer: KSerializer<T>, val default: T) {
         val encoded: JsonElement
@@ -24,13 +24,15 @@ internal abstract class LoadableDataRegistrar {
 
     protected abstract fun getFile(id: Identifier? = null): File
 
+    protected abstract fun getRelatedObjects(id: Identifier): Map<Identifier, Any>
+
     private val requests = mutableMapOf<Identifier, DataRequest<*>>()
 
     private var results = mutableMapOf<Identifier, JsonElement>()
 
     private val resultSerializer = MapSerializer(IdentitySer, JsonElement.serializer())
 
-    private val loadedObjects = mutableMapOf<Identifier, Any>()
+    protected val loadedObjects = mutableMapOf<Identifier, Any>()
 
     protected val toFlushObjects = mutableMapOf<Identifier, Any>()
 
@@ -62,12 +64,15 @@ internal abstract class LoadableDataRegistrar {
         }
     }
 
-    open fun saveResults() {
-        val file = getFile()
+    open fun saveResults(id: Identifier) {
+        val file = getFile(id)
 
         val outResults = mutableMapOf<Identifier, JsonElement>()
 
-        for ((objId, obj) in loadedObjects) {
+        // Only save objects in mod, if possible
+        val toSave = getRelatedObjects(id)
+
+        for ((objId, obj) in toSave) {
             val data = requests[objId]!!
             outResults[objId] = data.encode(obj)
         }
