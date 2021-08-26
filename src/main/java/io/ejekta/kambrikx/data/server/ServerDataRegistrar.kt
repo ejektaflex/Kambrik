@@ -5,12 +5,12 @@ import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.util.Identifier
 import java.io.File
 
-internal object ServerLoadableDataRegistrar : LoadableDataRegistrar() {
+internal object ServerDataRegistrar : LoadableDataRegistrar() {
 
     var loaded = false
 
     override fun getFile(id: Identifier?): File {
-        return FabricLoader.getInstance().gameDir.resolve("data.json").toFile()
+        return FabricLoader.getInstance().configDir.resolve("kambrik_data.json").toFile()
     }
 
     override fun loadResults() {
@@ -29,6 +29,5 @@ internal object ServerLoadableDataRegistrar : LoadableDataRegistrar() {
         }
         return super.loadResult(key)
     }
-
 
 }

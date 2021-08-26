@@ -82,6 +82,8 @@ internal abstract class LoadableDataRegistrar {
         }
     }
 
+    // These are only called via the delegate properties, so casting is guaranteed to succeed
+
     internal open fun <R : Any> loadResult(key: Identifier): R {
         return loadedObjects[key] as R
     }

@@ -2,7 +2,7 @@ package io.ejekta.kambrik.internal
 
 import io.ejekta.kambrik.Kambrik.Logger
 import io.ejekta.kambrik.ext.fapi.toMap
-import io.ejekta.kambrikx.data.server.ServerLoadableDataRegistrar
+import io.ejekta.kambrikx.data.server.ServerDataRegistrar
 import io.ejekta.kambrikx.data.serverData
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import io.ejekta.kambrik.logging.KambrikMarkers
@@ -36,20 +36,23 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
     }
 
     override fun onInitialize() {
+        // Auto Registration feature
         FabricLoader.getInstance().getEntrypointContainers(ID, KambrikMarker::class.java).forEach {
             Logger.debug("Got mod entrypoint: $it, ${it.entrypoint} from ${it.provider.metadata.id}, will do Kambrik init here")
             KambrikRegistrar.doRegistrationFor(it)
         }
+
+        // Kambrik commands
         CommandRegistrationCallback.EVENT.register(KambrikCommands)
 
         // Server data lifecycle management
 
         ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted {
-            ServerLoadableDataRegistrar.loadResults()
+            ServerDataRegistrar.loadResults()
         })
 
         ServerLifecycleEvents.SERVER_STOPPING.register(ServerLifecycleEvents.ServerStopping {
-            ServerLoadableDataRegistrar.saveResults()
+            ServerDataRegistrar.saveResults()
         })
 
     }

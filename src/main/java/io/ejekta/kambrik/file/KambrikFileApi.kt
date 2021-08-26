@@ -1,5 +1,7 @@
 package io.ejekta.kambrik.file
 
+import net.fabricmc.loader.api.FabricLoader
+import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -8,8 +10,16 @@ import java.nio.file.Paths
  */
 class KambrikFileApi internal constructor() {
 
-    fun getBaseFolder(modId: String): Path {
-        return Paths.get("config", modId)
+    fun getBaseFolderPath(modId: String): Path {
+        return FabricLoader.getInstance().configDir.resolve(modId)
+    }
+
+    fun getBaseFolder(modId: String): File {
+        return getBaseFolderPath(modId).toFile().apply {
+            if (!exists()) {
+                createNewFile()
+            }
+        }
     }
 
 }
