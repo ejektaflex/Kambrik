@@ -82,6 +82,7 @@ internal object KambrikCommands : CommandRegistrationCallback {
                     }
                     this runs test()
                     "text" runs text()
+                    "server_data" runs testServerData()
                 }
             }
 
@@ -145,7 +146,7 @@ internal object KambrikCommands : CommandRegistrationCallback {
     }
 
 
-    fun test() = Command<ServerCommandSource> {
+    private fun test() = Command<ServerCommandSource> {
         try {
 
             TestMsg(
@@ -162,7 +163,7 @@ internal object KambrikCommands : CommandRegistrationCallback {
         1
     }
 
-    fun text() = Command<ServerCommandSource> {
+    private fun text() = Command<ServerCommandSource> {
 
         val test = textLiteral("Hello World!") {
             onHoverShowText {
@@ -175,6 +176,16 @@ internal object KambrikCommands : CommandRegistrationCallback {
 
         println(test)
         println(test.string)
+
+        1
+    }
+
+    private fun testServerData() = Command<ServerCommandSource> {
+
+        for (id in KambrikMod.myIds) {
+            it.source.sendFeedback { +id.toString() }
+        }
+
 
         1
     }

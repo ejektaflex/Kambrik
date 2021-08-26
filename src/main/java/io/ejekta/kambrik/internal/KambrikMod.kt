@@ -1,21 +1,19 @@
 package io.ejekta.kambrik.internal
 
-import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.Kambrik.Logger
-import io.ejekta.kambrik.logging.KambrikMarkers
 import io.ejekta.kambrik.ext.fapi.toMap
+import io.ejekta.kambrik.internal.data.ServerDataRegistrar
+import io.ejekta.kambrik.internal.data.serverData
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
-import io.ejekta.kambrik.internal.testing.TellServerHello
-import io.ejekta.kambrik.internal.testing.TestMsg
-//import io.ejekta.kambrik.internal.testing.TestMsg
+import io.ejekta.kambrik.logging.KambrikMarkers
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint
 import net.fabricmc.loader.api.metadata.CustomValue
 import net.minecraft.util.Identifier
-import net.minecraft.util.math.BlockPos
-import org.apache.logging.log4j.*
+import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.core.Filter
 import org.apache.logging.log4j.core.Logger
 import org.apache.logging.log4j.core.LoggerContext
@@ -32,6 +30,8 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
         handleCustomEntryData()
         configureLoggerFilters()
     }
+    
+    var myIds: List<Identifier> by serverData(Identifier("kambrik", "ids"), listOf())
 
     override fun onInitialize() {
         FabricLoader.getInstance().getEntrypointContainers(ID, KambrikMarker::class.java).forEach {
@@ -40,6 +40,11 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
             KambrikRegistrar.doRegistrationFor(it)
         }
         CommandRegistrationCallback.EVENT.register(KambrikCommands)
+
+        ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted {
+            ServerDataRegistrar.loadResults(it)
+        })
+
     }
 
     private fun handleCustomEntryData() {
@@ -77,3 +82,5 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
     }
 
 }
+
+
