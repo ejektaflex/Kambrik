@@ -1,5 +1,6 @@
 package io.ejekta.kambrikx.input
 
+import io.ejekta.kambrik.ext.fapi.getBoundKey
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
@@ -19,8 +20,6 @@ class KambrikKeybind(
     category
 ) {
 
-    val ourBoundKey: InputUtil.Key
-        get() = KeyBindingHelper.getBoundKeyOf(this)
 
     private var keyDown = {}
 
