@@ -15,6 +15,7 @@ internal object KambrikClientMod : ClientModInitializer {
         ClientLifecycleEvents.CLIENT_STOPPING.register(ClientLifecycleEvents.ClientStopping {
             ConfigDataRegistrar.saveAllResults()
         })
+
     }
 
 }
