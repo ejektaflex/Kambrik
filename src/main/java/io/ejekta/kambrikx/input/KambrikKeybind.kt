@@ -1,6 +1,7 @@
 package io.ejekta.kambrikx.input
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
 
@@ -16,11 +17,12 @@ class KambrikKeybind(
     category
 ) {
 
+    val ourBoundKey: InputUtil.Key
+        get() = KeyBindingHelper.getBoundKeyOf(this)
+
     private var keyDown = {}
 
     private var keyUp = {}
-
-    private var keyHeld = {}
 
     fun onDown(func: () -> Unit) {
         keyDown = func
@@ -28,10 +30,6 @@ class KambrikKeybind(
 
     fun onUp(func: () -> Unit) {
         keyUp = func
-    }
-
-    fun onHolding(func: () -> Unit) {
-        keyHeld = func
     }
 
     var isDown = false
@@ -44,16 +42,16 @@ class KambrikKeybind(
         } else if (isDown && !wasPressed) {
             isDown = wasPressed
             keyUp()
-        } else if (isDown) {
-            keyHeld()
+            isPressed = false
         }
     }
 
 
     init {
-        ClientTickEvents.END_CLIENT_TICK.register {
-            update(wasPressed())
-        }
+
+        WorldRenderEvents.LAST.register(WorldRenderEvents.Last {
+            update(isPressed)
+        })
     }
 
 

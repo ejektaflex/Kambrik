@@ -16,6 +16,16 @@ internal object KambrikClientMod : ClientModInitializer {
             ConfigDataRegistrar.saveAllResults()
         })
 
+        Kambrik.Input.registerKeyboardBinding(GLFW.GLFW_KEY_RIGHT_BRACKET, "a.b.c", "misc") {
+            onDown {
+                println("Pressed!")
+            }
+
+            onUp {
+                println("Let go!")
+            }
+        }
+
     }
 
 }
