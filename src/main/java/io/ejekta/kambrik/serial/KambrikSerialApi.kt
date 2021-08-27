@@ -14,16 +14,6 @@ import net.minecraft.util.math.Box
 @Suppress("PropertyName")
 class KambrikSerialApi {
 
-    val Format = formatFor {
-        prettyPrint = true
-    }
-
-    fun formatFor(serialModule: SerializersModule = DefaultSerializers, builder: JsonBuilder.() -> Unit = {}): Json {
-        return Json {
-            this.builder()
-        }
-    }
-
     val DefaultSerializers = SerializersModule {
         // Built in data classes
         contextual(BlockPos::class, BlockPosSerializer)
@@ -34,6 +24,18 @@ class KambrikSerialApi {
         contextual(Block::class, BlockRefSerializer)
         // Simple NBT Compound serializer
         contextual(NbtCompound::class, SimpleNbtSerializer)
+    }
+
+    val Format = formatFor(DefaultSerializers) {
+        prettyPrint = true
+    }
+
+    fun formatFor(serialModule: SerializersModule = DefaultSerializers, builder: JsonBuilder.() -> Unit = {}): Json {
+        return Json {
+            this.apply {
+                serializersModule = serialModule
+            }.builder()
+        }
     }
 
 }

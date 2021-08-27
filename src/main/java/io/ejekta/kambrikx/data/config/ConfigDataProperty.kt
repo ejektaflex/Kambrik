@@ -7,5 +7,5 @@ import net.minecraft.util.Identifier
 class ConfigDataProperty<T : Any>(
     key: Identifier,
     default: () -> T,
-    serializer: KSerializer<T>
+    serializer: KSerializer<T>,
 ) : DataProperty<T>(key, default, serializer, ConfigDataRegistrar)
