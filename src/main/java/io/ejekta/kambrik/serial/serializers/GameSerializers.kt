@@ -1,12 +1,15 @@
 package io.ejekta.kambrik.serial.serializers
 
+import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.ext.internal.doStructure
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.JsonObject
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.StringNbtReader
 import net.minecraft.text.Text
@@ -101,13 +104,16 @@ object BlockPosSerializerOptimized : KSerializer<BlockPos> {
 }
 
 object TextSerializer : KSerializer<Text> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Identifier", PrimitiveKind.STRING)
+    @OptIn(InternalSerializationApi::class)
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("yarn.Text")
     override fun serialize(encoder: Encoder, value: Text) {
-        encoder.encodeString(Text.Serializer.toJson(value))
+        val str = Text.Serializer.toJson(value)
+        val json = Kambrik.Serial.Format.decodeFromString(JsonObject.serializer(), str)
+        encoder.encodeSerializableValue(JsonObject.serializer(), json)
     }
 
     override fun deserialize(decoder: Decoder): Text {
-        val str = decoder.decodeString()
+        val str = decoder.decodeSerializableValue(JsonObject.serializer()).toString()
         return Text.Serializer.fromJson(str) ?: throw Exception("Could not deserialize the given Text!")
     }
 }

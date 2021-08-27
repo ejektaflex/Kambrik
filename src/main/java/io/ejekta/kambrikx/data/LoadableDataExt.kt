@@ -1,6 +1,7 @@
 package io.ejekta.kambrikx.data
 
 import io.ejekta.kambrik.Kambrik
+import io.ejekta.kambrik.internal.KambrikMod
 import io.ejekta.kambrikx.data.config.ConfigDataProperty
 import io.ejekta.kambrikx.data.server.ServerDataProperty
 import kotlinx.serialization.KSerializer
@@ -19,10 +20,12 @@ inline fun <reified T : Any> serverData(
     return ServerDataProperty(key, default, serializer)
 }
 
+
 inline fun <reified T : Any> configData(
     key: Identifier,
-    serializer: KSerializer<T> = Kambrik.Serial.DefaultSerializers.serializer(),
+    serializer: KSerializer<T> = Kambrik.Serial.DefaultSerializers.getContextual(T::class)!!,
     noinline default: () -> T,
 ): ReadWriteProperty<Any, T> {
+    Kambrik.Logging.createLogger("k").warn("configData serializer is: $serializer")
     return ConfigDataProperty(key, default, serializer)
 }

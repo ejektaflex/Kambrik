@@ -3,19 +3,23 @@ package io.ejekta.testing
 
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.internal.KambrikExperimental
+import io.ejekta.kambrik.serial.serializers.TextSerializer
+import io.ejekta.kambrik.text.textLiteral
+//import io.ejekta.kambrik.serial.serializers.TextSerializer
 import io.ejekta.kambrikx.serial.NbtFormat
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
+import io.ejekta.kambrikx.serial.NbtSerializers
+import kotlinx.serialization.*
+import kotlinx.serialization.modules.overwriteWith
+import kotlinx.serialization.modules.plus
 import net.minecraft.nbt.NbtString
+import net.minecraft.text.LiteralText
+import net.minecraft.text.Text
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 
 
 fun <T> doJsonCycle(ser: KSerializer<T>, obj: T) {
-    val json = Json {
-        serializersModule = Kambrik.Serial.DefaultSerializers
-    }
+    val json = Kambrik.Serial.Format
 
     val c = json.encodeToString(ser, obj)
     println("OBJ -> JSN: $c")
@@ -43,6 +47,7 @@ data class InnerInt(val its: Int)
 data class Doot(val pos: @Contextual Box, val int: InnerInt)
 
 
+@OptIn(KambrikExperimental::class)
 fun main(args: Array<String>) {
 
     val u = Doot(Box(1.0, 2.0, 3.0, 12.0, 15.0, 18.0), InnerInt(30))
@@ -58,6 +63,41 @@ fun main(args: Array<String>) {
     } catch (e: Exception) {
         e.printStackTrace()
     }
+
+    //*
+    val text: Text = textLiteral("Hello!") {
+        +textLiteral("What's up?")
+    }
+
+    val format = Kambrik.Serial.Format
+
+    //val s = Kambrik.Serial.Format.serializersModule.serializer<Text>()
+
+    //println(s)
+
+    val test = format.encodeToString(
+        text
+    )
+
+    println(test)
+
+    val testBack = format.decodeFromString<Text>(test)
+
+    println(testBack)
+
+    //*/
+
+    /*
+    val derp: BlockPos = BlockPos(1, 2, 3)
+
+    val test = Kambrik.Serial.Format.encodeToString(derp)
+
+    println(test)
+
+    val testBack = Kambrik.Serial.Format.decodeFromString<BlockPos>(test)
+
+    println(testBack)
+     */
 
 }
 

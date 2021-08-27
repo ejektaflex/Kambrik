@@ -14,6 +14,7 @@ open class DataProperty<T : Any>(
 ) : ReadWriteProperty<Any, T> {
 
     init {
+        println("DataProperty requesting: $serializer")
         registrar.request(key, serializer, default())
     }
 

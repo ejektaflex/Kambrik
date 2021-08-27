@@ -2,23 +2,34 @@ package io.ejekta.kambrikx.data
 
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.serial.serializers.IdentitySer
+import io.ejekta.kambrik.serial.serializers.TextSerializer
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.serializer
+import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import java.io.File
+import kotlin.reflect.full.starProjectedType
 
 abstract class LoadableDataRegistrar {
 
     internal data class DataRequest<T : Any>(val serializer: KSerializer<T>, val default: T) {
         val encoded: JsonElement
-            get() = Kambrik.Serial.Format.encodeToJsonElement(serializer, default)
+            get() {
+                println("This: $this")
+                println("Ser: $serializer")
+                println("Ser should be: ${TextSerializer}")
+                println("think it's getting ${Kambrik.Serial.Format.serializersModule.getContextual(Text::class)}")
+                return Kambrik.Serial.Format.encodeToJsonElement(serializer, default)
+            }
 
         fun encode(value: Any?): JsonElement {
             return Kambrik.Serial.Format.encodeToJsonElement(serializer, value as? T ?: default)
         }
 
         fun decode(data: JsonElement): T {
+            println("Decoding as: ${this::class.starProjectedType}")
             return Kambrik.Serial.Format.decodeFromJsonElement(serializer, data)
         }
     }
@@ -38,6 +49,7 @@ abstract class LoadableDataRegistrar {
     protected val toFlushObjects = mutableMapOf<Identifier, Any>()
 
     open fun <T : Any> request(key: Identifier, serializer: KSerializer<T>, default: T) {
+        println("Requested serializer: $serializer")
         requests[key] = DataRequest(serializer, default)
         //println("Requested $key and serializer $serializer")
     }
@@ -60,6 +72,8 @@ abstract class LoadableDataRegistrar {
             val result = results.getOrPut(reqId) {
                 reqData.encoded
             }
+            println("REQ: $reqId")
+            println("DAT: $reqData")
             val data = reqData.decode(result)
             loadedObjects[reqId] = data
         }

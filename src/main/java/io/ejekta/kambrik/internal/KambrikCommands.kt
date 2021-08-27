@@ -12,10 +12,13 @@ import io.ejekta.kambrik.command.suggestionList
 import io.ejekta.kambrik.logging.KambrikMarkers
 import io.ejekta.kambrik.ext.identifier
 import io.ejekta.kambrik.internal.testing.TestMsg
+import io.ejekta.kambrik.serial.serializers.TextSerializer
 import io.ejekta.kambrik.text.sendError
 import io.ejekta.kambrik.text.sendFeedback
 import io.ejekta.kambrik.text.textLiteral
 import io.ejekta.kambrikx.data.config.ConfigDataRegistrar
+import io.ejekta.kambrikx.data.configData
+import io.ejekta.kambrikx.data.serverData
 import kotlinx.serialization.encodeToString
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
@@ -23,6 +26,7 @@ import net.minecraft.command.argument.IdentifierArgumentType.getIdentifier
 import net.minecraft.item.Items
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.tag.*
+import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
@@ -163,6 +167,8 @@ internal object KambrikCommands : CommandRegistrationCallback {
 
         1
     }
+
+
 
     private fun text() = Command<ServerCommandSource> {
 

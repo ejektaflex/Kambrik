@@ -6,6 +6,7 @@ import io.ejekta.kambrikx.data.server.ServerDataRegistrar
 import io.ejekta.kambrikx.data.serverData
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import io.ejekta.kambrik.logging.KambrikMarkers
+import io.ejekta.kambrik.text.textLiteral
 import io.ejekta.kambrikx.data.config.ConfigDataRegistrar
 import io.ejekta.kambrikx.data.configData
 import kotlinx.serialization.Contextual
@@ -16,6 +17,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint
 import net.fabricmc.loader.api.metadata.CustomValue
+import net.minecraft.text.LiteralText
+import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.core.Filter
@@ -35,10 +38,10 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
         configureLoggerFilters()
     }
 
-    var names: MutableList<String> by serverData(
-        Identifier("mymod", "my_names")
+    private var text: LiteralText by configData(
+        Identifier("kambrik", "doot")
     ) {
-        mutableListOf()
+        textLiteral("hi")
     }
 
     override fun onInitialize() {
@@ -64,7 +67,11 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
             }
         })
 
+        text = textLiteral("Hai!")
+
     }
+
+
 
     private fun handleCustomEntryData() {
         FabricLoader.getInstance().allMods.forEach { mod ->
