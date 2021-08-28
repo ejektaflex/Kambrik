@@ -1,7 +1,6 @@
-package io.ejekta.kambrikx.input
+package io.ejekta.kambrik.input
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
@@ -35,7 +34,7 @@ class KambrikKeybind(
     var isDown = false
         private set
 
-    fun update(wasPressed: Boolean) {
+    private fun update(wasPressed: Boolean) {
         if (!isDown && wasPressed) {
             isDown = wasPressed
             keyDown()

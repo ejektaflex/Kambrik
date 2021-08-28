@@ -31,14 +31,6 @@ class KambrikSerialApi {
         contextual(Block::class, BlockRefSerializer)
         // Simple NBT Compound serializer
         contextual(NbtCompound::class, SimpleNbtSerializer)
-
-        contextual(Text::class, TextSerializer)
-        contextual(LiteralText::class, TextSerializer as KSerializer<LiteralText>)
-        //contextual(Text::class, TextSerializer as KSerializer<LiteralText>)
-
-        //contextual(LiteralText::class, TextSerializer as KSerializer<LiteralText>)
-        polymorphic(Text::class, LiteralText::class, TextSerializer as KSerializer<LiteralText>)
-
     }
 
     val Format = formatFor(DefaultSerializers) {

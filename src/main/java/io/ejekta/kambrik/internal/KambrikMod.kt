@@ -38,12 +38,6 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
         configureLoggerFilters()
     }
 
-    private var text: LiteralText by configData(
-        Identifier("kambrik", "doot")
-    ) {
-        textLiteral("hi")
-    }
-
     override fun onInitialize() {
         // Auto Registration feature
         FabricLoader.getInstance().getEntrypointContainers(ID, KambrikMarker::class.java).forEach {
@@ -66,8 +60,6 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
                 ConfigDataRegistrar.saveAllResults()
             }
         })
-
-        text = textLiteral("Hai!")
 
     }
 

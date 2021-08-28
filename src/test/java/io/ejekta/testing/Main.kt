@@ -71,11 +71,7 @@ fun main(args: Array<String>) {
 
     val format = Kambrik.Serial.Format
 
-    //val s = Kambrik.Serial.Format.serializersModule.serializer<Text>()
-
-    //println(s)
-
-    val test = format.encodeToString(
+    val test = format.encodeToString( TextSerializer,
         text
     )
 
@@ -87,51 +83,7 @@ fun main(args: Array<String>) {
 
     //*/
 
-    /*
-    val derp: BlockPos = BlockPos(1, 2, 3)
-
-    val test = Kambrik.Serial.Format.encodeToString(derp)
-
-    println(test)
-
-    val testBack = Kambrik.Serial.Format.decodeFromString<BlockPos>(test)
-
-    println(testBack)
-     */
 
 }
-
-/*
-    @Serializable
-    data class Holder(val tag: @Contextual NbtElement)
-
-    val t = NbtCompound().apply {
-        putString("Hai", "There")
-        putByte("Yo", 1)
-        putByte("Ma", 3)
-        put("Blah", LongArrayTag(longArrayOf(5L, 10L, 15L)))
-    }
-
-    val u = Holder(t)
-
-    //val result = NbtFormat.Default.encodeToTag(NbtCompoundSerializer(), t)
-    //*
-    val result = NbtFormat.Default.encodeToTag(Holder.serializer(), u)
-    println(result.toString())
-    val result2 = NbtFormat.Default.decodeFromTag(Holder.serializer(), result)
-    println(result2.toString())
-
-
-    val json = Json {
-        serializersModule = NbtFormat.BuiltInSerializers
-    }
-
-    val result3 = json.encodeToString(Holder.serializer(), u)
-    println(result3)
-    val result4 = json.decodeFromString(Holder.serializer(), result3)
-    println(result4.toString())
-*/
-
- */
 
 
