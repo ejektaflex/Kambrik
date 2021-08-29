@@ -76,7 +76,7 @@ dependencies {
 	compileOnly("org.jetbrains:annotations:22.0.0")
 	implementation("com.google.code.findbugs:jsr305:3.0.2")
 
-	modImplementation(group = "net.fabricmc", name = "fabric-language-kotlin", version = "1.6.3+kotlin.1.5.21")
+	modImplementation(group = "net.fabricmc", name = "fabric-language-kotlin", version = "1.6.4+kotlin.1.5.30")
 
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricVersion}")
 }

@@ -10,12 +10,16 @@ import java.nio.file.Paths
  */
 class KambrikFileApi internal constructor() {
 
-    fun getBaseFolderPath(modId: String): Path {
+    fun getConfigFolderRelativePath(modId: String): Path {
+        return Paths.get("config", modId)
+    }
+
+    fun getConfigFolderAbsolutePath(modId: String): Path {
         return FabricLoader.getInstance().configDir.resolve(modId)
     }
 
     fun getBaseFolder(modId: String): File {
-        return getBaseFolderPath(modId).toFile().apply {
+        return getConfigFolderRelativePath(modId).toFile().apply {
             if (!exists()) {
                 mkdirs()
             }
