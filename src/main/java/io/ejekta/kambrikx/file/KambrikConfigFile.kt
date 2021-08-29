@@ -13,6 +13,9 @@ data class KambrikConfigFile<T>(val location: Path, val name: String, val format
         return location.assured.resolve(name).toFile().apply {
             if (!exists()) {
                 createNewFile()
+                writeText(
+                    format.encodeToString(serializer, default())
+                )
             }
         }
     }
