@@ -8,6 +8,7 @@ Kambrik Currently Offers:
 * Command DSL for simple command creation
 * A Message API for sending data over the network and back
 * Extension methods for common, reusable functionality
+* A Text builder DSL
 
 
 Experimental Features:
@@ -15,8 +16,7 @@ Experimental Features:
 
 
 Upcoming Features:
-* A Text builder DSL
-* A GUI drawing DSL
+* A GUI drawing framework / DSL
 
 
 Experimental library features will be put into `kambrikx` until they mature.
