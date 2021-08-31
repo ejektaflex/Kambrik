@@ -32,6 +32,7 @@ internal object KambrikCommands : CommandRegistrationCallback {
                     val currMarkers = suggestionList { KambrikMarkers.Registry.map { "\"" + it.key + "\"" }.sorted() }
                     argString("marker", items = currMarkers) {
                         "set" {
+                            /*
                             argBool("enabled") runs {
                                 val marker = getString(it, "marker")
                                 val enabled = getBool(it, "enabled")
@@ -48,6 +49,8 @@ internal object KambrikCommands : CommandRegistrationCallback {
                                 KambrikMod.configureLoggerFilters()
                                 1
                             }
+
+                             */
                         }
                     }
                 }
@@ -59,7 +62,7 @@ internal object KambrikCommands : CommandRegistrationCallback {
                     val dumpables = suggestionList {
                         Registry.REGISTRIES.toList().map { it.key.value }
                     }
-                    argIdentifier("dump_what", items = dumpables) runs dumpRegistry()
+                    //argIdentifier("dump_what", items = dumpables) runs dumpRegistry()
                 }
 
                 "tags" {
@@ -97,16 +100,16 @@ internal object KambrikCommands : CommandRegistrationCallback {
                     }
 
                     // New code, is type safe and removes need for `getX` methods inside of command
-                    "gimme" {
-                        argString("fruit") fruit@{
-                            argInt("amount") amount@{
-                                runArgs(this@amount, this@fruit) { ctx, fruit, amount ->
-                                    println("I got $amount of $fruit!")
-                                    1
-                                }
-                            }
-                        }
-                    }
+"gimme" {
+    argString("fruit") { fruit ->
+        argInt("amount") { amt ->
+            this runs {
+                println("You got ${it.amt()} of ${it.fruit()}!")
+                1
+            }
+        }
+    }
+}
 
 
                 }
@@ -124,6 +127,7 @@ internal object KambrikCommands : CommandRegistrationCallback {
         executes {
             dumpTagListing(inTags(), idGetter).run(it)
         }
+        /*
         argIdentifier("tag_id", items = suggestionList { inTags().keys.toList() }) {
             executes {
                 val computedTags = inTags()
@@ -140,6 +144,7 @@ internal object KambrikCommands : CommandRegistrationCallback {
                 results
             }
         }
+         */
     }
 
     private fun <T, R : Comparable<R>> dumpTagListing(inTags: Map<Identifier, Tag<T>>, idGetter: (T) -> R) = Command<ServerCommandSource> {
@@ -192,6 +197,8 @@ internal object KambrikCommands : CommandRegistrationCallback {
 
 
     private fun text() = Command<ServerCommandSource> {
+
+        getString(it, "a")
 
         val test = textLiteral("Hello World!") {
             onHoverShowText {

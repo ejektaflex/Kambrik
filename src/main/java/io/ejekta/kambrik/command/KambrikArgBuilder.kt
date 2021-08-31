@@ -9,6 +9,7 @@ import com.mojang.brigadier.arguments.StringArgumentType.string
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
+import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionProvider
 import com.mojang.brigadier.tree.CommandNode
 import net.minecraft.command.argument.BlockPosArgumentType
@@ -21,6 +22,7 @@ import net.minecraft.predicate.NumberRange
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
+import io.ejekta.kambrik.command.argFunc
 
 /**
  * Nearly the entirety of Kambrik's Command DSL
@@ -51,13 +53,15 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
     /**
      * Specifies a generic required argument.
      */
-    fun <ARG> argument(
+    private inline fun <reified ARG> argument(
         type: ArgumentType<ARG>,
         word: String,
         items: SuggestionProvider<SRC>? = null,
-        func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, ARG>> = {}
+        func: ArgDslTyped<SRC, ARG> = {}
     ): RequiredArgumentBuilder<SRC, ARG> {
-        val req = KambrikArgBuilder<SRC, RequiredArgumentBuilder<SRC, ARG>>(RequiredArgumentBuilder.argument(word, type)).apply(func)
+        val req = KambrikArgBuilder<SRC, RequiredArgumentBuilder<SRC, ARG>>(RequiredArgumentBuilder.argument(word, type)).apply {
+            func(argFunc())
+        }
 
         items?.let {
             req.arg.suggests(it)
@@ -68,8 +72,9 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
         return req.arg
     }
 
+    /*
     fun argBlockPos(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, PosArgument>> = {}
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, PosArgument> = {}
     ) = argument(BlockPosArgumentType.blockPos(), word, items, func)
 
     fun argBool(
@@ -88,18 +93,21 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
     fun argIdentifier(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, Identifier>> = {}
     ) = argument(identifier(), word, items, func)
+    */
 
     fun argInt(
         word: String, range: IntRange? = null,
-        items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, Int>> = {}
+        items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, Int> = {}
     ) = argument(if (range != null) integer(range.first, range.last) else integer(), word, items, func)
 
+    /*
     fun argIntRange(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, NumberRange.IntRange>> = {}
     ) = argument(intRange(), word, items, func)
+     */
 
     fun argString(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, String>> = {}
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, String> = {}
     ) = argument(string(), word, items, func)
 
     /**
@@ -145,6 +153,13 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
         }
     }
 
+    infix fun runsInContext(func: CommandContext<SRC>.() -> Unit) {
+        this runs {
+            func(it)
+            1
+        }
+    }
+
     inline fun <reified ARG : Any> RequiredArgumentBuilder<SRC, ARG>.block(crossinline func: (it: ARG) -> Command<SRC>) {
         this runs Command {
             val gotArg = it.getArgument(this.name, ARG::class.java)
@@ -161,3 +176,4 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
     }
 
 }
+

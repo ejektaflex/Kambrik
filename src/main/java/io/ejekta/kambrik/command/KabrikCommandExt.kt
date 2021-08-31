@@ -5,6 +5,7 @@ import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.Message
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
@@ -18,6 +19,7 @@ import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 
 typealias ArgDsl<S, T> = KambrikArgBuilder<S, T>.() -> Unit
+typealias ArgDslTyped<S, A> = KambrikArgBuilder<S, RequiredArgumentBuilder<S, A>>.(it: CommandContext<S>.() -> A) -> Unit
 
 fun CommandDispatcher<ServerCommandSource>.addCommand(
     baseCommandName: String,
@@ -53,6 +55,24 @@ inline fun <SRC : CommandSource, reified ARG_A : Any, reified ARG_B : Any> Kambr
         func(it, gotArgA, gotArgB)
     }
 }
+
+/*
+inline fun <SRC : CommandSource, reified ARG, REQ : RequiredArgumentBuilder<SRC, ARG>> KambrikArgBuilder<SRC, REQ>.argFunc(): CommandContext<SRC>.() -> ARG {
+    return {
+        getArgument(this@argFunc.arg.name, ARG::class.java)
+    }
+}
+
+ */
+
+//*
+inline fun <SRC, REQ : RequiredArgumentBuilder<SRC, ARG>, reified ARG> KambrikArgBuilder<SRC, REQ>.argFunc(): CommandContext<SRC>.() -> ARG {
+    return {
+        getArgument(this@argFunc.arg.name, ARG::class.java)
+    }
+}
+
+ //*/
 
 fun playerCommand(player: CommandContext<ServerCommandSource>.(player: ServerPlayerEntity) -> Int): PlayerCommand {
     return PlayerCommand(player)
