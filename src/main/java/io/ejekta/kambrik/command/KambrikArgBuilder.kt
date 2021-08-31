@@ -145,6 +145,15 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
         }
     }
 
+    inline fun <reified ARG : Any> RequiredArgumentBuilder<SRC, ARG>.block(crossinline func: (it: ARG) -> Command<SRC>) {
+        this runs Command {
+            val gotArg = it.getArgument(this.name, ARG::class.java)
+            func(gotArg).run(it)
+            1
+        }
+    }
+
+
     override fun getThis(): KambrikArgBuilder<SRC, A> = this
 
     override fun build(): CommandNode<SRC> {

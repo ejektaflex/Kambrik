@@ -1,10 +1,12 @@
 package io.ejekta.kambrik.command
 
+import com.mojang.brigadier.Command
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.Message
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionProvider
 import io.ejekta.kambrik.Kambrik
@@ -37,6 +39,18 @@ fun <SRC : CommandSource> KambrikArgBuilder<SRC, *>.suggestionListTooltipped(fun
             builder.suggest(item, msg)
         }
         builder.buildFuture()
+    }
+}
+
+inline fun <SRC : CommandSource, reified ARG_A : Any, reified ARG_B : Any> KambrikArgBuilder<SRC, *>.runArgs(
+    argB: KambrikArgBuilder<SRC, RequiredArgumentBuilder<SRC, ARG_B>>,
+    argA: KambrikArgBuilder<SRC, RequiredArgumentBuilder<SRC, ARG_A>>,
+    crossinline func: (ctx: CommandContext<SRC>, a: ARG_A, b: ARG_B) -> Int
+) {
+    this runs Command {
+        val gotArgA = it.getArgument(argA.arg.name, ARG_A::class.java)
+        val gotArgB = it.getArgument(argB.arg.name, ARG_B::class.java)
+        func(it, gotArgA, gotArgB)
     }
 }
 

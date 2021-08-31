@@ -6,27 +6,19 @@ import com.mojang.brigadier.arguments.BoolArgumentType.getBool
 import com.mojang.brigadier.arguments.StringArgumentType.getString
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import io.ejekta.kambrik.Kambrik
-import io.ejekta.kambrik.command.KambrikArgBuilder
-import io.ejekta.kambrik.command.addCommand
-import io.ejekta.kambrik.command.suggestionList
+import io.ejekta.kambrik.command.*
 import io.ejekta.kambrik.logging.KambrikMarkers
 import io.ejekta.kambrik.ext.identifier
 import io.ejekta.kambrik.internal.testing.TestMsg
-import io.ejekta.kambrik.serial.serializers.TextSerializer
 import io.ejekta.kambrik.text.sendError
 import io.ejekta.kambrik.text.sendFeedback
 import io.ejekta.kambrik.text.textLiteral
-import io.ejekta.kambrikx.data.config.ConfigDataRegistrar
-import io.ejekta.kambrikx.data.configData
-import io.ejekta.kambrikx.data.serverData
-import kotlinx.serialization.encodeToString
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.command.argument.IdentifierArgumentType.getIdentifier
 import net.minecraft.item.Items
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.tag.*
-import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
@@ -90,6 +82,31 @@ internal object KambrikCommands : CommandRegistrationCallback {
                     "text" runs text()
 
                     argInt("num", 5..10).runsArg(::testInlined)
+
+
+                    // Old code
+                    "give_me" {
+                        argString("fruit") {
+                            argInt("amount") runs {
+                                val fruit = it.getString("fruit")
+                                val amount = it.getInt("amount")
+                                println("I got $amount of $fruit!")
+                                1
+                            }
+                        }
+                    }
+
+                    // New code, is type safe and removes need for `getX` methods inside of command
+                    "gimme" {
+                        argString("fruit") fruit@{
+                            argInt("amount") amount@{
+                                runArgs(this@amount, this@fruit) { ctx, fruit, amount ->
+                                    println("I got $amount of $fruit!")
+                                    1
+                                }
+                            }
+                        }
+                    }
 
 
                 }
