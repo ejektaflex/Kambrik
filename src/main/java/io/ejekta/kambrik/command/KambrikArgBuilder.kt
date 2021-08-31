@@ -16,6 +16,7 @@ import net.minecraft.command.argument.BlockPosArgumentType
 import net.minecraft.command.argument.ColorArgumentType
 import net.minecraft.command.argument.IdentifierArgumentType.identifier
 import net.minecraft.command.argument.PosArgument
+import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 
@@ -116,32 +117,27 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
         return KambrikArgBuilder(arg.executes(command) as A)
     }
 
-    /**
-     * Specifies a command to execute when the string literal is called.
-     */
-    infix fun String.runs(cmd: CommandContext<SRC>.() -> Unit) {
-        this {
-            executes {
-                cmd(it)
-                1
-            }
-        }
-    }
-
-    infix fun String.runs(cmd: Command<SRC>) {
-        this {
-            executes(cmd)
-        }
+    fun executes(kCommand: KCommand<SRC>) {
+        executes(Command<SRC> {
+            kCommand(it)
+            1
+        })
     }
 
     // Alternate shortcuts for `runs`.
 
-    infix fun runs(cmd: CommandContext<SRC>.() -> Unit) {
-        this.executes {
-            cmd(it)
-            1
-        }
-    }
+    /**
+     * Specifies a command to execute when the string literal is called.
+     */
+    infix fun String.runs(kcmd: KCommand<SRC>) = this { executes(kcmd) }
+    infix fun String.runs(cmd: Command<SRC>) = this { executes(cmd) }
+
+    // this runs
+
+    infix fun runs(cmd: KCommand<SRC>) = executes(cmd)
+    infix fun runs(cmd: Command<SRC>) = executes(cmd)
+
+    // Required Args runs
 
     inline infix fun <reified ARG> RequiredArgumentBuilder<SRC, ARG>.runs(noinline cmd: CommandContext<SRC>.(it: CommandContext<SRC>.() -> ARG) -> Unit) {
         val runContext: CommandContext<SRC>.() -> ARG = {
@@ -154,9 +150,24 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
         }
     }
 
-    infix fun LiteralArgumentBuilder<SRC>.runs(cmd: Command<SRC>) {
-        this@runs.executes(cmd)
+    inline infix fun <reified ARG> RequiredArgumentBuilder<SRC, ARG>.runs(cmd: Command<SRC>) {
+        executes(cmd)
     }
+
+    // Literal Args runs
+
+    infix fun LiteralArgumentBuilder<SRC>.runs(kcmd: KCommand<SRC>) {
+        executes {
+            kcmd(it)
+            1
+        }
+    }
+
+    infix fun LiteralArgumentBuilder<SRC>.runs(cmd: Command<SRC>) {
+        executes(cmd)
+    }
+
+    // Misc builder methods
 
     override fun getThis(): KambrikArgBuilder<SRC, A> = this
 

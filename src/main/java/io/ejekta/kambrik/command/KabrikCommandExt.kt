@@ -20,14 +20,17 @@ import net.minecraft.server.network.ServerPlayerEntity
 
 typealias ArgDsl<S, T> = KambrikArgBuilder<S, T>.() -> Unit
 typealias ArgDslTyped<S, A> = KambrikArgBuilder<S, RequiredArgumentBuilder<S, A>>.(it: CommandContext<S>.() -> A) -> Unit
-typealias KCommandContext<SRC> = CommandContext<SRC>.() -> Unit
+typealias KCommand<SRC> = CommandContext<SRC>.() -> Unit // non-int return type command
 
+// Command registration shortcut
 fun CommandDispatcher<ServerCommandSource>.addCommand(
     baseCommandName: String,
     func: ArgDsl<ServerCommandSource, LiteralArgumentBuilder<ServerCommandSource>>
 ) {
     Kambrik.Command.addSourcedCommand(baseCommandName, this, func)
 }
+
+// Suggestion list providers
 
 fun <SRC : CommandSource> KambrikArgBuilder<SRC, *>.suggestionList(func: () -> List<Any>): SuggestionProvider<SRC> {
     return SuggestionProvider<SRC> { context, builder ->
@@ -45,13 +48,15 @@ fun <SRC : CommandSource> KambrikArgBuilder<SRC, *>.suggestionListTooltipped(fun
     }
 }
 
-fun playerCommand(player: CommandContext<ServerCommandSource>.(player: ServerPlayerEntity) -> Int): PlayerCommand {
-    return PlayerCommand(player)
+/* Creates a non-int return type command */
+fun <SRC : CommandSource> kambrikCommand(func: KCommand<SRC>): Command<SRC> {
+    return Command<SRC> {
+        it.func()
+        1
+    }
 }
 
-// Simple contextual arg getters
-fun <SRC : CommandSource> CommandContext<SRC>.getString(name: String): String = StringArgumentType.getString(this, name)
-fun <SRC : CommandSource> CommandContext<SRC>.getInt(name: String): Int = IntegerArgumentType.getInteger(this, name)
+/* Shortcuts for requirements */
 
 fun KambrikArgBuilder<ServerCommandSource, *>.requiresCreative() {
     requires { it.entity is PlayerEntity && it.player.isCreative }
@@ -65,10 +70,4 @@ fun KambrikArgBuilder<ServerCommandSource, *>.requiresCreativeOrOp(opLevel: Int 
     requires { (it.entity is PlayerEntity && it.player.isCreative) || it.hasPermissionLevel(opLevel) }
 }
 
-fun <SRC : CommandSource> kambrikCommand(func: CommandContext<SRC>.() -> Unit): Command<SRC> {
-    return Command<SRC> {
-        it.func()
-        1
-    }
-}
 
