@@ -2,6 +2,8 @@ package io.ejekta.kambrik.command
 
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.arguments.ArgumentType
+import com.mojang.brigadier.arguments.BoolArgumentType.bool
+import com.mojang.brigadier.arguments.FloatArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType.integer
 import com.mojang.brigadier.arguments.StringArgumentType.string
 import com.mojang.brigadier.builder.ArgumentBuilder
@@ -10,7 +12,11 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionProvider
 import com.mojang.brigadier.tree.CommandNode
+import net.minecraft.command.argument.BlockPosArgumentType
+import net.minecraft.command.argument.ColorArgumentType
 import net.minecraft.command.argument.IdentifierArgumentType.identifier
+import net.minecraft.command.argument.PosArgument
+import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 
 /**
@@ -60,25 +66,22 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
         subArgs.add(req)
         return req.arg
     }
-
-    /*
     fun argBlockPos(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, PosArgument> = {}
     ) = argument(BlockPosArgumentType.blockPos(), word, items, func)
 
     fun argBool(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, Boolean>> = {}
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, Boolean> = {}
     ) = argument(bool(), word, items, func)
 
     fun argColor(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, Formatting>> = {}
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, Formatting> = {}
     ) = argument(ColorArgumentType.color(), word, items, func)
 
     fun argFloat(
         word: String, range: ClosedFloatingPointRange<Float>? = null,
-        items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, Float>> = {}
+        items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, Float> = {}
     ) = argument(if (range != null) FloatArgumentType.floatArg(range.start, range.endInclusive) else FloatArgumentType.floatArg(), word, items, func)
-    */
 
     fun argIdentifier(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, Identifier> = {}
@@ -118,10 +121,16 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
      */
     infix fun String.runs(cmd: CommandContext<SRC>.() -> Unit) {
         this {
-            this.executes {
+            executes {
                 cmd(it)
                 1
             }
+        }
+    }
+
+    infix fun String.runs(cmd: Command<SRC>) {
+        this {
+            executes(cmd)
         }
     }
 

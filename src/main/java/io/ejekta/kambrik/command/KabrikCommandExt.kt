@@ -65,3 +65,10 @@ fun KambrikArgBuilder<ServerCommandSource, *>.requiresCreativeOrOp(opLevel: Int 
     requires { (it.entity is PlayerEntity && it.player.isCreative) || it.hasPermissionLevel(opLevel) }
 }
 
+fun <SRC : CommandSource> kambrikCommand(func: CommandContext<SRC>.() -> Unit): Command<SRC> {
+    return Command<SRC> {
+        it.func()
+        1
+    }
+}
+

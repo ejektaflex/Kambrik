@@ -19,9 +19,7 @@ class PlayerCommand(val func: CommandContext<ServerCommandSource>.(player: Serve
     override fun run(ctx: CommandContext<ServerCommandSource>): Int {
         val from = ctx.source.entity
         if (ctx.source !is ServerCommandSource) { // TODO reference player
-            ctx.source.sendError {
-                +textLiteral("Only Players can send Player commands.")
-            }
+            ctx.source.sendError("Only Players can send Player commands.")
         }
         return func(ctx, ctx.source.player)
     }

@@ -3,6 +3,7 @@ package io.ejekta.kambrik.internal
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.mojang.brigadier.context.CommandContext
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.command.*
 import io.ejekta.kambrik.logging.KambrikMarkers
@@ -27,12 +28,9 @@ internal object KambrikCommands : CommandRegistrationCallback {
             "logging" {
                 "markers" {
                     val currMarkers = suggestionList { KambrikMarkers.Registry.map { "\"" + it.key + "\"" }.sorted() }
-                    argString("marker", items = currMarkers) {
+                    argString("marker", items = currMarkers) { marker ->
                         "set" {
-                            /*
-                            argBool("enabled") runs {
-                                val marker = getString(it, "marker")
-                                val enabled = getBool(it, "enabled")
+                            argBool("enabled") runs { enabled ->
                                 /*
                                 KambrikMod.config.edit {
                                     if (enabled == KambrikMarkers.Registry[marker]) {
@@ -44,23 +42,17 @@ internal object KambrikCommands : CommandRegistrationCallback {
 
                                  */
                                 KambrikMod.configureLoggerFilters()
-                                1
                             }
-
-                             */
                         }
                     }
                 }
-
             }
 
             "dump" {
                 "registry" {
-                    val dumpables = suggestionList {
-                        Registry.REGISTRIES.toList().map { it.key.value }
-                    }
+                    val dumpables = suggestionList { Registry.REGISTRIES.toList().map { it.key.value } }
                     argIdentifier("dump_what", items = dumpables) runs { what ->
-                        apply(dumpRegistry(what()))
+                        dumpRegistry(what()).run(this)
                     }
                 }
 
@@ -80,24 +72,8 @@ internal object KambrikCommands : CommandRegistrationCallback {
                         Kambrik.Logger.info(KambrikMarkers.Rendering, "Hello! Rendering")
                         1
                     }
-                    //this runs test()
+                    "test" runs test()
                     "text" runs text()
-
-
-
-                    // Old code
-                    "give_me" {
-                        argString("fruit") { fruit ->
-                            argInt("amount") runs { amount ->
-                                println("I got ${amount()} of ${fruit()}!")
-                            }
-                        }
-                        "liberty" runs {
-                            println("Or give me death?")
-                        }
-                    }
-
-
                 }
             }
 
@@ -110,41 +86,30 @@ internal object KambrikCommands : CommandRegistrationCallback {
         inTags: () -> Map<Identifier, Tag<T>>,
         idGetter: (T) -> R
     ) {
-        executes {
-            dumpTagListing(inTags(), idGetter).run(it)
-        }
-        /*
-        argIdentifier("tag_id", items = suggestionList { inTags().keys.toList() }) {
-            executes {
-                val computedTags = inTags()
-                var results = 0
-                val queryId = getIdentifier(it, "tag_id")
-                val foundItem = computedTags.keys.find { id -> id == queryId }
-                if (foundItem == null) {
-                    it.source.sendError { +"Tag does not exist." }
-                } else {
-                    dumpTagListing(computedTags.filter { entry -> entry.key == queryId }, idGetter).run(it)
-                    results = computedTags.size
-                }
+        this runs { dumpTagListing(inTags(), idGetter).run(this) }
 
-                results
+        argIdentifier("tag_id", items = suggestionList { inTags().keys.toList() }) runs { tagId ->
+            val computedTags = inTags()
+            val foundItem = computedTags.keys.find { id -> id == tagId() }
+            if (foundItem == null) {
+                source.sendError("Tag does not exist.")
+            } else {
+                dumpTagListing(computedTags.filter { entry -> entry.key == tagId() }, idGetter).run(this)
             }
         }
-         */
+
     }
 
-    private fun <T, R : Comparable<R>> dumpTagListing(inTags: Map<Identifier, Tag<T>>, idGetter: (T) -> R) = Command<ServerCommandSource> {
+    private fun <T, R : Comparable<R>> dumpTagListing(inTags: Map<Identifier, Tag<T>>, idGetter: (T) -> R) = kambrikCommand<ServerCommandSource> {
         for ((id, tag) in inTags.toSortedMap { a, b -> a.compareTo(b) }) {
             Kambrik.Logger.info("[TAG] $id")
             for (item in tag.values().sortedBy(idGetter)) {
                 Kambrik.Logger.info("  * [ID] ${idGetter(item)}")
             }
         }
-        1
     }
 
-
-    private fun dumpRegistry(what: Identifier): KCommandContext<ServerCommandSource> = {
+    private fun dumpRegistry(what: Identifier) = kambrikCommand<ServerCommandSource> {
         if (Registry.REGISTRIES.containsId(what)) {
             val reg = Registry.REGISTRIES[what]!!
             Kambrik.Logger.info("Contents of registry '$what':")
@@ -158,44 +123,27 @@ internal object KambrikCommands : CommandRegistrationCallback {
     }
 
 
-    private fun test() = Command<ServerCommandSource> {
+    private fun test() = kambrikCommand<ServerCommandSource> {
         try {
-
             TestMsg(
                 Items.BUCKET
-            ).sendToClient(it.source.player)
-
+            ).sendToClient(source.player)
         } catch (e: Exception) {
             Kambrik.Logger.error(e)
             e.stackTrace.forEach { element ->
                 Kambrik.Logger.error(element)
             }
         }
-
-        1
     }
 
-
-
-    private fun text(): KCommandContext<ServerCommandSource> = {
-
+    private fun text() = kambrikCommand<ServerCommandSource> {
         val test = textLiteral("Hello World!") {
             onHoverShowText {
                 +Formatting.ITALIC
                 +textLiteral("How are you?")
             }
         }
-
         source.sendFeedback(test, false)
-
-        println(test)
-        println(test.string)
     }
-
-    private fun testInlined(num: Int) = Command<ServerCommandSource> {
-        println("NUM!: $num")
-        1
-    }
-
 
 }
