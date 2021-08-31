@@ -4,6 +4,7 @@ import com.mojang.brigadier.Command
 import com.mojang.brigadier.context.CommandContext
 import io.ejekta.kambrik.text.sendError
 import io.ejekta.kambrik.text.textLiteral
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 
@@ -17,7 +18,7 @@ class PlayerCommand(val func: CommandContext<ServerCommandSource>.(player: Serve
 
     override fun run(ctx: CommandContext<ServerCommandSource>): Int {
         val from = ctx.source.entity
-        if (from !is ServerCommandSource) {
+        if (ctx.source !is ServerCommandSource) { // TODO reference player
             ctx.source.sendError {
                 +textLiteral("Only Players can send Player commands.")
             }

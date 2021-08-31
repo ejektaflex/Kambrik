@@ -56,7 +56,6 @@ fun KambrikArgBuilder<ServerCommandSource, *>.requiresOp(opLevel: Int = 4) {
     requires { it.hasPermissionLevel(opLevel) }
 }
 
-
 fun KambrikArgBuilder<ServerCommandSource, *>.requiresCreativeOrOp(opLevel: Int = 4) {
     requires { (it.entity is PlayerEntity && it.player.isCreative) || it.hasPermissionLevel(opLevel) }
 }

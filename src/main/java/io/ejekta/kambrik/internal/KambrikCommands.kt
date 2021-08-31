@@ -88,6 +88,10 @@ internal object KambrikCommands : CommandRegistrationCallback {
                     }
                     this runs test()
                     "text" runs text()
+
+                    argInt("num", 5..10).runsArg(::testInlined)
+
+
                 }
             }
 
@@ -184,6 +188,11 @@ internal object KambrikCommands : CommandRegistrationCallback {
         println(test)
         println(test.string)
 
+        1
+    }
+
+    private fun testInlined(num: Int) = Command<ServerCommandSource> {
+        println("NUM!: $num")
         1
     }
 
