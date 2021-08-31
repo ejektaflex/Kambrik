@@ -31,17 +31,7 @@ internal object KambrikCommands : CommandRegistrationCallback {
                     argString("marker", items = currMarkers) { marker ->
                         "set" {
                             argBool("enabled") runs { enabled ->
-                                /*
-                                KambrikMod.config.edit {
-                                    if (enabled == KambrikMarkers.Registry[marker]) {
-                                        markers.remove(marker)
-                                    } else {
-                                        markers[marker] = enabled
-                                    }
-                                }
-
-                                 */
-                                KambrikMod.configureLoggerFilters()
+                                configureLoggers(marker(), enabled()).run(this)
                             }
                         }
                     }
@@ -67,19 +57,25 @@ internal object KambrikCommands : CommandRegistrationCallback {
 
             if (FabricLoader.getInstance().isDevelopmentEnvironment) {
                 "test" {
-                    "output" runs {
-                        Kambrik.Logger.info(KambrikMarkers.General, "Hello! General")
-                        Kambrik.Logger.info(KambrikMarkers.Rendering, "Hello! Rendering")
-                        1
-                    }
-                    "test" runs test()
                     "text" runs text()
                 }
             }
-
         }
 
 
+    }
+
+    private fun configureLoggers(marker: String, enabled: Boolean) = kambrikCommand<ServerCommandSource> {
+        /*
+        KambrikMod.config.edit {
+            if (enabled == KambrikMarkers.Registry[marker]) {
+                markers.remove(marker)
+            } else {
+                markers[marker] = enabled
+            }
+        }
+         */
+        KambrikMod.configureLoggerFilters()
     }
 
     private fun <T, R : Comparable<R>> KambrikArgBuilder<ServerCommandSource, LiteralArgumentBuilder<ServerCommandSource>>.tagQueryDump(
@@ -119,20 +115,6 @@ internal object KambrikCommands : CommandRegistrationCallback {
             source.sendFeedback("Dumped contents of '$what' to log.")
         } else {
             source.sendError("There is no registry with that name.")
-        }
-    }
-
-
-    private fun test() = kambrikCommand<ServerCommandSource> {
-        try {
-            TestMsg(
-                Items.BUCKET
-            ).sendToClient(source.player)
-        } catch (e: Exception) {
-            Kambrik.Logger.error(e)
-            e.stackTrace.forEach { element ->
-                Kambrik.Logger.error(element)
-            }
         }
     }
 
