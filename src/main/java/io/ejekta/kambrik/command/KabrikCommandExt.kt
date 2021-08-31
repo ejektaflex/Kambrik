@@ -20,6 +20,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 
 typealias ArgDsl<S, T> = KambrikArgBuilder<S, T>.() -> Unit
 typealias ArgDslTyped<S, A> = KambrikArgBuilder<S, RequiredArgumentBuilder<S, A>>.(it: CommandContext<S>.() -> A) -> Unit
+typealias KCommandContext<SRC> = CommandContext<SRC>.() -> Unit
 
 fun CommandDispatcher<ServerCommandSource>.addCommand(
     baseCommandName: String,
@@ -43,36 +44,6 @@ fun <SRC : CommandSource> KambrikArgBuilder<SRC, *>.suggestionListTooltipped(fun
         builder.buildFuture()
     }
 }
-
-inline fun <SRC : CommandSource, reified ARG_A : Any, reified ARG_B : Any> KambrikArgBuilder<SRC, *>.runArgs(
-    argB: KambrikArgBuilder<SRC, RequiredArgumentBuilder<SRC, ARG_B>>,
-    argA: KambrikArgBuilder<SRC, RequiredArgumentBuilder<SRC, ARG_A>>,
-    crossinline func: (ctx: CommandContext<SRC>, a: ARG_A, b: ARG_B) -> Int
-) {
-    this runs Command {
-        val gotArgA = it.getArgument(argA.arg.name, ARG_A::class.java)
-        val gotArgB = it.getArgument(argB.arg.name, ARG_B::class.java)
-        func(it, gotArgA, gotArgB)
-    }
-}
-
-/*
-inline fun <SRC : CommandSource, reified ARG, REQ : RequiredArgumentBuilder<SRC, ARG>> KambrikArgBuilder<SRC, REQ>.argFunc(): CommandContext<SRC>.() -> ARG {
-    return {
-        getArgument(this@argFunc.arg.name, ARG::class.java)
-    }
-}
-
- */
-
-//*
-inline fun <SRC, REQ : RequiredArgumentBuilder<SRC, ARG>, reified ARG> KambrikArgBuilder<SRC, REQ>.argFunc(): CommandContext<SRC>.() -> ARG {
-    return {
-        getArgument(this@argFunc.arg.name, ARG::class.java)
-    }
-}
-
- //*/
 
 fun playerCommand(player: CommandContext<ServerCommandSource>.(player: ServerPlayerEntity) -> Int): PlayerCommand {
     return PlayerCommand(player)

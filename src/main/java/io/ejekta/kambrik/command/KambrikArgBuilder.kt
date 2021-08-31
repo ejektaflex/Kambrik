@@ -2,8 +2,6 @@ package io.ejekta.kambrik.command
 
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.arguments.ArgumentType
-import com.mojang.brigadier.arguments.BoolArgumentType.bool
-import com.mojang.brigadier.arguments.FloatArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType.integer
 import com.mojang.brigadier.arguments.StringArgumentType.string
 import com.mojang.brigadier.builder.ArgumentBuilder
@@ -12,17 +10,8 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionProvider
 import com.mojang.brigadier.tree.CommandNode
-import net.minecraft.command.argument.BlockPosArgumentType
-import net.minecraft.command.argument.ColorArgumentType
 import net.minecraft.command.argument.IdentifierArgumentType.identifier
-import net.minecraft.command.argument.NumberRangeArgumentType.intRange
-import net.minecraft.command.argument.PosArgument
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.predicate.NumberRange
-import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
-import io.ejekta.kambrik.command.argFunc
 
 /**
  * Nearly the entirety of Kambrik's Command DSL
@@ -60,7 +49,7 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
         func: ArgDslTyped<SRC, ARG> = {}
     ): RequiredArgumentBuilder<SRC, ARG> {
         val req = KambrikArgBuilder<SRC, RequiredArgumentBuilder<SRC, ARG>>(RequiredArgumentBuilder.argument(word, type)).apply {
-            func(argFunc())
+            func { getArgument(this@apply.arg.name, ARG::class.java) }
         }
 
         items?.let {
@@ -89,11 +78,11 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
         word: String, range: ClosedFloatingPointRange<Float>? = null,
         items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, Float>> = {}
     ) = argument(if (range != null) FloatArgumentType.floatArg(range.start, range.endInclusive) else FloatArgumentType.floatArg(), word, items, func)
+    */
 
     fun argIdentifier(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, Identifier>> = {}
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, Identifier> = {}
     ) = argument(identifier(), word, items, func)
-    */
 
     fun argInt(
         word: String, range: IntRange? = null,
@@ -127,47 +116,38 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
     /**
      * Specifies a command to execute when the string literal is called.
      */
-    infix fun String.runs(cmd: Command<SRC>) {
-        this { this.executes(cmd) }
+    infix fun String.runs(cmd: CommandContext<SRC>.() -> Unit) {
+        this {
+            this.executes {
+                cmd(it)
+                1
+            }
+        }
     }
 
     // Alternate shortcuts for `runs`.
 
-    infix fun runs(cmd: Command<SRC>) {
-        executes(cmd)
+    infix fun runs(cmd: CommandContext<SRC>.() -> Unit) {
+        this.executes {
+            cmd(it)
+            1
+        }
     }
 
-    infix fun RequiredArgumentBuilder<SRC, *>.runs(cmd: Command<SRC>) {
-        this@runs.executes(cmd)
+    inline infix fun <reified ARG> RequiredArgumentBuilder<SRC, ARG>.runs(noinline cmd: CommandContext<SRC>.(it: CommandContext<SRC>.() -> ARG) -> Unit) {
+        val runContext: CommandContext<SRC>.() -> ARG = {
+            getArgument(name, ARG::class.java)
+        }
+
+        executes {
+            it.cmd(runContext)
+            1
+        }
     }
 
     infix fun LiteralArgumentBuilder<SRC>.runs(cmd: Command<SRC>) {
         this@runs.executes(cmd)
     }
-
-    inline fun <reified ARG : Any> RequiredArgumentBuilder<SRC, ARG>.runsArg(crossinline func: (it: ARG) -> Command<SRC>) {
-        this runs Command {
-            val gotArg = it.getArgument(this.name, ARG::class.java)
-            func(gotArg).run(it)
-            1
-        }
-    }
-
-    infix fun runsInContext(func: CommandContext<SRC>.() -> Unit) {
-        this runs {
-            func(it)
-            1
-        }
-    }
-
-    inline fun <reified ARG : Any> RequiredArgumentBuilder<SRC, ARG>.block(crossinline func: (it: ARG) -> Command<SRC>) {
-        this runs Command {
-            val gotArg = it.getArgument(this.name, ARG::class.java)
-            func(gotArg).run(it)
-            1
-        }
-    }
-
 
     override fun getThis(): KambrikArgBuilder<SRC, A> = this
 

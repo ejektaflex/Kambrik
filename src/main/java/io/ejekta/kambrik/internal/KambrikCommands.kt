@@ -2,8 +2,6 @@ package io.ejekta.kambrik.internal
 
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.CommandDispatcher
-import com.mojang.brigadier.arguments.BoolArgumentType.getBool
-import com.mojang.brigadier.arguments.StringArgumentType.getString
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.command.*
@@ -15,7 +13,6 @@ import io.ejekta.kambrik.text.sendFeedback
 import io.ejekta.kambrik.text.textLiteral
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.command.argument.IdentifierArgumentType.getIdentifier
 import net.minecraft.item.Items
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.tag.*
@@ -62,7 +59,9 @@ internal object KambrikCommands : CommandRegistrationCallback {
                     val dumpables = suggestionList {
                         Registry.REGISTRIES.toList().map { it.key.value }
                     }
-                    //argIdentifier("dump_what", items = dumpables) runs dumpRegistry()
+                    argIdentifier("dump_what", items = dumpables) runs { what ->
+                        apply(dumpRegistry(what()))
+                    }
                 }
 
                 "tags" {
@@ -81,35 +80,22 @@ internal object KambrikCommands : CommandRegistrationCallback {
                         Kambrik.Logger.info(KambrikMarkers.Rendering, "Hello! Rendering")
                         1
                     }
-                    this runs test()
+                    //this runs test()
                     "text" runs text()
 
-                    argInt("num", 5..10).runsArg(::testInlined)
 
 
                     // Old code
                     "give_me" {
-                        argString("fruit") {
-                            argInt("amount") runs {
-                                val fruit = it.getString("fruit")
-                                val amount = it.getInt("amount")
-                                println("I got $amount of $fruit!")
-                                1
+                        argString("fruit") { fruit ->
+                            argInt("amount") runs { amount ->
+                                println("I got ${amount()} of ${fruit()}!")
                             }
                         }
+                        "liberty" runs {
+                            println("Or give me death?")
+                        }
                     }
-
-                    // New code, is type safe and removes need for `getX` methods inside of command
-"gimme" {
-    argString("fruit") { fruit ->
-        argInt("amount") { amt ->
-            this runs {
-                println("You got ${it.amt()} of ${it.fruit()}!")
-                1
-            }
-        }
-    }
-}
 
 
                 }
@@ -158,22 +144,17 @@ internal object KambrikCommands : CommandRegistrationCallback {
     }
 
 
-    private fun dumpRegistry() = Command<ServerCommandSource> {
-
-        val what = getIdentifier(it, "dump_what")
-
+    private fun dumpRegistry(what: Identifier): KCommandContext<ServerCommandSource> = {
         if (Registry.REGISTRIES.containsId(what)) {
             val reg = Registry.REGISTRIES[what]!!
             Kambrik.Logger.info("Contents of registry '$what':")
             reg.ids.forEach { id ->
                 Kambrik.Logger.info("  * [ID] $id")
             }
-            it.source.sendFeedback { +"Dumped contents of '$what' to log." }
+            source.sendFeedback("Dumped contents of '$what' to log.")
         } else {
-            it.source.sendError { +"There is no registry with that name." }
+            source.sendError("There is no registry with that name.")
         }
-
-        1
     }
 
 
@@ -196,9 +177,7 @@ internal object KambrikCommands : CommandRegistrationCallback {
 
 
 
-    private fun text() = Command<ServerCommandSource> {
-
-        getString(it, "a")
+    private fun text(): KCommandContext<ServerCommandSource> = {
 
         val test = textLiteral("Hello World!") {
             onHoverShowText {
@@ -207,12 +186,10 @@ internal object KambrikCommands : CommandRegistrationCallback {
             }
         }
 
-        it.source.sendFeedback(test, false)
+        source.sendFeedback(test, false)
 
         println(test)
         println(test.string)
-
-        1
     }
 
     private fun testInlined(num: Int) = Command<ServerCommandSource> {
