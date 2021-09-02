@@ -5,6 +5,7 @@ import net.minecraft.network.MessageType
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
+import net.minecraft.util.Formatting
 import net.minecraft.util.Util
 
 fun ServerCommandSource.sendError(literal: String, text: KambrikTextBuilder<LiteralText>.() -> Unit = {}) {
@@ -19,6 +20,12 @@ fun MinecraftServer.broadcastChatMessage(messageType: MessageType = MessageType.
     playerManager.broadcastChatMessage(textLiteral("", text), messageType, Util.NIL_UUID)
 }
 
-fun PlayerEntity.sendMessage(literal: String = "", actionBar: Boolean = false, text: KambrikTextBuilder<LiteralText>.() -> Unit = {}) {
-    sendMessage(textLiteral(literal, text), actionBar)
+fun PlayerEntity.sendMessage(literal: String = "", vararg formats: Formatting, actionBar: Boolean = false, text: KambrikTextBuilder<LiteralText>.() -> Unit = {}) {
+    sendMessage(
+        textLiteral(literal) {
+            format(*formats)
+            apply(text)
+        },
+        actionBar
+    )
 }
