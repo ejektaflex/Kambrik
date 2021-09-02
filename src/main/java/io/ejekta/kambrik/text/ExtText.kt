@@ -19,6 +19,6 @@ fun MinecraftServer.broadcastChatMessage(messageType: MessageType = MessageType.
     playerManager.broadcastChatMessage(textLiteral("", text), messageType, Util.NIL_UUID)
 }
 
-fun PlayerEntity.sendMessage(actionBar: Boolean = false, text: KambrikTextBuilder<LiteralText>.() -> Unit) {
-    sendMessage(textLiteral("", text), actionBar)
+fun PlayerEntity.sendMessage(literal: String = "", actionBar: Boolean = false, text: KambrikTextBuilder<LiteralText>.() -> Unit = {}) {
+    sendMessage(textLiteral(literal, text), actionBar)
 }

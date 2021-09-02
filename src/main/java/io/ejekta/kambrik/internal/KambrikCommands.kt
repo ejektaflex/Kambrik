@@ -58,6 +58,11 @@ internal object KambrikCommands : CommandRegistrationCallback {
             if (FabricLoader.getInstance().isDevelopmentEnvironment) {
                 "test" {
                     "text" runs text()
+                    argString("doot") { doot ->
+                        this runs {
+                            println(doot())
+                        }
+                    }
                 }
             }
         }

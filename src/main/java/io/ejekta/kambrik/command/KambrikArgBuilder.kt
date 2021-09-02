@@ -15,7 +15,9 @@ import com.mojang.brigadier.tree.CommandNode
 import net.minecraft.command.argument.BlockPosArgumentType
 import net.minecraft.command.argument.ColorArgumentType
 import net.minecraft.command.argument.IdentifierArgumentType.identifier
+import net.minecraft.command.argument.NumberRangeArgumentType.intRange
 import net.minecraft.command.argument.PosArgument
+import net.minecraft.predicate.NumberRange
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
@@ -93,11 +95,10 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
         items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, Int> = {}
     ) = argument(if (range != null) integer(range.first, range.last) else integer(), word, items, func)
 
-    /*
     fun argIntRange(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDsl<SRC, RequiredArgumentBuilder<SRC, NumberRange.IntRange>> = {}
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, NumberRange.IntRange> = {}
     ) = argument(intRange(), word, items, func)
-     */
+
 
     fun argString(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, String> = {}
@@ -132,10 +133,20 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
     infix fun String.runs(kcmd: KCommand<SRC>) = this { executes(kcmd) }
     infix fun String.runs(cmd: Command<SRC>) = this { executes(cmd) }
 
-    // this runs
+    // this runs (required and literal variants)
 
-    infix fun runs(cmd: KCommand<SRC>) = executes(cmd)
-    infix fun runs(cmd: Command<SRC>) = executes(cmd)
+    inline infix fun <reified ARG> KambrikArgBuilder<SRC, RequiredArgumentBuilder<SRC, ARG>>
+            .runs(noinline cmd: CommandContext<SRC>.(it: CommandContext<SRC>.() -> ARG) -> Unit) {
+        arg.runs(cmd)
+    }
+
+    infix fun KambrikArgBuilder<SRC, LiteralArgumentBuilder<SRC>>.runs(
+        cmd: KCommand<SRC>
+    ) {
+        arg.runs(cmd)
+    }
+
+    //infix fun runs(cmd: Command<SRC>) = executes(cmd)
 
     // Required Args runs
 
