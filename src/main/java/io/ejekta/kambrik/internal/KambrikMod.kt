@@ -1,6 +1,5 @@
 package io.ejekta.kambrik.internal
 
-import io.ejekta.kambrik.Kambrik.Logger
 import io.ejekta.kambrik.ext.fapi.toMap
 import io.ejekta.kambrikx.data.server.ServerDataRegistrar
 import io.ejekta.kambrikx.data.serverData
@@ -29,6 +28,8 @@ import org.apache.logging.log4j.core.filter.MarkerFilter
 internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
 
     const val ID = "kambrik"
+    
+    val Logger = LogManager.getLogger("Kambrik")
 
     fun idOf(unique: String) = Identifier(ID, unique)
 

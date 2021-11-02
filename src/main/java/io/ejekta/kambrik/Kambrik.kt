@@ -26,6 +26,4 @@ object Kambrik {
 
     val Input = KambrikInputApi()
 
-    internal val Logger = LogManager.getLogger("Kambrik")
-
 }

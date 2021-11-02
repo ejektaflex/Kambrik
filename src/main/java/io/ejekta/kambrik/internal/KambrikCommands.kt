@@ -25,18 +25,6 @@ internal object KambrikCommands : CommandRegistrationCallback {
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>, dedicated: Boolean) {
 
         dispatcher.addCommand(KambrikMod.ID) {
-            "logging" {
-                "markers" {
-                    val currMarkers = suggestionList { KambrikMarkers.Registry.map { "\"" + it.key + "\"" }.sorted() }
-                    argString("marker", items = currMarkers) { marker ->
-                        "set" {
-                            argBool("enabled") runs { enabled ->
-                                configureLoggers(marker(), enabled()).run(this)
-                            }
-                        }
-                    }
-                }
-            }
 
             "dump" {
                 "registry" {
@@ -70,19 +58,6 @@ internal object KambrikCommands : CommandRegistrationCallback {
 
     }
 
-    private fun configureLoggers(marker: String, enabled: Boolean) = kambrikCommand<ServerCommandSource> {
-        /*
-        KambrikMod.config.edit {
-            if (enabled == KambrikMarkers.Registry[marker]) {
-                markers.remove(marker)
-            } else {
-                markers[marker] = enabled
-            }
-        }
-         */
-        KambrikMod.configureLoggerFilters()
-    }
-
     private fun <T, R : Comparable<R>> KambrikArgBuilder<ServerCommandSource, LiteralArgumentBuilder<ServerCommandSource>>.tagQueryDump(
         inTags: () -> Map<Identifier, Tag<T>>,
         idGetter: (T) -> R
@@ -103,9 +78,9 @@ internal object KambrikCommands : CommandRegistrationCallback {
 
     private fun <T, R : Comparable<R>> dumpTagListing(inTags: Map<Identifier, Tag<T>>, idGetter: (T) -> R) = kambrikCommand<ServerCommandSource> {
         for ((id, tag) in inTags.toSortedMap { a, b -> a.compareTo(b) }) {
-            Kambrik.Logger.info("[TAG] $id")
+            KambrikMod.Logger.info("[TAG] $id")
             for (item in tag.values().sortedBy(idGetter)) {
-                Kambrik.Logger.info("  * [ID] ${idGetter(item)}")
+                KambrikMod.Logger.info("  * [ID] ${idGetter(item)}")
             }
         }
     }
@@ -113,9 +88,9 @@ internal object KambrikCommands : CommandRegistrationCallback {
     private fun dumpRegistry(what: Identifier) = kambrikCommand<ServerCommandSource> {
         if (Registry.REGISTRIES.containsId(what)) {
             val reg = Registry.REGISTRIES[what]!!
-            Kambrik.Logger.info("Contents of registry '$what':")
+            KambrikMod.Logger.info("Contents of registry '$what':")
             reg.ids.forEach { id ->
-                Kambrik.Logger.info("  * [ID] $id")
+                KambrikMod.Logger.info("  * [ID] $id")
             }
             source.sendFeedback("Dumped contents of '$what' to log.")
         } else {

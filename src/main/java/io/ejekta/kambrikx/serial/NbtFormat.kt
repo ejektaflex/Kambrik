@@ -2,6 +2,7 @@ package io.ejekta.kambrikx.serial
 
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.internal.KambrikExperimental
+import io.ejekta.kambrik.internal.KambrikMod
 import io.ejekta.kambrikx.internal.serial.decoders.TagDecoder
 import io.ejekta.kambrikx.internal.serial.decoders.TaglessDecoder
 import io.ejekta.kambrikx.internal.serial.encoders.TagEncoder
@@ -20,7 +21,7 @@ class NbtFormatConfig {
 
     //private val nbtEncodingMarker = Kambrik.Logging.createMarker(KambrikMod.idOf("nbt"))
 
-    private val logger = Kambrik.Logger
+    private val logger = KambrikMod.Logger
 
     var showDebug = false
 

@@ -1,12 +1,13 @@
 package io.ejekta.kambrik.ext.math
 
-import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Direction
-import net.minecraft.util.math.Vec3d
-import net.minecraft.util.math.Vec3i
-import kotlin.math.round
+import net.minecraft.util.math.*
+import kotlin.math.*
 
 // Operator Functions
+
+operator fun Vec3d.unaryMinus(): Vec3d {
+    return Vec3d(-x, -y, -z)
+}
 
 operator fun Vec3d.plus(other: Vec3d): Vec3d {
     return this.add(other)
@@ -34,6 +35,14 @@ fun Vec3d.toVec3i(): Vec3i {
     return Vec3i(x, y, z)
 }
 
+fun Vec3d.toBlockPos(): BlockPos {
+    return BlockPos(this)
+}
+
+fun Vec3d.toVec3f(): Vec3f {
+    return Vec3f(x.toFloat(), y.toFloat(), z.toFloat())
+}
+
 // Other Functions
 
 fun Vec3d.axisValue(axis: Direction.Axis): Double {
@@ -41,11 +50,11 @@ fun Vec3d.axisValue(axis: Direction.Axis): Double {
 }
 
 fun Vec3d.abs(): Vec3d {
-    return Vec3d(kotlin.math.abs(x), kotlin.math.abs(y), kotlin.math.abs(z))
+    return Vec3d(abs(x), abs(y), abs(z))
 }
 
 fun Vec3d.ceil(): Vec3i {
-    return BlockPos(kotlin.math.ceil(x), kotlin.math.ceil(y), kotlin.math.ceil(z))
+    return BlockPos(ceil(x), ceil(y), ceil(z))
 }
 
 fun Vec3d.floor(): Vec3i {

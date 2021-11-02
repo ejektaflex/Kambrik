@@ -1,6 +1,6 @@
 package io.ejekta.kambrik.serial
 
-import io.ejekta.kambrik.Kambrik
+import io.ejekta.kambrik.internal.KambrikMod
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.modules.SerializersModule
@@ -56,7 +56,7 @@ abstract class ItemData<T> {
         return try {
             decode(tag)
         } catch (e: SerializationException) {
-            Kambrik.Logger.error("Failed to decode leaf '$identifier' in stack $stack (type: ${stack.item::class.simpleName})")
+            KambrikMod.Logger.error("Failed to decode leaf '$identifier' in stack $stack (type: ${stack.item::class.simpleName})")
             default().also { set(stack, it) }
         }
     }

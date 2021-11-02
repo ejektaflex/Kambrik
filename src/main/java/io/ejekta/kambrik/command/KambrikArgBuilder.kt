@@ -146,9 +146,19 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
         arg.runs(cmd)
     }
 
+    infix fun KambrikArgBuilder<SRC, LiteralArgumentBuilder<SRC>>.runs(
+        cmd: Command<SRC>
+    ) {
+        arg.runs(cmd)
+    }
+
     //infix fun runs(cmd: Command<SRC>) = executes(cmd)
 
     // Required Args runs
+
+    inline fun <reified ARG> CommandContext<SRC>.argFrom(req: RequiredArgumentBuilder<SRC, ARG>): ARG {
+        return getArgument(req.name, ARG::class.java)
+    }
 
     inline infix fun <reified ARG> RequiredArgumentBuilder<SRC, ARG>.runs(noinline cmd: CommandContext<SRC>.(it: CommandContext<SRC>.() -> ARG) -> Unit) {
         val runContext: CommandContext<SRC>.() -> ARG = {

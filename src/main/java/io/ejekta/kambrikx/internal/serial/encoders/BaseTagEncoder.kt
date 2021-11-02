@@ -71,7 +71,7 @@ internal abstract class BaseTagEncoder(
     override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
         if (value is Any) {
             val open = serializer.descriptor.kind is PolymorphicKind.OPEN
-            //Kambrik.Logger.info("Ser is $serializer")
+            //KambrikMod.Logger.info("Ser is $serializer")
             val serial = when (serializer.descriptor.kind) {
                 is PolymorphicKind.OPEN -> {
                     encodePolymorphic = true

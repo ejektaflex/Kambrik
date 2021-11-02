@@ -1,8 +1,8 @@
 package io.ejekta.kambrik.internal.registration
 
-import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.ext.register
 import io.ejekta.kambrik.internal.KambrikMarker
+import io.ejekta.kambrik.internal.KambrikMod
 import io.ejekta.kambrik.registration.KambrikAutoRegistrar
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer
 import net.minecraft.util.Identifier
@@ -23,13 +23,13 @@ internal object KambrikRegistrar {
     }
 
     fun <T> register(requester: KambrikAutoRegistrar, reg: Registry<T>, itemId: String, obj: T): T {
-        Kambrik.Logger.debug("Kambrik registering '${requester::class.qualifiedName} for $itemId' for autoregistration")
+        KambrikMod.Logger.debug("Kambrik registering '${requester::class.qualifiedName} for $itemId' for autoregistration")
         this[requester].content.add(RegistrationEntry(reg, itemId, obj))
         return obj
     }
 
     fun doRegistrationFor(container: EntrypointContainer<KambrikMarker>) {
-        Kambrik.Logger.debug("Kambrik doing real registration for mod ${container.provider.metadata.id}")
+        KambrikMod.Logger.debug("Kambrik doing real registration for mod ${container.provider.metadata.id}")
         this[container.entrypoint as? KambrikAutoRegistrar ?: return].apply {
             requestor.manualRegister()
             content.forEach { entry ->

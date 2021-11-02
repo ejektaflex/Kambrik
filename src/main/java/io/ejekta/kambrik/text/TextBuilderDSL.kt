@@ -117,7 +117,7 @@ class KambrikTextBuilder<T : BaseText>(
         root.append(this)
     }
 
-    operator fun BaseText.unaryPlus() {
+    operator fun Text.unaryPlus() {
         root.append(this)
     }
 
