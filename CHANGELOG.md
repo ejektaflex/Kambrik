@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as closely as it can.
 
+## [2.1.0] for 1.17.1 - 2021-11-01
+
+### Added
+- Added some math extensions for:
+  - Vec3d
+  - Vec3i
+  - Vec3f
+  - MatrixStack
+
+### Changed
+- Command DSL API
+  - Command arguments now pass their parameter into their lambda function. When invoked in a command, the value can be retrieved.
+- Logger API
+  - Kambrik's internal logger has been moved. This should not affect anyone, but fixes (#7).
+
 ## [1.1.0] for 1.17.1 - 2021-08-28
 
 ### Added
