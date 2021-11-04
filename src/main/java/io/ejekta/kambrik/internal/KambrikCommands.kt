@@ -8,12 +8,14 @@ import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.command.*
 import io.ejekta.kambrik.logging.KambrikMarkers
 import io.ejekta.kambrik.ext.identifier
+import io.ejekta.kambrik.internal.testing.RecursiveRecipeParser
 import io.ejekta.kambrik.internal.testing.TestMsg
 import io.ejekta.kambrik.text.sendError
 import io.ejekta.kambrik.text.sendFeedback
 import io.ejekta.kambrik.text.textLiteral
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.tag.*
@@ -23,27 +25,6 @@ import net.minecraft.util.registry.Registry
 
 internal object KambrikCommands : CommandRegistrationCallback {
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>, dedicated: Boolean) {
-
-        dispatcher.addCommand("test") {
-            "count" {
-                argInt("amt") runs { amt ->
-                    for (i in 0 until amt()) {
-                        println("Counting: $i")
-                    }
-                }
-            }
-
-            "add" {
-                argInt("a") { a ->
-                    argInt("b") { b ->
-                        this runs {
-                            println(a() + b())
-                        }
-                    }
-                }
-            }
-
-        }
 
         dispatcher.addCommand(KambrikMod.ID) {
 
@@ -73,6 +54,7 @@ internal object KambrikCommands : CommandRegistrationCallback {
                         }
                     }
                 }
+                "query" runs query()
             }
         }
 
@@ -128,5 +110,30 @@ internal object KambrikCommands : CommandRegistrationCallback {
         }
         source.sendFeedback(test, false)
     }
+
+    private fun query() = kambrikServerCommand {
+
+        val parser = RecursiveRecipeParser(source.server)
+
+        parser.query(
+            ItemStack(Items.GOLD_INGOT)
+        )
+
+        for (thing in Registry.ITEM) {
+            parser.query(ItemStack(thing))
+        }
+
+        for ((k, v) in parser.visited) {
+            println("$k -")
+            for (item in v) {
+                println("\t= $item")
+            }
+        }
+
+        println("Done!")
+
+
+    }
+
 
 }

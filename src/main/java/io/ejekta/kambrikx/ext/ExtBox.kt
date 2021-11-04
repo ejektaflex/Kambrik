@@ -2,6 +2,7 @@ package io.ejekta.kambrikx.ext
 
 import io.ejekta.kambrik.ext.math.axisValue
 import io.ejekta.kambrik.ext.math.toVec3d
+import io.ejekta.kambrik.ext.toVec3d
 import io.ejekta.kambrikx.ext.vector.dirMask
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
