@@ -1,4 +1,4 @@
-package io.ejekta.kambrik.ext
+package io.ejekta.kambrik.ext.packets
 
 import net.minecraft.network.PacketByteBuf
 

@@ -48,25 +48,25 @@ class KambrikTextBuilder<T : BaseText>(
     var bold: Boolean
         get() = root.style.isBold
         set(value) {
-            format(Formatting.BOLD)
+            root.style = root.style.withBold(value)
         }
 
     var italics: Boolean
         get() = root.style.isItalic
         set(value) {
-            format(Formatting.ITALIC)
+            root.style = root.style.withItalic(value)
         }
 
     var strikeThrough: Boolean
         get() = root.style.isStrikethrough
         set(value) {
-            format(Formatting.STRIKETHROUGH)
+            root.style = root.style.withStrikethrough(value)
         }
 
     var obfuscated: Boolean
         get() = root.style.isObfuscated
         set(value) {
-            format(Formatting.OBFUSCATED)
+            root.style = root.style.obfuscated(value)
         }
 
     var color: Int
@@ -103,7 +103,7 @@ class KambrikTextBuilder<T : BaseText>(
         hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ENTITY, HoverEvent.EntityContent(entity.type, entity.uuid, entity.name))
     }
 
-    fun newLine() = textLiteral("\n")
+    fun newLine() = addLiteral("\n")
 
     operator fun T.invoke(inFunc: KambrikTextBuilder<T>.() -> Unit): KambrikTextBuilder<T> {
         return KambrikTextBuilder(this).apply(inFunc)
@@ -113,24 +113,16 @@ class KambrikTextBuilder<T : BaseText>(
         return KambrikTextBuilder(LiteralText(this)).apply(inFunc).root
     }
 
-    operator fun String.unaryPlus() {
-        root.append(this)
+    fun add(text: Text) {
+        root.append(text)
     }
 
-    operator fun Text.unaryPlus() {
-        root.append(this)
+    fun addLiteral(str: String, func: KambrikTextBuilder<LiteralText>.() -> Unit = {}) {
+        root.append(textLiteral(str, func))
     }
 
-    operator fun Formatting.unaryPlus() {
-        format(this)
-    }
-
-    operator fun ClickEvent.unaryPlus() {
-        clickEvent = this
-    }
-
-    operator fun HoverEvent.unaryPlus() {
-        hoverEvent = this
+    fun addTranslate(key: String, func: KambrikTextBuilder<TranslatableText>.() -> Unit = {}) {
+        root.append(textTranslate(key, func))
     }
 
 }
@@ -141,16 +133,16 @@ fun main() {
 
 
     val test = textLiteral("Hello ") {
-        +Formatting.GOLD; +Formatting.ITALIC
-        +"Joe" {
+        format(Formatting.GOLD, Formatting.ITALIC)
+        addLiteral("Joe") {
             color = 0x55ff33
             bold = true
             italics = true
             strikeThrough = false
             obfuscated = false
-            +Formatting.AQUA
+            format(Formatting.AQUA)
         }
-        +", how are you?"
+        addLiteral(", how are you?")
     }
 
     /*

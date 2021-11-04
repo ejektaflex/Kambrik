@@ -66,7 +66,7 @@ fun main(args: Array<String>) {
 
     //*
     val text: Text = textLiteral("Hello!") {
-        +textLiteral("What's up?")
+        addLiteral("What's up?")
     }
 
     val format = Kambrik.Serial.Format

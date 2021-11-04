@@ -99,7 +99,6 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, NumberRange.IntRange> = {}
     ) = argument(intRange(), word, items, func)
 
-
     fun argString(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, String> = {}
     ) = argument(string(), word, items, func)
@@ -111,7 +110,6 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
     operator fun String.invoke(func: ArgDsl<SRC, LiteralArgumentBuilder<SRC>>) {
         literal(this, func)
     }
-
 
     @Suppress("UNCHECKED_CAST")
     override fun executes(command: Command<SRC>?): KambrikArgBuilder<SRC, A> {

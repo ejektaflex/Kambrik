@@ -1,10 +1,8 @@
-package io.ejekta.kambrik.command.commands
+package io.ejekta.kambrik.command.types
 
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.context.CommandContext
 import io.ejekta.kambrik.text.sendError
-import io.ejekta.kambrik.text.textLiteral
-import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 

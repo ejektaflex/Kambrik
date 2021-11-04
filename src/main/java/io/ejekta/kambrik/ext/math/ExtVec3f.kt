@@ -38,18 +38,30 @@ operator fun Vec3f.times(num: Float): Vec3f {
 
 // Conversion Functions
 
+/**
+ * Converts all properties of the Vector to an array
+ */
 fun Vec3f.toArray(): FloatArray {
     return floatArrayOf(x, y, z)
 }
 
+/**
+ * Converts the Vec3f to a Vec3d
+ */
 fun Vec3f.toVec3d(): Vec3d {
     return Vec3d(this)
 }
 
+/**
+ * Converts the Vec3f to a Vec3i
+ */
 fun Vec3f.toVec3i(): Vec3i {
     return Vec3i(x.toInt(), y.toInt(), z.toInt())
 }
 
+/**
+ * Converts the Vec3f to a BlockPos
+ */
 fun Vec3f.toBlockPos(): BlockPos {
     return BlockPos(x.toInt(), y.toInt(), z.toInt())
 }

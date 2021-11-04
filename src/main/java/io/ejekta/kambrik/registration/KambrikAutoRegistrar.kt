@@ -30,7 +30,11 @@ import net.minecraft.world.gen.feature.FeatureConfig
 @Suppress("UNCHECKED_CAST")
 interface KambrikAutoRegistrar : KambrikMarker {
 
-    fun manualRegister()
+    /**
+     * Any non-automatic registration that still needs to be done can
+     * be put inside of this method, if desired.
+     */
+    fun manualRegister() {}
 
     fun <T> String.forRegistration(reg: Registry<T>, obj: T): T {
         return KambrikRegistrar.register(this@KambrikAutoRegistrar, reg, this, obj)

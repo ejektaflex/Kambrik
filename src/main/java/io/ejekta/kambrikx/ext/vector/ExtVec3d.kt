@@ -3,8 +3,7 @@ package io.ejekta.kambrikx.ext.vector
 
 import io.ejekta.kambrik.ext.math.abs
 import io.ejekta.kambrik.ext.math.axisValue
-import io.ejekta.kambrik.ext.toVec3d
-import io.ejekta.kambrik.internal.KambrikExperimental
+import io.ejekta.kambrik.ext.math.toVec3d
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
 import net.minecraft.util.math.Vec3i

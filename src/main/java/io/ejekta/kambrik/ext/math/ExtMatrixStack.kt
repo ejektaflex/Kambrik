@@ -1,6 +1,7 @@
 package io.ejekta.kambrik.ext.math
 
 import net.minecraft.client.util.math.MatrixStack
+import net.minecraft.util.math.Quaternion
 import net.minecraft.util.math.Vec3d
 import net.minecraft.util.math.Vec3f
 
@@ -17,4 +18,16 @@ fun MatrixStack.scale(vec3f: Vec3f) {
 
 fun MatrixStack.scale(amt: Float) {
     scale(amt, amt, amt)
+}
+
+operator fun MatrixStack.timesAssign(quat: Quaternion) {
+    multiply(quat)
+}
+
+operator fun MatrixStack.plusAssign(vec3d: Vec3d) {
+    translate(vec3d)
+}
+
+operator fun MatrixStack.plusAssign(vec3f: Vec3f) {
+    translate(vec3f)
 }

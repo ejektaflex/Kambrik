@@ -1,4 +1,4 @@
-package io.ejekta.kambrik.ext
+package io.ejekta.kambrik.ext.math
 
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d

@@ -24,6 +24,27 @@ import net.minecraft.util.registry.Registry
 internal object KambrikCommands : CommandRegistrationCallback {
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>, dedicated: Boolean) {
 
+        dispatcher.addCommand("test") {
+            "count" {
+                argInt("amt") runs { amt ->
+                    for (i in 0 until amt()) {
+                        println("Counting: $i")
+                    }
+                }
+            }
+
+            "add" {
+                argInt("a") { a ->
+                    argInt("b") { b ->
+                        this runs {
+                            println(a() + b())
+                        }
+                    }
+                }
+            }
+
+        }
+
         dispatcher.addCommand(KambrikMod.ID) {
 
             "dump" {
@@ -76,7 +97,7 @@ internal object KambrikCommands : CommandRegistrationCallback {
 
     }
 
-    private fun <T, R : Comparable<R>> dumpTagListing(inTags: Map<Identifier, Tag<T>>, idGetter: (T) -> R) = kambrikCommand<ServerCommandSource> {
+    private fun <T, R : Comparable<R>> dumpTagListing(inTags: Map<Identifier, Tag<T>>, idGetter: (T) -> R) = kambrikServerCommand {
         for ((id, tag) in inTags.toSortedMap { a, b -> a.compareTo(b) }) {
             KambrikMod.Logger.info("[TAG] $id")
             for (item in tag.values().sortedBy(idGetter)) {
@@ -85,7 +106,7 @@ internal object KambrikCommands : CommandRegistrationCallback {
         }
     }
 
-    private fun dumpRegistry(what: Identifier) = kambrikCommand<ServerCommandSource> {
+    private fun dumpRegistry(what: Identifier) = kambrikServerCommand {
         if (Registry.REGISTRIES.containsId(what)) {
             val reg = Registry.REGISTRIES[what]!!
             KambrikMod.Logger.info("Contents of registry '$what':")
@@ -98,11 +119,11 @@ internal object KambrikCommands : CommandRegistrationCallback {
         }
     }
 
-    private fun text() = kambrikCommand<ServerCommandSource> {
+    private fun text() = kambrikServerCommand {
         val test = textLiteral("Hello World!") {
             onHoverShowText {
-                +Formatting.ITALIC
-                +textLiteral("How are you?")
+                format(Formatting.ITALIC)
+                addLiteral("How are you?")
             }
         }
         source.sendFeedback(test, false)

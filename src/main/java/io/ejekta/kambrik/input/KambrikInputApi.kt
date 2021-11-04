@@ -21,6 +21,14 @@ class KambrikInputApi internal constructor() {
         return kambrikKeybind
     }
 
+    /**
+     * Registers a new Kambrik Keyboard Keybind.
+     * @param key Which key to register with. See GLFW keys for reference
+     * @param keyTranslation The translation key for this keybind's localization
+     * @param keyCategory Which category in the Controls menu this key belongs to
+     * @param realTime Whether key updates are processed per tick or per frame (default: false or per tick)
+     * @param keybindDsl A DSL where you can specify how the keybind reacts to onUp and onDown presses
+     */
     fun registerKeyboardBinding(
         key: Int = GLFW.GLFW_KEY_UNKNOWN,
         keyTranslation: String,
@@ -29,6 +37,14 @@ class KambrikInputApi internal constructor() {
         keybindDsl: KambrikKeybind.() -> Unit
     ) = registerBinding(key, keyTranslation, keyCategory, InputUtil.Type.KEYSYM, realTime, keybindDsl)
 
+    /**
+     * Registers a new Kambrik Mouse Keybind.
+     * @param key Which mouse button to register with. See GLFW keys for reference
+     * @param keyTranslation The translation key for this keybind's localization
+     * @param keyCategory Which category in the Controls menu this key belongs to
+     * @param realTime Whether key updates are processed per tick or per frame (default: false or per tick)
+     * @param keybindDsl A DSL where you can specify how the keybind reacts to onUp and onDown presses
+     */
     fun registerMouseBinding(
         key: Int = GLFW.GLFW_KEY_UNKNOWN,
         keyTranslation: String,
