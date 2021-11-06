@@ -14,12 +14,12 @@ internal object KambrikRegistrar {
         fun register(modId: String) = registry.register(Identifier(modId, itemId), item)
     }
 
-    data class ModResistrar(val requestor: KambrikAutoRegistrar, val content: MutableList<RegistrationEntry<*>> = mutableListOf())
+    data class ModRegistrar(val requestor: KambrikAutoRegistrar, val content: MutableList<RegistrationEntry<*>> = mutableListOf())
 
-    private val registrars = mutableMapOf<KambrikAutoRegistrar, ModResistrar>()
+    private val registrars = mutableMapOf<KambrikAutoRegistrar, ModRegistrar>()
 
-    operator fun get(requester: KambrikAutoRegistrar): ModResistrar {
-        return registrars.getOrPut(requester) { ModResistrar(requester) }
+    operator fun get(requester: KambrikAutoRegistrar): ModRegistrar {
+        return registrars.getOrPut(requester) { ModRegistrar(requester) }
     }
 
     fun <T> register(requester: KambrikAutoRegistrar, reg: Registry<T>, itemId: String, obj: T): T {
