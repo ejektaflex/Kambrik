@@ -6,7 +6,6 @@ import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import io.ejekta.kambrik.logging.KambrikMarkers
 import io.ejekta.kambrikx.data.ConfigDataFile
 import io.ejekta.kambrikx.data.KambrikPersistence
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.ModInitializer
@@ -35,21 +34,7 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
         handleCustomEntryData()
         configureLoggerFilters()
     }
-
-    val configData = ConfigDataFile(Kambrik.File.getBaseFile(ID))
-
-    var myTestData: Int by configData("myNumber", Int.serializer()) { 5 }
-
-    private var derp by configData.of { 3 }
-
-    /*
-
-    Theoretically this will be possible!
-
-    val myNumber: Int by configData { 5 }
-
-     */
-
+    
     override fun onInitialize() {
         // Auto Registration feature
         FabricLoader.getInstance().getEntrypointContainers(ID, KambrikMarker::class.java).forEach {
@@ -57,25 +42,22 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
             KambrikRegistrar.doRegistrationFor(it)
         }
 
-        myTestData = 120
-        derp = 333
-
         // Kambrik commands
         CommandRegistrationCallback.EVENT.register(KambrikCommands)
 
         // Server data lifecycle management
 
-        ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted {
+        ServerLifecycleEvents.SERVER_STARTED.register {
             KambrikPersistence.loadServerResults()
-        })
+        }
 
-        ServerLifecycleEvents.SERVER_STOPPING.register(ServerLifecycleEvents.ServerStopping {
+        ServerLifecycleEvents.SERVER_STOPPING.register {
             KambrikPersistence.saveAllServerResults()
 
             if (FabricLoader.getInstance().environmentType != EnvType.CLIENT) {
                 KambrikPersistence.saveAllConfigResults()
             }
-        })
+        }
 
     }
 
@@ -87,22 +69,19 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
                 val cv = mod.metadata.getCustomValue(ID)
                 if (cv is CustomValue.CvObject) {
                     for ((name, value) in cv) {
-
                         when (name) {
                             "log_markers" -> {
                                 val markerMap = value.asObject.toMap().map { it.key to it.value.asBoolean }.toMap()
                                 KambrikMarkers.handleContainerMarkers(markerMap)
                             }
                         }
-
                     }
                 }
             }
         }
     }
 
-    fun configureLoggerFilters() {
-
+    private fun configureLoggerFilters() {
         val ctx = LogManager.getContext(false) as LoggerContext
         ctx.reconfigure()
 

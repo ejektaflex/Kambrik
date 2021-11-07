@@ -45,7 +45,7 @@ abstract class DataFile(val src: File) {
     inline fun <reified T : Any> of(
         noinline default: () -> T
     ): ReadWriteProperty<Any, T> {
-        return DataProperty("derp", default, serializer(), this)
+        return DataProperty(null, default, serializer(), this)
     }
 
     private val requests = mutableMapOf<String, DataRequest<*>>()
@@ -55,6 +55,8 @@ abstract class DataFile(val src: File) {
     private val resultSerializer = MapSerializer(String.serializer(), JsonElement.serializer())
 
     private val loadedObjects = mutableMapOf<String, Any>()
+
+    fun hasRequested(key: String) = key in requests
 
     open fun <T : Any> request(key: String, serializer: KSerializer<T>, default: T) {
         println("Requested serializer: $serializer")
