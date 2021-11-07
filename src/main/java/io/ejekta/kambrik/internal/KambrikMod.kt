@@ -7,6 +7,7 @@ import io.ejekta.kambrik.logging.KambrikMarkers
 import io.ejekta.kambrikx.data.ConfigDataFile
 import io.ejekta.kambrikx.data.KambrikPersistence
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.serializer
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
@@ -37,12 +38,9 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
 
     val configData = ConfigDataFile(Kambrik.File.getBaseFile(ID))
 
-    @Serializable
-    data class TestDataClass(val num: Int)
+    var myTestData: Int by configData("myNumber", Int.serializer()) { 5 }
 
-    val myTestData: TestDataClass by configData("myNumber", TestDataClass.serializer()) {
-        TestDataClass(5)
-    }
+    private var derp by configData.of { 3 }
 
     /*
 
@@ -58,6 +56,9 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
             Logger.debug("Got mod entrypoint: $it, ${it.entrypoint} from ${it.provider.metadata.id}, will do Kambrik init here")
             KambrikRegistrar.doRegistrationFor(it)
         }
+
+        myTestData = 120
+        derp = 333
 
         // Kambrik commands
         CommandRegistrationCallback.EVENT.register(KambrikCommands)

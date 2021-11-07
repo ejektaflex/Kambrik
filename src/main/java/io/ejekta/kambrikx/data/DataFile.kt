@@ -6,6 +6,7 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.serializer
 import net.minecraft.text.Text
 import java.io.File
 import kotlin.properties.ReadWriteProperty
@@ -39,6 +40,12 @@ abstract class DataFile(val src: File) {
         default: () -> T
     ): ReadWriteProperty<Any, T> {
         return DataProperty(key, default, serializer, this)
+    }
+
+    inline fun <reified T : Any> of(
+        noinline default: () -> T
+    ): ReadWriteProperty<Any, T> {
+        return DataProperty("derp", default, serializer(), this)
     }
 
     private val requests = mutableMapOf<String, DataRequest<*>>()

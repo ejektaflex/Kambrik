@@ -5,11 +5,15 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 open class DataProperty<T : Any>(
-    val key: String,
+    var key: String,
     val default: () -> T,
     val serializer: KSerializer<T>,
     private val dataFile: DataFile
 ) : ReadWriteProperty<Any, T> {
+
+    fun getKeyValue(property: KProperty<*>): String {
+        return key ?: property.name
+    }
 
     init {
         println("DataProperty requesting: $serializer")
@@ -17,6 +21,10 @@ open class DataProperty<T : Any>(
     }
 
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
+        if (key.isBlank()) {
+            key = property.name
+        }
+        println("Getting prop: ${property.name} with key $key")
         return dataFile.loadResult(key)
     }
 
