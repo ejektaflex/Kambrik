@@ -1,14 +1,12 @@
 package io.ejekta.kambrik.internal
 
+import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.ext.fapi.toMap
-import io.ejekta.kambrikx.data.server.ServerDataRegistrar
-import io.ejekta.kambrikx.data.serverData
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import io.ejekta.kambrik.logging.KambrikMarkers
-import io.ejekta.kambrik.text.textLiteral
-import io.ejekta.kambrikx.data.config.ConfigDataRegistrar
-import io.ejekta.kambrikx.data.configData
-import kotlinx.serialization.Contextual
+import io.ejekta.kambrikx.data.ConfigDataFile
+import io.ejekta.kambrikx.data.KambrikPersistence
+import kotlinx.serialization.Serializable
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
@@ -16,8 +14,6 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint
 import net.fabricmc.loader.api.metadata.CustomValue
-import net.minecraft.text.LiteralText
-import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.core.Filter
@@ -39,6 +35,23 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
         configureLoggerFilters()
     }
 
+    val configData = ConfigDataFile(Kambrik.File.getBaseFile(ID))
+
+    @Serializable
+    data class TestDataClass(val num: Int)
+
+    val myTestData: TestDataClass by configData("myNumber", TestDataClass.serializer()) {
+        TestDataClass(5)
+    }
+
+    /*
+
+    Theoretically this will be possible!
+
+    val myNumber: Int by configData { 5 }
+
+     */
+
     override fun onInitialize() {
         // Auto Registration feature
         FabricLoader.getInstance().getEntrypointContainers(ID, KambrikMarker::class.java).forEach {
@@ -52,13 +65,14 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
         // Server data lifecycle management
 
         ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted {
-            ServerDataRegistrar.loadResults(idOf("server_id"))
+            KambrikPersistence.loadServerResults()
         })
 
         ServerLifecycleEvents.SERVER_STOPPING.register(ServerLifecycleEvents.ServerStopping {
-            ServerDataRegistrar.saveResults(idOf("server_id"))
+            KambrikPersistence.saveAllServerResults()
+
             if (FabricLoader.getInstance().environmentType != EnvType.CLIENT) {
-                ConfigDataRegistrar.saveAllResults()
+                KambrikPersistence.saveAllConfigResults()
             }
         })
 

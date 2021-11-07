@@ -1,25 +1,24 @@
 package io.ejekta.kambrikx.data
 
 import io.ejekta.kambrik.Kambrik
-import io.ejekta.kambrik.serial.serializers.IdentitySer
 import io.ejekta.kambrik.serial.serializers.TextSerializer
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.serializer
 import net.minecraft.text.Text
-import net.minecraft.util.Identifier
 import java.io.File
+import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.full.starProjectedType
 
-abstract class LoadableDataRegistrar {
+abstract class DataFile(val src: File) {
 
     internal data class DataRequest<T : Any>(val serializer: KSerializer<T>, val default: T) {
         val encoded: JsonElement
             get() {
                 println("This: $this")
                 println("Ser: $serializer")
-                println("Ser should be: ${TextSerializer}")
+                println("Ser should be: $TextSerializer")
                 println("think it's getting ${Kambrik.Serial.Format.serializersModule.getContextual(Text::class)}")
                 return Kambrik.Serial.Format.encodeToJsonElement(serializer, default)
             }
@@ -34,28 +33,30 @@ abstract class LoadableDataRegistrar {
         }
     }
 
-    protected abstract fun getFile(id: Identifier? = null): File
+    operator fun <T : Any> invoke(
+        key: String,
+        serializer: KSerializer<T>,
+        default: () -> T
+    ): ReadWriteProperty<Any, T> {
+        return DataProperty(key, default, serializer, this)
+    }
 
-    protected abstract fun getRelatedObjects(id: Identifier): Map<Identifier, Any>
+    private val requests = mutableMapOf<String, DataRequest<*>>()
 
-    private val requests = mutableMapOf<Identifier, DataRequest<*>>()
+    private var results = mutableMapOf<String, JsonElement>()
 
-    private var results = mutableMapOf<Identifier, JsonElement>()
+    private val resultSerializer = MapSerializer(String.serializer(), JsonElement.serializer())
 
-    private val resultSerializer = MapSerializer(IdentitySer, JsonElement.serializer())
+    private val loadedObjects = mutableMapOf<String, Any>()
 
-    protected val loadedObjects = mutableMapOf<Identifier, Any>()
-
-    protected val toFlushObjects = mutableMapOf<Identifier, Any>()
-
-    open fun <T : Any> request(key: Identifier, serializer: KSerializer<T>, default: T) {
+    open fun <T : Any> request(key: String, serializer: KSerializer<T>, default: T) {
         println("Requested serializer: $serializer")
         requests[key] = DataRequest(serializer, default)
         //println("Requested $key and serializer $serializer")
     }
 
-    open fun loadResults(id: Identifier) {
-        val file = getFile(id)
+    open fun load() {
+        val file = src
 
         if (!file.exists()) {
             file.createNewFile()
@@ -64,7 +65,9 @@ abstract class LoadableDataRegistrar {
             )
         }
 
-        val contents = file.readText()
+        val contents = file.readText().ifBlank {
+            "{}"
+        }
 
         results = Kambrik.Serial.Format.decodeFromString(resultSerializer, contents).toMutableMap()
 
@@ -79,15 +82,12 @@ abstract class LoadableDataRegistrar {
         }
     }
 
-    open fun saveResults(id: Identifier) {
-        val file = getFile(id)
+    open fun save() {
+        val file = src
 
-        val outResults = mutableMapOf<Identifier, JsonElement>()
+        val outResults = mutableMapOf<String, JsonElement>()
 
-        // Only save objects in mod, if possible
-        val toSave = getRelatedObjects(id)
-
-        for ((objId, obj) in toSave) {
+        for ((objId, obj) in loadedObjects) {
             val data = requests[objId]!!
             outResults[objId] = data.encode(obj)
         }
@@ -104,12 +104,16 @@ abstract class LoadableDataRegistrar {
 
     // These are only called via the delegate properties, so casting is guaranteed to succeed
 
-    internal open fun <R : Any> loadResult(key: Identifier): R {
+    internal open fun <R : Any> loadResult(key: String): R {
         return loadedObjects[key] as R
     }
 
-    internal fun <R : Any> setResult(key: Identifier, value: R) {
+    internal fun <R : Any> setResult(key: String, value: R) {
         loadedObjects[key] = value
     }
 
+    companion object {
+        fun forServer(file: File) = ConfigDataFile(file)
+        fun forClient(file: File) = ServerDataFile(file)
+    }
 }

@@ -18,6 +18,14 @@ class KambrikFileApi internal constructor() {
         return FabricLoader.getInstance().configDir.resolve(modId)
     }
 
+    fun getBaseFile(modId: String): File {
+        return FabricLoader.getInstance().configDir.resolve("${modId}.json").toFile().apply {
+            if (!exists()) {
+                createNewFile()
+            }
+        }
+    }
+
     fun getBaseFolder(modId: String): File {
         return getConfigFolderRelativePath(modId).toFile().apply {
             if (!exists()) {
