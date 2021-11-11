@@ -17,10 +17,6 @@ abstract class DataFile(val src: File) {
     internal data class DataRequest<T : Any>(val serializer: KSerializer<T>, val default: T) {
         val encoded: JsonElement
             get() {
-                println("This: $this")
-                println("Ser: $serializer")
-                println("Ser should be: $TextSerializer")
-                println("think it's getting ${Kambrik.Serial.Format.serializersModule.getContextual(Text::class)}")
                 return Kambrik.Serial.Format.encodeToJsonElement(serializer, default)
             }
 
@@ -29,7 +25,6 @@ abstract class DataFile(val src: File) {
         }
 
         fun decode(data: JsonElement): T {
-            println("Decoding as: ${this::class.starProjectedType}")
             return Kambrik.Serial.Format.decodeFromJsonElement(serializer, data)
         }
     }
@@ -43,9 +38,10 @@ abstract class DataFile(val src: File) {
     }
 
     inline fun <reified T : Any> of(
+        key: String? = null,
         noinline default: () -> T
     ): ReadWriteProperty<Any, T> {
-        return DataProperty(null, default, serializer(), this)
+        return DataProperty(key, default, serializer(), this)
     }
 
     private val requests = mutableMapOf<String, DataRequest<*>>()
@@ -84,8 +80,6 @@ abstract class DataFile(val src: File) {
             val result = results.getOrPut(reqId) {
                 reqData.encoded
             }
-            println("REQ: $reqId")
-            println("DAT: $reqData")
             val data = reqData.decode(result)
             loadedObjects[reqId] = data
         }

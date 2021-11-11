@@ -21,7 +21,7 @@ import org.apache.logging.log4j.core.Logger
 import org.apache.logging.log4j.core.LoggerContext
 import org.apache.logging.log4j.core.filter.MarkerFilter
 
-internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
+internal object KambrikMod : ModInitializer {
 
     const val ID = "kambrik"
     
@@ -29,12 +29,6 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
 
     fun idOf(unique: String) = Identifier(ID, unique)
 
-    override fun onPreLaunch() {
-        Logger.info("Kambrik Says Hello!")
-        handleCustomEntryData()
-        configureLoggerFilters()
-    }
-    
     override fun onInitialize() {
         // Auto Registration feature
         FabricLoader.getInstance().getEntrypointContainers(ID, KambrikMarker::class.java).forEach {
@@ -56,40 +50,6 @@ internal object KambrikMod : PreLaunchEntrypoint, ModInitializer {
 
             if (FabricLoader.getInstance().environmentType != EnvType.CLIENT) {
                 KambrikPersistence.saveAllConfigResults()
-            }
-        }
-
-    }
-
-
-
-    private fun handleCustomEntryData() {
-        FabricLoader.getInstance().allMods.forEach { mod ->
-            if (mod.metadata.containsCustomValue(ID)) {
-                val cv = mod.metadata.getCustomValue(ID)
-                if (cv is CustomValue.CvObject) {
-                    for ((name, value) in cv) {
-                        when (name) {
-                            "log_markers" -> {
-                                val markerMap = value.asObject.toMap().map { it.key to it.value.asBoolean }.toMap()
-                                KambrikMarkers.handleContainerMarkers(markerMap)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun configureLoggerFilters() {
-        val ctx = LogManager.getContext(false) as LoggerContext
-        ctx.reconfigure()
-
-        for (logger in ctx.loggers.filterIsInstance<Logger>()) {
-            logger.context.configuration.removeFilter(logger.context.configuration.filter)
-            KambrikMarkers.Registry.forEach { (key, value) ->
-                val filter = MarkerFilter.createFilter(key, if (value) Filter.Result.ACCEPT else Filter.Result.DENY, Filter.Result.NEUTRAL)
-                logger.addFilter(filter)
             }
         }
     }

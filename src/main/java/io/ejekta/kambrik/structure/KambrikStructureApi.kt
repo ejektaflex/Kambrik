@@ -1,5 +1,6 @@
 package io.ejekta.kambrik.structure
 
+import com.mojang.datafixers.util.Pair
 import io.ejekta.kambrik.internal.mixins.StructurePoolAccessor
 import net.minecraft.server.MinecraftServer
 import net.minecraft.structure.pool.StructurePool
@@ -16,8 +17,13 @@ class KambrikStructureApi internal constructor() {
     fun addToStructurePool(server: MinecraftServer, nbtLocation: Identifier, poolLocation: Identifier, weight: Int = 10_000) {
         val pool = server.registryManager.get(Registry.STRUCTURE_POOL_KEY).entries
             .find { it.key.value.toString() == poolLocation.toString() }?.value ?: throw Exception("Cannot add to '$poolLocation' as it cannot be found!")
-        val pieceList = (pool as StructurePoolAccessor).kambrik_getStructureElements()
+        val pieceList = (pool as StructurePoolAccessor).elements
         val piece = StructurePoolElement.ofSingle(nbtLocation.toString()).apply(StructurePool.Projection.RIGID)
+
+        val list = (pool as StructurePoolAccessor).elementCounts.toMutableList()
+        list.add(Pair(piece, weight))
+        (pool as StructurePoolAccessor).elementCounts = list
+
         repeat(weight) {
             pieceList.add(piece)
         }
