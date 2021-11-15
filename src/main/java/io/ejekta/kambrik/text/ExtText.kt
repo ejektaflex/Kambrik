@@ -16,8 +16,8 @@ fun ServerCommandSource.sendFeedback(literal: String, broadcastToOps: Boolean = 
     sendFeedback(textLiteral(literal, dsl), broadcastToOps)
 }
 
-fun MinecraftServer.broadcastChatMessage(literal: String = "", messageType: MessageType = MessageType.CHAT, text: KambrikTextBuilder<LiteralText>.() -> Unit) {
-    playerManager.broadcastChatMessage(textLiteral(literal, text), messageType, Util.NIL_UUID)
+fun MinecraftServer.broadcast(literal: String = "", messageType: MessageType = MessageType.CHAT, text: KambrikTextBuilder<LiteralText>.() -> Unit) {
+    playerManager.broadcast(textLiteral(literal, text), messageType, Util.NIL_UUID)
 }
 
 fun PlayerEntity.sendMessage(literal: String = "", vararg formats: Formatting, actionBar: Boolean = false, text: KambrikTextBuilder<LiteralText>.() -> Unit = {}) {

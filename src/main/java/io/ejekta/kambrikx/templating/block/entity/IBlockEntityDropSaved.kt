@@ -23,11 +23,11 @@ abstract class KambrikBlockWithEntitySavesDrop(settings: Settings) : BlockWithEn
     abstract val entitySubTagName: String
 
     override fun getDroppedStacks(state: BlockState?, builder: LootContext.Builder?): MutableList<ItemStack> {
-        val blockEntity = builder?.getNullable(LootContextParameters.BLOCK_ENTITY)
-        if (blockEntity?.type == getBlockEntityType()) {
+        val blockEntity = builder?.getNullable(LootContextParameters.BLOCK_ENTITY) ?: return mutableListOf()
+        if (blockEntity.type == getBlockEntityType()) {
             return super.getDroppedStacks(state, builder).map {
                 it.apply {
-                    blockEntity!!.writeNbt(orCreateNbt.getCompound(entitySubTagName))
+                    blockEntity.setStackNbt(it)
                 }
             }.toMutableList()
         }
@@ -45,11 +45,8 @@ abstract class KambrikBlockWithEntitySavesDrop(settings: Settings) : BlockWithEn
             val blockEntity = world.getBlockEntity(pos, getBlockEntityType())
             blockEntity.ifPresent {
                 val itemNbt = itemStack.nbt ?: return@ifPresent
-                if (itemNbt.contains(entitySubTagName)) {
-                    val tag = itemNbt.getCompound(entitySubTagName)
-                    it.readNbt(tag)
-                    it.markDirty()
-                }
+                it.readNbt(itemNbt)
+                it.markDirty()
             }
         }
     }
