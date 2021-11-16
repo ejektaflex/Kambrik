@@ -1,6 +1,6 @@
 package io.ejekta.kambrikx.data
 
-object KambrikPersistence {
+internal object KambrikPersistence {
     val serverDataFiles = mutableListOf<ServerDataFile>()
     val configDataFiles = mutableListOf<ConfigDataFile>()
 

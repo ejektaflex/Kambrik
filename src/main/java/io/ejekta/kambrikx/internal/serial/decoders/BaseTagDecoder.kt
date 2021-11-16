@@ -25,10 +25,8 @@ internal abstract class BaseTagDecoder(
         return root
     }
 
-    @ExperimentalSerializationApi
     override val serializersModule: SerializersModule = config.serializersModule
 
-    @ExperimentalSerializationApi
     override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder {
         config.logInfo(level, "Parse: ${descriptor.kind} with tag ${currentTag()} (am: ${this::class.simpleName})")
         return when (descriptor.kind) {
@@ -57,7 +55,6 @@ internal abstract class BaseTagDecoder(
     }
 
     @Suppress("UNCHECKED_CAST")
-    @ExperimentalSerializationApi
     override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T {
 
         if (deserializer !is AbstractPolymorphicSerializer<*>) {

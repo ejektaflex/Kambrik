@@ -48,7 +48,7 @@ data class Doot(val pos: @Contextual Box, val int: InnerInt)
 
 
 @OptIn(KambrikExperimental::class)
-fun main(args: Array<String>) {
+fun main() {
 
     val u = Doot(Box(1.0, 2.0, 3.0, 12.0, 15.0, 18.0), InnerInt(30))
 

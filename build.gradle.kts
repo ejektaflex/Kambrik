@@ -6,10 +6,11 @@ import java.net.URL
 
 plugins {
 	//id 'com.github.johnrengelman.shadow' version '6.1.0'
-	kotlin("jvm") version "1.5.31"
+	kotlin("jvm") version "1.6.0"
 
 	// if IR backend error occurs, for some reason toggling the KSX plugin fixes it. -_-
-	kotlin("plugin.serialization") version "1.5.31"
+	// (that should not happen anymore, with the stable backend)
+	kotlin("plugin.serialization") version "1.6.0"
 
 	id("fabric-loom") version "0.10-SNAPSHOT"
 	`maven-publish`
@@ -21,8 +22,8 @@ plugins {
 
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_16
-	targetCompatibility = JavaVersion.VERSION_16
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
 	withSourcesJar()
 	withJavadocJar()
 }
@@ -49,8 +50,6 @@ val buildVersion = if (modVersion.endsWith("SNAPSHOT")) {
 
 project.group = group
 version = buildVersion
-
-//compileKotlin.kotlinOptions.jvmTarget = "1.8"
 
 repositories {
 	mavenCentral()
@@ -172,7 +171,7 @@ tasks.withType<JavaCompile> {
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
-		jvmTarget = "16"
+		jvmTarget = "17"
 	}
 }
 

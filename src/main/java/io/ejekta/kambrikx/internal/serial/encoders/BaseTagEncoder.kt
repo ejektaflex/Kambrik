@@ -27,10 +27,8 @@ internal abstract class BaseTagEncoder(
 
     var encodePolymorphic: Boolean = false
 
-    @ExperimentalSerializationApi
     override val serializersModule: SerializersModule = config.serializersModule
 
-    @ExperimentalSerializationApi
     override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
         super.beginStructure(descriptor)
         config.logInfo(level, "Parse: ${descriptor.kind}")
@@ -47,14 +45,12 @@ internal abstract class BaseTagEncoder(
         }
     }
 
-    @ExperimentalSerializationApi
     override fun elementName(descriptor: SerialDescriptor, index: Int): String {
         return if (descriptor.kind is PolymorphicKind) index.toString() else super.elementName(descriptor, index)
     }
 
     override fun composeName(parentName: String, childName: String) = childName // Leave only base name
 
-    @ExperimentalSerializationApi
     override fun endEncode(descriptor: SerialDescriptor) {
         super.endEncode(descriptor)
         onEnd(root)
@@ -67,7 +63,6 @@ internal abstract class BaseTagEncoder(
         return abs.findPolymorphicSerializer(this, value)
     }
 
-    @ExperimentalSerializationApi
     override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
         if (value is Any) {
             val open = serializer.descriptor.kind is PolymorphicKind.OPEN
