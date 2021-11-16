@@ -55,10 +55,10 @@
   },
 
   "depends": {
-    "fabricloader": ">=0.11.6",
-    "fabric": ">=0.37.2",
-    "minecraft": "1.18.x",
-    "fabric-language-kotlin": ">=1.5.20"
+    "fabricloader": ">=0.12.5",
+    "fabric": ">=0.42.4",
+    "minecraft": "~1.18-0",
+    "fabric-language-kotlin": ">=1.6.0"
   },
   "suggests": {
     "flamingo": "*"
