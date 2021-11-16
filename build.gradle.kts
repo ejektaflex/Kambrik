@@ -1,51 +1,62 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import net.fabricmc.loom.task.RemapSourcesJarTask
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.net.URL
 
 plugins {
-	//id 'com.github.johnrengelman.shadow' version '6.1.0'
 	kotlin("jvm") version "1.6.0"
-
-	// if IR backend error occurs, for some reason toggling the KSX plugin fixes it. -_-
-	// (that should not happen anymore, with the stable backend)
 	kotlin("plugin.serialization") version "1.6.0"
-
 	id("fabric-loom") version "0.10-SNAPSHOT"
 	`maven-publish`
 	signing
-
 	`idea`
 	id("org.jetbrains.dokka") version "1.5.30"
 }
 
+object Versions {
+	const val Minecraft = "1.18-pre2"
+	object Jvm {
+		val Java = JavaVersion.VERSION_17
+		const val Kotlin = "1.6.0"
+		const val TargetKotlin = "17"
+	}
+	object Fabric {
+		const val Yarn = "1.18-pre2+build.1"
+		const val Loader = "0.12.5"
+		const val Api = "0.42.4+1.18"
+	}
+	object Mod {
+		const val Group = "io.ejekta"
+		const val ID = "kambrik"
+		const val Version = "2.0.0"
+	}
+	object Env {
+		const val Serialization = "1.3.0"
+		const val Kambrik = "3.+"
+		const val FLK = "1.6.5+kotlin.1.5.31"
+		const val ClothConfig = "6.0.42"
+		const val ModMenu = "2.0.6"
+	}
+}
+
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = Versions.Jvm.Java
+	targetCompatibility = Versions.Jvm.Java
 	withSourcesJar()
 	withJavadocJar()
 }
 
-val modId: String by project
-val modVersion: String by project
-val group: String by project
-val minecraftVersion: String by project
-val fabricVersion: String by project
-val kotlinVersion: String by project
-val loaderVersion: String by project
-val yarnMappings: String by project
 val pkgName: String by project
 val pkgDesc: String by project
 val pkgAuthor: String by project
 val pkgEmail: String by project
 val pkgHub: String by project
 
-val buildVersion = if (modVersion.endsWith("SNAPSHOT")) {
-	modVersion + ".${SimpleDateFormat("YYYY.MMdd.HHmmss").format(Date())}"
+val buildVersion = if (Versions.Mod.Version.endsWith("SNAPSHOT")) {
+	Versions.Mod.Version + ".${SimpleDateFormat("YYYY.MMdd.HHmmss").format(Date())}"
 } else {
-	modVersion
+	Versions.Mod.Version
 }
 
 project.group = group
@@ -63,21 +74,21 @@ minecraft { }
 
 dependencies {
 	//to change the versions see the gradle.properties file
-	minecraft("com.mojang:minecraft:${minecraftVersion}")
-	mappings("net.fabricmc:yarn:${yarnMappings}:v2")
-	modImplementation("net.fabricmc:fabric-loader:${loaderVersion}")
+	minecraft("com.mojang:minecraft:${Versions.Minecraft}")
+	mappings("net.fabricmc:yarn:${Versions.Fabric.Yarn}:v2")
+	modImplementation("net.fabricmc:fabric-loader:${Versions.Fabric.Loader}")
 
-	modApi("org.jetbrains.kotlinx:kotlinx-serialization-core:1.2.2")
-	include("org.jetbrains.kotlinx:kotlinx-serialization-core:1.2.2")
-	modApi("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
-	include("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
+	modApi("org.jetbrains.kotlinx:kotlinx-serialization-core:${Versions.Env.Serialization}")
+	include("org.jetbrains.kotlinx:kotlinx-serialization-core:${Versions.Env.Serialization}")
+	modApi("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.Env.Serialization}")
+	include("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.Env.Serialization}")
 
 	compileOnly("org.jetbrains:annotations:22.0.0")
 	implementation("com.google.code.findbugs:jsr305:3.0.2")
 
 	modImplementation(group = "net.fabricmc", name = "fabric-language-kotlin", version = "1.6.4+kotlin.1.5.30")
 
-	modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricVersion}")
+	modImplementation("net.fabricmc.fabric-api:fabric-api:${Versions.Fabric.Api}")
 }
 
 val remapJarTask = tasks.named("remapJar").get()
@@ -90,8 +101,8 @@ publishing {
 	publications {
 		create<MavenPublication>("Kambrik") {
 
-			groupId = group
-			artifactId = modId
+			groupId = Versions.Mod.Group
+			artifactId = Versions.Mod.ID
 			version = buildVersion
 
 			artifact(remapJarTask) { builtBy(remapJarTask) }
@@ -156,10 +167,10 @@ tasks.getByName<ProcessResources>("processResources") {
 	filesMatching("fabric.mod.json") {
 		expand(
 			mutableMapOf<String, String>(
-				"modid" to modId,
-				"version" to modVersion,
-				"kotlinVersion" to kotlinVersion,
-				"fabricApiVersion" to fabricVersion
+				"modid" to Versions.Mod.ID,
+				"version" to Versions.Mod.Version,
+				"kotlinVersion" to Versions.Jvm.Kotlin,
+				"fabricApiVersion" to Versions.Fabric.Api
 			)
 		)
 	}
