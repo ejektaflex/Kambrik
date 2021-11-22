@@ -14,26 +14,25 @@ plugins {
 }
 
 object Versions {
-	const val Minecraft = "1.18-pre2"
+	const val Minecraft = "1.18-pre5"
 	object Jvm {
 		val Java = JavaVersion.VERSION_17
 		const val Kotlin = "1.6.0"
 		const val TargetKotlin = "17"
 	}
 	object Fabric {
-		const val Yarn = "1.18-pre2+build.1"
+		const val Yarn = "1.18-pre5+build.4"
 		const val Loader = "0.12.5"
-		const val Api = "0.42.4+1.18"
+		const val Api = "0.42.8+1.18"
 	}
 	object Mod {
 		const val Group = "io.ejekta"
 		const val ID = "kambrik"
-		const val Version = "2.0.0"
+		const val Version = "3.0.0"
 	}
 	object Env {
 		const val Serialization = "1.3.0"
-		const val Kambrik = "3.+"
-		const val FLK = "1.6.5+kotlin.1.5.31"
+		const val FLK = "1.7.0+kotlin.1.6.0"
 		const val ClothConfig = "6.0.42"
 		const val ModMenu = "2.0.6"
 	}
