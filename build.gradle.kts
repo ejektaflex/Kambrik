@@ -28,7 +28,7 @@ object Versions {
 	object Mod {
 		const val Group = "io.ejekta"
 		const val ID = "kambrik"
-		const val Version = "3.0.0"
+		const val Version = "2.4.2"
 	}
 	object Env {
 		const val Serialization = "1.3.0"
@@ -181,7 +181,7 @@ tasks.withType<JavaCompile> {
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
-		jvmTarget = "17"
+		jvmTarget = Versions.Jvm.TargetKotlin
 	}
 }
 
