@@ -66,7 +66,7 @@ class KambrikTextBuilder<T : BaseText>(
     var obfuscated: Boolean
         get() = root.style.isObfuscated
         set(value) {
-            root.style = root.style.withObfuscated(value)
+            root.style = root.style.obfuscated(value)
         }
 
     var color: Int
