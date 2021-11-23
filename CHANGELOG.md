@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as closely as it can.
 
+## [3.0.0] for 1.18 - 2021-11-23
+
+## Changed
+- General
+  - Updated to 1.18
+- Text DSL
+  - Changed the method to add siblings from `+` syntax to an `add*` syntax.
+    - E.g. `addLiteral`, `addTranslate`, etc.
+- Persistence (Experimental)
+  - Total rework of experimental data persistence
+  - Data is now stored per file, which can be stored in a world-specific config file, or a general config file
+
 ## [2.1.0] for 1.17.1 - 2021-11-01
 
 ### Added
