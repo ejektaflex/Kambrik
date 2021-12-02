@@ -10,7 +10,7 @@ plugins {
 	`maven-publish`
 	signing
 	`idea`
-	id("org.jetbrains.dokka") version "1.5.30"
+	id("org.jetbrains.dokka") version "1.6.0"
 }
 
 object Versions {
