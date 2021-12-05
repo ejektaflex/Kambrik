@@ -31,11 +31,24 @@ internal object KambrikRegistrar {
     fun doRegistrationFor(container: EntrypointContainer<KambrikMarker>) {
         KambrikMod.Logger.debug("Kambrik doing real registration for mod ${container.provider.metadata.id}")
         this[container.entrypoint as? KambrikAutoRegistrar ?: return].apply {
-            requestor.manualRegister()
+            requestor.mainRegister()
             content.forEach { entry ->
                 entry.register(container.provider.metadata.id)
             }
         }
     }
 
+    fun doClientRegistrationFor(container: EntrypointContainer<KambrikMarker>) {
+        KambrikMod.Logger.debug("Kambrik doing real client registration for mod ${container.provider.metadata.id}")
+        this[container.entrypoint as? KambrikAutoRegistrar ?: return].apply {
+            requestor.clientRegister()
+        }
+    }
+
+    fun doServerRegistrationFor(container: EntrypointContainer<KambrikMarker>) {
+        KambrikMod.Logger.debug("Kambrik doing real server registration for mod ${container.provider.metadata.id}")
+        this[container.entrypoint as? KambrikAutoRegistrar ?: return].apply {
+            requestor.serverRegister()
+        }
+    }
 }

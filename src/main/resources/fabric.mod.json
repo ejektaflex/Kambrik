@@ -36,6 +36,12 @@
         "adapter": "kotlin",
         "value": "io.ejekta.kambrik.internal.client.KambrikClientMod"
       }
+    ],
+    "server": [
+      {
+        "adapter": "kotlin",
+        "value": "io.ejekta.kambrik.internal.server.KambrikServerMod"
+      }
     ]
   },
   "mixins": [

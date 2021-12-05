@@ -2,17 +2,22 @@ package io.ejekta.kambrik.registration
 
 import io.ejekta.kambrik.internal.KambrikMarker
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
+import io.ejekta.kambrikx.items.KambrikItemGroupBuilder
+import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
+import net.minecraft.client.render.entity.EntityRendererFactory
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.attribute.EntityAttribute
 import net.minecraft.entity.effect.StatusEffect
 import net.minecraft.item.Item
+import net.minecraft.item.ItemGroup
 import net.minecraft.potion.Potion
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerType
@@ -30,11 +35,17 @@ import net.minecraft.world.gen.feature.FeatureConfig
 @Suppress("UNCHECKED_CAST")
 interface KambrikAutoRegistrar : KambrikMarker {
 
-    /**
-     * Any non-automatic registration that still needs to be done can
-     * be put inside of this method, if desired.
-     */
-    fun manualRegister() {}
+    /** Any non-automatic methods for all environments */
+    fun mainRegister() {}
+
+    /** Any non-automatic methods for the client environment */
+    fun clientRegister() {}
+
+    /** Any non-automatic methods for the server environment */
+    fun serverRegister() {}
+
+    @Deprecated("Use the mainRegister instead", ReplaceWith("mainRegister()"))
+    fun manualRegister() = mainRegister()
 
     fun <T> String.forRegistration(reg: Registry<T>, obj: T): T {
         return KambrikRegistrar.register(this@KambrikAutoRegistrar, reg, this, obj)
@@ -64,6 +75,10 @@ interface KambrikAutoRegistrar : KambrikMarker {
 
     infix fun String.forSoundEvent(event: SoundEvent): SoundEvent = forRegistration(Registry.SOUND_EVENT, event)
 
+    infix fun <T : Entity> EntityType<T>.forRenderer(factory: EntityRendererFactory<T>) {
+        EntityRendererRegistry.register(this, factory)
+    }
+
     fun <T : BlockEntity>String.forBlockEntity(block: Block, factory: (pos: BlockPos, state: BlockState) -> T): BlockEntityType<T>? {
         return BlockEntityType.Builder.create(factory, block).build(null).also {
             forRegistration(Registry.BLOCK_ENTITY_TYPE, it)
@@ -73,7 +88,5 @@ interface KambrikAutoRegistrar : KambrikMarker {
     fun <T : ScreenHandler> forExtendedScreen(id: Identifier, factory: ScreenHandlerRegistry.ExtendedClientHandlerFactory<T>): ScreenHandlerType<T>? {
         return ScreenHandlerRegistry.registerExtended(id, factory)
     }
-
-
 
 }
