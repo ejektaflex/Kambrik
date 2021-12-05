@@ -81,12 +81,12 @@ interface KambrikAutoRegistrar : KambrikMarker {
 
     infix fun <T : Entity> String.forEntityType(type: EntityType<T>): EntityType<T> = forMCRegistry(Registry.ENTITY_TYPE, type) as EntityType<T>
 
+    infix fun <T : Entity> EntityType<T>.withRenderer(factory: EntityRendererFactory<T>): EntityType<T> =
+        forOtherRegistry(CustomRegistrarEntry { EntityRendererRegistry.register(this, factory) }, this, EnvType.CLIENT)
+
     infix fun String.forVillagerType(type: VillagerType): VillagerType = forMCRegistry(Registry.VILLAGER_TYPE, type)
 
     infix fun String.forSoundEvent(event: SoundEvent): SoundEvent = forMCRegistry(Registry.SOUND_EVENT, event)
-
-    infix fun <T : Entity> EntityType<T>.withRenderer(factory: EntityRendererFactory<T>): EntityType<T> =
-        forOtherRegistry(CustomRegistrarEntry { EntityRendererRegistry.register(this, factory) }, this, EnvType.CLIENT)
 
     fun <T : BlockEntity>String.forBlockEntity(block: Block, factory: (pos: BlockPos, state: BlockState) -> T): BlockEntityType<T>? {
         return BlockEntityType.Builder.create(factory, block).build(null).also {
