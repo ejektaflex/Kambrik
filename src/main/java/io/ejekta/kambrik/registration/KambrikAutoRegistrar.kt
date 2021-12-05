@@ -2,7 +2,11 @@ package io.ejekta.kambrik.registration
 
 import io.ejekta.kambrik.internal.KambrikMarker
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
+import io.ejekta.kambrik.internal.registration.registrar.CustomRegistrarEntry
+import io.ejekta.kambrik.internal.registration.registrar.IRegistrar
+import io.ejekta.kambrik.internal.registration.registrar.MCRegistryEntry
 import io.ejekta.kambrikx.items.KambrikItemGroupBuilder
+import net.fabricmc.api.EnvType
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry
@@ -47,41 +51,46 @@ interface KambrikAutoRegistrar : KambrikMarker {
     @Deprecated("Use the mainRegister instead", ReplaceWith("mainRegister()"))
     fun manualRegister() = mainRegister()
 
-    fun <T> String.forRegistration(reg: Registry<T>, obj: T): T {
-        return KambrikRegistrar.register(this@KambrikAutoRegistrar, reg, this, obj)
+    fun <T> String.forMCRegistry(reg: Registry<T>, obj: T, envType: EnvType? = null): T {
+        KambrikRegistrar.register(this@KambrikAutoRegistrar, MCRegistryEntry(reg, this, obj), envType)
+        return obj
     }
 
-    infix fun String.forItem(item: Item): Item = forRegistration(Registry.ITEM, item)
-
-    infix fun String.forBlock(block: Block): Block = forRegistration(Registry.BLOCK, block)
-
-    infix fun String.forEnchant(enchant: Enchantment): Enchantment = forRegistration(Registry.ENCHANTMENT, enchant)
-
-    infix fun <C : CarverConfig?> String.forCarver(carver: Carver<C>): Carver<C> = forRegistration(Registry.CARVER, carver) as Carver<C>
-
-    infix fun <FC : FeatureConfig?> String.forFeature(feature: Feature<FC>): Feature<FC> = forRegistration(Registry.FEATURE, feature) as Feature<FC>
-
-    infix fun String.forStat(statIdentifier: Identifier): Identifier = forRegistration(Registry.CUSTOM_STAT, statIdentifier)
-
-    infix fun String.forStatusEffect(status: StatusEffect): StatusEffect = forRegistration(Registry.STATUS_EFFECT, status)
-
-    infix fun String.forAttribute(attribute: EntityAttribute): EntityAttribute = forRegistration(Registry.ATTRIBUTE, attribute)
-
-    infix fun String.forPotion(potion: Potion): Potion = forRegistration(Registry.POTION, potion)
-
-    infix fun <T : Entity> String.forEntityType(type: EntityType<T>): EntityType<T> = forRegistration(Registry.ENTITY_TYPE, type) as EntityType<T>
-
-    infix fun String.forVillagerType(type: VillagerType): VillagerType = forRegistration(Registry.VILLAGER_TYPE, type)
-
-    infix fun String.forSoundEvent(event: SoundEvent): SoundEvent = forRegistration(Registry.SOUND_EVENT, event)
-
-    infix fun <T : Entity> EntityType<T>.forRenderer(factory: EntityRendererFactory<T>) {
-        EntityRendererRegistry.register(this, factory)
+    fun <T> forOtherRegistry(registrar: IRegistrar, obj: T, envType: EnvType? = null): T {
+        KambrikRegistrar.register(this@KambrikAutoRegistrar, registrar, envType)
+        return obj
     }
+
+    infix fun String.forItem(item: Item): Item = forMCRegistry(Registry.ITEM, item)
+
+    infix fun String.forBlock(block: Block): Block = forMCRegistry(Registry.BLOCK, block)
+
+    infix fun String.forEnchant(enchant: Enchantment): Enchantment = forMCRegistry(Registry.ENCHANTMENT, enchant)
+
+    infix fun <C : CarverConfig?> String.forCarver(carver: Carver<C>): Carver<C> = forMCRegistry(Registry.CARVER, carver) as Carver<C>
+
+    infix fun <FC : FeatureConfig?> String.forFeature(feature: Feature<FC>): Feature<FC> = forMCRegistry(Registry.FEATURE, feature) as Feature<FC>
+
+    infix fun String.forStat(statIdentifier: Identifier): Identifier = forMCRegistry(Registry.CUSTOM_STAT, statIdentifier)
+
+    infix fun String.forStatusEffect(status: StatusEffect): StatusEffect = forMCRegistry(Registry.STATUS_EFFECT, status)
+
+    infix fun String.forAttribute(attribute: EntityAttribute): EntityAttribute = forMCRegistry(Registry.ATTRIBUTE, attribute)
+
+    infix fun String.forPotion(potion: Potion): Potion = forMCRegistry(Registry.POTION, potion)
+
+    infix fun <T : Entity> String.forEntityType(type: EntityType<T>): EntityType<T> = forMCRegistry(Registry.ENTITY_TYPE, type) as EntityType<T>
+
+    infix fun String.forVillagerType(type: VillagerType): VillagerType = forMCRegistry(Registry.VILLAGER_TYPE, type)
+
+    infix fun String.forSoundEvent(event: SoundEvent): SoundEvent = forMCRegistry(Registry.SOUND_EVENT, event)
+
+    infix fun <T : Entity> EntityType<T>.withRenderer(factory: EntityRendererFactory<T>): EntityType<T> =
+        forOtherRegistry(CustomRegistrarEntry { EntityRendererRegistry.register(this, factory) }, this, EnvType.CLIENT)
 
     fun <T : BlockEntity>String.forBlockEntity(block: Block, factory: (pos: BlockPos, state: BlockState) -> T): BlockEntityType<T>? {
         return BlockEntityType.Builder.create(factory, block).build(null).also {
-            forRegistration(Registry.BLOCK_ENTITY_TYPE, it)
+            forMCRegistry(Registry.BLOCK_ENTITY_TYPE, it)
         }
     }
 

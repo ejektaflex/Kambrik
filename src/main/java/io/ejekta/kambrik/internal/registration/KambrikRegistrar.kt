@@ -3,34 +3,41 @@ package io.ejekta.kambrik.internal.registration
 import io.ejekta.kambrik.ext.register
 import io.ejekta.kambrik.internal.KambrikMarker
 import io.ejekta.kambrik.internal.KambrikMod
+import io.ejekta.kambrik.internal.registration.registrar.IRegistrar
 import io.ejekta.kambrik.registration.KambrikAutoRegistrar
+import net.fabricmc.api.EnvType
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 
 internal object KambrikRegistrar {
 
-    data class RegistrationEntry<T>(val registry: Registry<T>, val itemId: String, val item: T) {
-        fun register(modId: String) = registry.register(Identifier(modId, itemId), item)
+    class ModRegistrarEnvironments(requester: KambrikAutoRegistrar) {
+        val main = ModRegistrar(requester)
+        val client = ModRegistrar(requester)
+        val server = ModRegistrar(requester)
+    }
+    data class ModRegistrar(val requestor: KambrikAutoRegistrar, val content: MutableList<IRegistrar> = mutableListOf())
+
+    private val registrars = mutableMapOf<KambrikAutoRegistrar, ModRegistrarEnvironments>()
+
+    operator fun get(requester: KambrikAutoRegistrar): ModRegistrarEnvironments {
+        return registrars.getOrPut(requester) { ModRegistrarEnvironments(requester) }
     }
 
-    data class ModRegistrar(val requestor: KambrikAutoRegistrar, val content: MutableList<RegistrationEntry<*>> = mutableListOf())
+    fun register(requester: KambrikAutoRegistrar, registrar: IRegistrar, envType: EnvType? = null) {
+        KambrikMod.Logger.debug("Kambrik registering '${requester::class.qualifiedName} for $registrar' for autoregistration")
 
-    private val registrars = mutableMapOf<KambrikAutoRegistrar, ModRegistrar>()
-
-    operator fun get(requester: KambrikAutoRegistrar): ModRegistrar {
-        return registrars.getOrPut(requester) { ModRegistrar(requester) }
+        when (envType) {
+            EnvType.CLIENT -> this[requester].client.content.add(registrar)
+            EnvType.SERVER -> this[requester].server.content.add(registrar)
+            null -> this[requester].main.content.add(registrar)
+        }
     }
 
-    fun <T> register(requester: KambrikAutoRegistrar, reg: Registry<T>, itemId: String, obj: T): T {
-        KambrikMod.Logger.debug("Kambrik registering '${requester::class.qualifiedName} for $itemId' for autoregistration")
-        this[requester].content.add(RegistrationEntry(reg, itemId, obj))
-        return obj
-    }
-
-    fun doRegistrationFor(container: EntrypointContainer<KambrikMarker>) {
+    fun doMainRegistrationFor(container: EntrypointContainer<KambrikMarker>) {
         KambrikMod.Logger.debug("Kambrik doing real registration for mod ${container.provider.metadata.id}")
-        this[container.entrypoint as? KambrikAutoRegistrar ?: return].apply {
+        this[container.entrypoint as? KambrikAutoRegistrar ?: return].main.apply {
             requestor.mainRegister()
             content.forEach { entry ->
                 entry.register(container.provider.metadata.id)
@@ -40,15 +47,21 @@ internal object KambrikRegistrar {
 
     fun doClientRegistrationFor(container: EntrypointContainer<KambrikMarker>) {
         KambrikMod.Logger.debug("Kambrik doing real client registration for mod ${container.provider.metadata.id}")
-        this[container.entrypoint as? KambrikAutoRegistrar ?: return].apply {
+        this[container.entrypoint as? KambrikAutoRegistrar ?: return].client.apply {
             requestor.clientRegister()
+            content.forEach { entry ->
+                entry.register(container.provider.metadata.id)
+            }
         }
     }
 
     fun doServerRegistrationFor(container: EntrypointContainer<KambrikMarker>) {
         KambrikMod.Logger.debug("Kambrik doing real server registration for mod ${container.provider.metadata.id}")
-        this[container.entrypoint as? KambrikAutoRegistrar ?: return].apply {
+        this[container.entrypoint as? KambrikAutoRegistrar ?: return].server.apply {
             requestor.serverRegister()
+            content.forEach { entry ->
+                entry.register(container.provider.metadata.id)
+            }
         }
     }
 }
