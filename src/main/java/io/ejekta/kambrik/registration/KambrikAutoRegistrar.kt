@@ -40,7 +40,7 @@ import net.minecraft.world.gen.feature.FeatureConfig
 interface KambrikAutoRegistrar : KambrikMarker {
 
     /** Any non-automatic methods for all environments */
-    fun mainRegister() {}
+    fun mainRegister() = manualRegister()
 
     /** Any non-automatic methods for the client environment */
     fun clientRegister() {}
@@ -49,7 +49,7 @@ interface KambrikAutoRegistrar : KambrikMarker {
     fun serverRegister() {}
 
     @Deprecated("Use the mainRegister instead", ReplaceWith("mainRegister()"))
-    fun manualRegister() = mainRegister()
+    fun manualRegister() {}
 
     fun <T> String.forMCRegistry(reg: Registry<T>, obj: T, envType: EnvType? = null): T {
         KambrikRegistrar.register(this@KambrikAutoRegistrar, MCRegistryEntry(reg, this, obj), envType)
