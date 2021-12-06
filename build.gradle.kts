@@ -6,24 +6,24 @@ import java.net.URL
 plugins {
 	kotlin("jvm") version "1.6.0"
 	kotlin("plugin.serialization") version "1.6.0"
-	id("fabric-loom") version "0.10-SNAPSHOT"
+	id("fabric-loom") version "0.10.+"
 	`maven-publish`
 	signing
-	`idea`
-	id("org.jetbrains.dokka") version "1.5.30"
+	idea
+	id("org.jetbrains.dokka") version "1.6.0"
 }
 
 object Versions {
-	const val Minecraft = "1.18-pre5"
+	const val Minecraft = "1.18"
 	object Jvm {
 		val Java = JavaVersion.VERSION_17
 		const val Kotlin = "1.6.0"
 		const val TargetKotlin = "17"
 	}
 	object Fabric {
-		const val Yarn = "1.18-pre5+build.4"
-		const val Loader = "0.12.5"
-		const val Api = "0.42.8+1.18"
+		const val Yarn = "1.18+build.1"
+		const val Loader = "0.12.8"
+		const val Api = "0.44.0+1.18"
 	}
 	object Mod {
 		const val Group = "io.ejekta"
@@ -31,7 +31,7 @@ object Versions {
 		const val Version = "3.0.0-1.18"
 	}
 	object Env {
-		const val Serialization = "1.3.0"
+		const val Serialization = "1.3.1"
 		const val FLK = "1.7.0+kotlin.1.6.0"
 		const val ClothConfig = "6.0.42"
 		const val ModMenu = "2.0.6"
@@ -85,7 +85,7 @@ dependencies {
 	compileOnly("org.jetbrains:annotations:22.0.0")
 	implementation("com.google.code.findbugs:jsr305:3.0.2")
 
-	modImplementation(group = "net.fabricmc", name = "fabric-language-kotlin", version = "1.6.4+kotlin.1.5.30")
+	modImplementation(group = "net.fabricmc", name = "fabric-language-kotlin", version = "1.7.0+kotlin.1.6.0")
 
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${Versions.Fabric.Api}")
 }
@@ -96,7 +96,6 @@ val sourcesJarTask = tasks.named("sourcesJar").get()
 val remapSourcesJarTask = tasks.named("remapSourcesJar").get()
 
 publishing {
-
 	publications {
 		create<MavenPublication>("Kambrik") {
 
@@ -132,30 +131,31 @@ publishing {
 					connection.set("$pkgHub.git")
 					url.set(pkgHub)
 				}
-
 			}
-
-
 		}
 	}
 
 	repositories {
-		maven("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2") {
-			name = "Central"
-			credentials {
-				username = property("ossrh.username") as? String
-				password = property("ossrh.password") as? String
+		if (hasProperty("ossrh.username") && hasProperty("ossrh.password")) {
+			maven("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2") {
+				name = "Central"
+				credentials {
+					username = property("ossrh.username") as? String
+					password = property("ossrh.password") as? String
+				}
 			}
 		}
-		maven("https://maven.pkg.github.com/ejektaflex/kambrik") {
-			name = "GitHub"
-			credentials {
-				username = property("gpr.user") as? String
-				password = property("gpr.key") as? String
+
+		if (hasProperty("gpr.user") && hasProperty("gpr.key")) {
+			maven("https://maven.pkg.github.com/ejektaflex/kambrik") {
+				name = "GitHub"
+				credentials {
+					username = property("gpr.user") as? String
+					password = property("gpr.key") as? String
+				}
 			}
 		}
 	}
-
 }
 
 signing {
@@ -173,10 +173,6 @@ tasks.getByName<ProcessResources>("processResources") {
 			)
 		)
 	}
-}
-
-tasks.withType<JavaCompile> {
-	//this.
 }
 
 tasks.withType<KotlinCompile> {
@@ -207,5 +203,4 @@ tasks.dokkaHtml.configure {
 			}
 		}
 	}
-
 }
