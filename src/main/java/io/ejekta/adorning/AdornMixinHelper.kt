@@ -1,15 +1,21 @@
 package io.ejekta.adorning
 
-import net.minecraft.client.render.OverlayTexture
-import net.minecraft.client.render.RenderLayer
-import net.minecraft.client.render.VertexConsumerProvider
+import net.minecraft.client.MinecraftClient
+import net.minecraft.client.render.*
 import net.minecraft.client.render.entity.model.BipedEntityModel
 import net.minecraft.client.render.item.ItemRenderer
+import net.minecraft.client.render.model.BakedModel
+import net.minecraft.client.render.model.BakedQuad
+import net.minecraft.client.render.model.json.ModelTransformation
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.LivingEntity
 import net.minecraft.item.ArmorItem
+import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
 import net.minecraft.util.Identifier
+import net.minecraft.util.math.Direction
+import java.util.*
 
 object AdornMixinHelper {
 
@@ -40,6 +46,104 @@ object AdornMixinHelper {
         }
     }
 
+    fun onItemRender(
+        itemStack: ItemStack,
+        renderMode: ModelTransformation.Mode,
+        leftHanded: Boolean,
+        matrices: MatrixStack,
+        vertexConsumers: VertexConsumerProvider?,
+        light: Int,
+        overlay: Int,
+        model: BakedModel?
+    ) {
+        if (!itemStack.isEmpty && itemStack.item is ArmorItem && itemStack.hasNbt()
+            && itemStack.nbt!!.contains("_adornment")
+        ) {
+            val adornment = Adornments.REGISTRY[Identifier(itemStack.nbt!!.getString("_adornment"))]
+            if (adornment != null) {
+                val armorItem = itemStack.item as ArmorItem
+                val st: ItemStack = stacks[armorItem.slotType] ?: return
+                val bakedModel: BakedModel = MinecraftClient.getInstance().itemRenderer
+                    .getModel(st, null, null, 0)
+                    // getHeldItemModel(st, null, null)
+                val c: Int = adornment.colour
+                renderItem(st, renderMode, leftHanded, matrices, vertexConsumers, light, overlay, bakedModel, c)
+            }
+        }
+    }
+
+    private val stacks = mapOf(
+        EquipmentSlot.HEAD to ItemStack(AdornmentMod.DISPLAY_ITEM_HELMET),
+        EquipmentSlot.CHEST to ItemStack(AdornmentMod.DISPLAY_ITEM_CHEST),
+        EquipmentSlot.LEGS to ItemStack(AdornmentMod.DISPLAY_ITEM_LEGGINGS),
+        EquipmentSlot.FEET to ItemStack(AdornmentMod.DISPLAY_ITEM_FEET)
+    )
+
+    private fun renderItem(
+        stack: ItemStack,
+        renderMode: ModelTransformation.Mode,
+        leftHanded: Boolean,
+        matrices: MatrixStack,
+        vertexConsumers: VertexConsumerProvider?,
+        light: Int,
+        overlay: Int,
+        model: BakedModel,
+        color: Int
+    ) {
+        if (!stack.isEmpty) {
+            matrices.push()
+            val bl = renderMode == ModelTransformation.Mode.GUI
+            val bl2 =
+                bl || renderMode == ModelTransformation.Mode.GROUND || renderMode == ModelTransformation.Mode.FIXED
+            model.transformation.getTransformation(renderMode).apply(leftHanded, matrices)
+            matrices.translate(-0.5, -0.5, -0.5)
+            if (!model.isBuiltin && (stack.item !== Items.TRIDENT || bl2)) {
+                val idk =
+                    renderMode == ModelTransformation.Mode.GUI || renderMode == ModelTransformation.Mode.FIRST_PERSON_LEFT_HAND || renderMode == ModelTransformation.Mode.FIRST_PERSON_RIGHT_HAND || renderMode == ModelTransformation.Mode.FIXED
+                val renderLayer = RenderLayers.getItemLayer(stack, idk)
+                val vertexConsumer: VertexConsumer =
+                    ItemRenderer.getArmorGlintConsumer(vertexConsumers, renderLayer, true, stack.hasGlint())
+                this.renderBakedItemModel(model, light, overlay, matrices, vertexConsumer, color)
+            }
+            matrices.pop()
+        }
+    }
+
+    private fun renderBakedItemModel(
+        model: BakedModel,
+        light: Int,
+        overlay: Int,
+        matrices: MatrixStack,
+        vertices: VertexConsumer,
+        color: Int
+    ) {
+        val random = Random()
+        val dirs = Direction.values()
+        for (direction in dirs) {
+            random.setSeed(42L)
+            renderBakedItemQuads(matrices, vertices, model.getQuads(null, direction, random), light, overlay, color)
+        }
+        random.setSeed(42L)
+        renderBakedItemQuads(matrices, vertices, model.getQuads(null, null, random), light, overlay, color)
+    }
+
+    private fun renderBakedItemQuads(
+        matrices: MatrixStack,
+        vertices: VertexConsumer,
+        quads: List<BakedQuad>,
+        light: Int,
+        overlay: Int,
+        color: Int
+    ) {
+        val entry = matrices.peek()
+        for (bakedQuad in quads) {
+            val r = (color shr 16 and 255).toFloat() / 255.0f
+            val g = (color shr 8 and 255).toFloat() / 255.0f
+            val b = (color and 255).toFloat() / 255.0f
+            vertices.quad(entry, bakedQuad, r, g, b, light, overlay)
+        }
+    }
+
     private fun renderArmorParts(
         matrices: MatrixStack,
         vertexConsumers: VertexConsumerProvider,
@@ -53,14 +157,14 @@ object AdornMixinHelper {
     ) {
         val vertexConsumer = ItemRenderer.getArmorGlintConsumer(
             vertexConsumers,
-            RenderLayer.getArmorCutoutNoCull(this.getArmorTexture(secondLayer)),
+            RenderLayer.getArmorCutoutNoCull(getArmorTexture(secondLayer)),
             false,
             glint
         )
         armorModel.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, red, green, blue, 1.0f)
     }
 
-    fun getArmorTexture(secondLayer: Boolean): Identifier {
+    private fun getArmorTexture(secondLayer: Boolean): Identifier {
         val string = "textures/adornment/adornment_" + (if (secondLayer) 2 else 1) + ".png"
         return Identifier(AdornmentMod.ID, string)
     }
