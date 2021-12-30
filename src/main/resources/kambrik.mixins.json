@@ -6,6 +6,9 @@
 	"mixins": [
 		"StructurePoolAccessor"
 	],
+	"client": [
+		""
+	],
 	"injectors": {
 		"defaultRequire": 1
 	}
