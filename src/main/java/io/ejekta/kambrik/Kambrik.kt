@@ -12,18 +12,32 @@ import org.apache.logging.log4j.LogManager
 
 object Kambrik {
 
-    val Command = KambrikCommandApi()
+    val Command: KambrikCommandApi by lazy {
+        KambrikCommandApi()
+    }
 
-    val Structure = KambrikStructureApi()
+    val Structure: KambrikStructureApi by lazy {
+        KambrikStructureApi()
+    }
 
-    val File = KambrikFileApi()
+    val File: KambrikFileApi by lazy {
+        KambrikFileApi()
+    }
 
-    val Logging = KambrikLoggingApi()
+    val Logging: KambrikLoggingApi by lazy {
+        KambrikLoggingApi()
+    }
 
-    val Message = KambrikMessageApi()
+    val Message: KambrikMessageApi by lazy {
+        KambrikMessageApi()
+    }
 
-    val Serial = KambrikSerialApi()
+    val Serial: KambrikSerialApi by lazy {
+        KambrikSerialApi()
+    }
 
-    val Input = KambrikInputApi()
+    val Input: KambrikInputApi by lazy {
+        KambrikInputApi()
+    }
 
 }

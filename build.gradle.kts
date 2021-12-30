@@ -14,21 +14,21 @@ plugins {
 }
 
 object Versions {
-	const val Minecraft = "1.18-pre5"
+	const val Minecraft = "1.18.1"
 	object Jvm {
 		val Java = JavaVersion.VERSION_17
 		const val Kotlin = "1.6.0"
 		const val TargetKotlin = "17"
 	}
 	object Fabric {
-		const val Yarn = "1.18-pre5+build.4"
-		const val Loader = "0.12.5"
-		const val Api = "0.42.8+1.18"
+		const val Yarn = "1.18.1+build.12"
+		const val Loader = "0.12.12"
+		const val Api = "0.45.0+1.18"
 	}
 	object Mod {
 		const val Group = "io.ejekta"
 		const val ID = "kambrik"
-		const val Version = "3.0.0-1.18"
+		const val Version = "3.0.1-1.18"
 	}
 	object Env {
 		const val Serialization = "1.3.0"
@@ -140,18 +140,22 @@ publishing {
 	}
 
 	repositories {
-		maven("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2") {
-			name = "Central"
-			credentials {
-				username = property("ossrh.username") as? String
-				password = property("ossrh.password") as? String
+		if (hasProperty("ossrh.username") && hasProperty("ossrh.password")) {
+			maven("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2") {
+				name = "Central"
+				credentials {
+					username = property("ossrh.username") as? String
+					password = property("ossrh.password") as? String
+				}
 			}
 		}
-		maven("https://maven.pkg.github.com/ejektaflex/kambrik") {
-			name = "GitHub"
-			credentials {
-				username = property("gpr.user") as? String
-				password = property("gpr.key") as? String
+		if (hasProperty("gpr.user") && hasProperty("gpr.key")) {
+			maven("https://maven.pkg.github.com/ejektaflex/kambrik") {
+				name = "GitHub"
+				credentials {
+					username = property("gpr.user") as? String
+					password = property("gpr.key") as? String
+				}
 			}
 		}
 	}
@@ -173,10 +177,6 @@ tasks.getByName<ProcessResources>("processResources") {
 			)
 		)
 	}
-}
-
-tasks.withType<JavaCompile> {
-	//this.
 }
 
 tasks.withType<KotlinCompile> {

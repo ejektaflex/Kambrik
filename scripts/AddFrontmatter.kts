@@ -3,7 +3,7 @@ package io.ejekta.testing
 import java.io.File
 
 fun main() {
-    println("Running Add Frontmatter Script")
+    println("Running 'Add Frontmatter' Script")
 
     val dokkaFolder = File("../build/dokka/gfm")
 
