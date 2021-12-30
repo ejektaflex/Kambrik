@@ -1,6 +1,6 @@
 package io.ejekta.kambrik.internal.mixins.client;
 
-import io.ejekta.adorning.AdornMixinHelper;
+import io.ejekta.adorning.AdornMixinHelperClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedModel;
@@ -18,7 +18,7 @@ public class ItemRendererMixin
     @Inject(at = @At("TAIL"), method = "renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/model/json/ModelTransformation$Mode;ZLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IILnet/minecraft/client/render/model/BakedModel;)V")
     public void onItemRender(ItemStack itemStack, ModelTransformation.Mode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, BakedModel model, CallbackInfo cbi)
     {
-        AdornMixinHelper.INSTANCE.onItemRender(itemStack, renderMode, leftHanded, matrices, vertexConsumers, light, overlay, model);
+        AdornMixinHelperClient.INSTANCE.onItemRender(itemStack, renderMode, leftHanded, matrices, vertexConsumers, light, overlay, model);
     }
 }
 
