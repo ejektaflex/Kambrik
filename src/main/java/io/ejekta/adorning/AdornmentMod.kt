@@ -16,26 +16,16 @@ object AdornmentMod : ModInitializer, KambrikAutoRegistrar {
         Kambrik.SpecialRecipes.addAnvilRecipe(
             Identifier(ID, "adorn_smithing")
         ) { armorStack, materialStack ->
-
-            println("Check?: $armorStack $materialStack")
-
             val material = Adornments.REGISTRY.getForMaterial(materialStack.item) ?: return@addAnvilRecipe null
-
-            println("Check material: $material")
-
             if (!armorStack.isEmpty && armorStack.item is ArmorItem) {
-                println("Check armor: is armor stack")
                 val armorItem = armorStack.item as ArmorItem
                 // Avoid repair ingredients and existing armor adornments
                 if (armorItem.material.repairIngredient.test(materialStack)) return@addAnvilRecipe null
-                println("Check repair: is not repair")
                 if (armorStack.hasNbt() && armorStack.nbt!!.contains("_adornment")) return@addAnvilRecipe  null
-                println("Check adorns: none")
                 val output = armorStack.copy()
                 output.orCreateNbt.putString("_adornment", Adornments.REGISTRY.getId(material).toString())
                 return@addAnvilRecipe output
             }
-
             return@addAnvilRecipe null
         }
 
@@ -43,10 +33,10 @@ object AdornmentMod : ModInitializer, KambrikAutoRegistrar {
 
     }
 
-    val DISPLAY_ITEM_HELMET = "helmet" forItem AdornmentDisplay()
-    val DISPLAY_ITEM_CHEST = "chest" forItem AdornmentDisplay()
-    val DISPLAY_ITEM_LEGGINGS = "leggings" forItem AdornmentDisplay()
-    val DISPLAY_ITEM_FEET = "feet" forItem AdornmentDisplay()
+    val DISPLAY_ITEM_HELMET = "adornment_helmet" forItem AdornmentDisplay()
+    val DISPLAY_ITEM_CHEST = "adornment_chest" forItem AdornmentDisplay()
+    val DISPLAY_ITEM_LEGGINGS = "adornment_leggings" forItem AdornmentDisplay()
+    val DISPLAY_ITEM_FEET = "adornment_feet" forItem AdornmentDisplay()
 
     const val ID = "adornments"
 }

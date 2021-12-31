@@ -7,6 +7,6 @@ import net.minecraft.world.World
 
 class AdornmentDisplay : Item(Settings().maxCount(1)) {
     override fun inventoryTick(stack: ItemStack, world: World, entity: Entity, slot: Int, selected: Boolean) {
-        stack.count = 0
+        //stack.count = 0
     }
 }

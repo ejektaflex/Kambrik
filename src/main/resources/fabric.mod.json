@@ -40,6 +40,12 @@
         "adapter": "kotlin",
         "value": "io.ejekta.kambrik.internal.client.KambrikClientMod"
       }
+    ],
+    "kambrik": [
+      {
+        "adapter": "kotlin",
+        "value": "io.ejekta.adorning.AdornmentMod"
+      }
     ]
   },
   "mixins": [

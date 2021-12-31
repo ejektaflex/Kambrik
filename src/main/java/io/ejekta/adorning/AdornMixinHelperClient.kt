@@ -65,9 +65,7 @@ object AdornMixinHelperClient {
                 val st: ItemStack = stacks[armorItem.slotType] ?: return
                 val bakedModel: BakedModel = MinecraftClient.getInstance().itemRenderer
                     .getModel(st, null, null, 0)
-                    // getHeldItemModel(st, null, null)
-                val c: Int = adornment.colour
-                renderItem(st, renderMode, leftHanded, matrices, vertexConsumers, light, overlay, bakedModel, c)
+                renderItem(st, renderMode, leftHanded, matrices, vertexConsumers, light, overlay, bakedModel, adornment.colour)
             }
         }
     }
@@ -93,17 +91,15 @@ object AdornMixinHelperClient {
         if (!stack.isEmpty) {
             matrices.push()
             val bl = renderMode == ModelTransformation.Mode.GUI
-            val bl2 =
-                bl || renderMode == ModelTransformation.Mode.GROUND || renderMode == ModelTransformation.Mode.FIXED
+            val bl2 = bl || renderMode == ModelTransformation.Mode.GROUND || renderMode == ModelTransformation.Mode.FIXED
             model.transformation.getTransformation(renderMode).apply(leftHanded, matrices)
             matrices.translate(-0.5, -0.5, -0.5)
             if (!model.isBuiltin && (stack.item !== Items.TRIDENT || bl2)) {
-                val idk =
-                    renderMode == ModelTransformation.Mode.GUI || renderMode == ModelTransformation.Mode.FIRST_PERSON_LEFT_HAND || renderMode == ModelTransformation.Mode.FIRST_PERSON_RIGHT_HAND || renderMode == ModelTransformation.Mode.FIXED
+                val idk = renderMode == ModelTransformation.Mode.GUI || renderMode == ModelTransformation.Mode.FIRST_PERSON_LEFT_HAND || renderMode == ModelTransformation.Mode.FIRST_PERSON_RIGHT_HAND || renderMode == ModelTransformation.Mode.FIXED
                 val renderLayer = RenderLayers.getItemLayer(stack, idk)
                 val vertexConsumer: VertexConsumer =
-                    ItemRenderer.getArmorGlintConsumer(vertexConsumers, renderLayer, true, stack.hasGlint())
-                this.renderBakedItemModel(model, light, overlay, matrices, vertexConsumer, color)
+                    ItemRenderer.getArmorGlintConsumer(vertexConsumers, renderLayer, false, stack.hasGlint())
+                renderBakedItemModel(model, light, overlay, matrices, vertexConsumer, color)
             }
             matrices.pop()
         }
@@ -165,7 +161,7 @@ object AdornMixinHelperClient {
     }
 
     private fun getArmorTexture(secondLayer: Boolean): Identifier {
-        val string = "textures/adornment_" + (if (secondLayer) 2 else 1) + ".png"
+        val string = "textures/adornment/adornment_" + (if (secondLayer) 2 else 1) + ".png"
         return Identifier(AdornmentMod.ID, string)
     }
 
