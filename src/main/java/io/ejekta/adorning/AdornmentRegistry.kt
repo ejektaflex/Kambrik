@@ -4,6 +4,7 @@ import com.google.common.collect.Maps
 import com.mojang.serialization.Lifecycle
 import net.minecraft.item.Item
 import net.minecraft.util.Identifier
+import net.minecraft.util.registry.Registry
 import net.minecraft.util.registry.RegistryKey
 import net.minecraft.util.registry.SimpleRegistry
 
@@ -18,7 +19,7 @@ class AdornmentRegistry : SimpleRegistry<Adornment>(KEY, Lifecycle.stable()) {
     }
 
     companion object {
-        private val ADORNMENTS: MutableMap<Item, Identifier> = Maps.newHashMap()
-        val KEY = RegistryKey.ofRegistry<Adornment>(Identifier(AdornmentMod.ID, "adornments"))
+        private val ADORNMENTS: MutableMap<Item, Identifier> = mutableMapOf()
+        val KEY: RegistryKey<Registry<Adornment>> = RegistryKey.ofRegistry<Adornment>(Identifier(AdornmentMod.ID, "adornments"))
     }
 }

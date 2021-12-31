@@ -11,23 +11,32 @@ object AdornmentMod : ModInitializer, KambrikAutoRegistrar {
 
     override fun onInitialize() {
 
+        println("Adornment init!")
+
         Kambrik.SpecialRecipes.addAnvilRecipe(
             Identifier(ID, "adorn_smithing")
         ) { armorStack, materialStack ->
 
+            println("Check?: $armorStack $materialStack")
+
             val material = Adornments.REGISTRY.getForMaterial(materialStack.item) ?: return@addAnvilRecipe null
 
+            println("Check material: $material")
+
             if (!armorStack.isEmpty && armorStack.item is ArmorItem) {
+                println("Check armor: is armor stack")
                 val armorItem = armorStack.item as ArmorItem
                 // Avoid repair ingredients and existing armor adornments
                 if (armorItem.material.repairIngredient.test(materialStack)) return@addAnvilRecipe null
-                if (armorStack.hasNbt() && armorStack.getNbt()!!.contains("_adornment")) return@addAnvilRecipe  null
-
+                println("Check repair: is not repair")
+                if (armorStack.hasNbt() && armorStack.nbt!!.contains("_adornment")) return@addAnvilRecipe  null
+                println("Check adorns: none")
                 val output = armorStack.copy()
                 output.orCreateNbt.putString("_adornment", Adornments.REGISTRY.getId(material).toString())
+                return@addAnvilRecipe output
             }
 
-            null
+            return@addAnvilRecipe null
         }
 
         // TODO add the ability to remove adornments

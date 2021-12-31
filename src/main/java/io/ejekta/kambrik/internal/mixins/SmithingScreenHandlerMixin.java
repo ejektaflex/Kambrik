@@ -31,29 +31,42 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler
     @Inject(at = @At("RETURN"), method = "canTakeOutput(Lnet/minecraft/entity/player/PlayerEntity;Z)Z", cancellable = true)
     protected void canTakeOutput(PlayerEntity player, boolean present, CallbackInfoReturnable<Boolean> cbi)
     {
-        result = AdornMixinHelper.INSTANCE.smithingCanTake(
-                this.input.getStack(0),
-                this.input.getStack(1)
-        );
+        System.out.println("Can take??");
+
 
         if (result != null) {
             cbi.setReturnValue(true);
         }
     }
 
+
+
     @Inject(at = @At("TAIL"), method = "updateResult()V")
     public void updateResult(CallbackInfo cbi)
     {
+        System.out.println("Can update??");
+
+
         if(!output.isEmpty()) {
             return;
         }
 
-        if (result != null) {
-            output.setStack(0, result);
-            result = null;
+        try {
+            result = AdornMixinHelper.INSTANCE.smithingCanTake(
+                    this.input.getStack(0),
+                    this.input.getStack(1)
+            );
+            System.out.println("Result gotten. ");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        ItemStack armourStack = this.input.getStack(0);
-        ItemStack materialStack = this.input.getStack(1);
+
+
+
+        if (result != null) {
+            System.out.println("Wooo!");
+            output.setStack(0, result);
+        }
     }
 }

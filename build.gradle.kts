@@ -52,6 +52,7 @@ val pkgAuthor: String by project
 val pkgEmail: String by project
 val pkgHub: String by project
 
+// EZ local Maven updates
 val buildVersion = if (Versions.Mod.Version.endsWith("SNAPSHOT")) {
 	Versions.Mod.Version + ".${SimpleDateFormat("YYYY.MMdd.HHmmss").format(Date())}"
 } else {
@@ -63,7 +64,6 @@ version = buildVersion
 
 repositories {
 	mavenCentral()
-	maven(url = "https://kotlin.bintray.com/kotlinx")
 	maven(url = "https://maven.terraformersmc.com/") {
 		name = "Mod Menu"
 	}

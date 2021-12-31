@@ -165,7 +165,7 @@ object AdornMixinHelperClient {
     }
 
     private fun getArmorTexture(secondLayer: Boolean): Identifier {
-        val string = "textures/adornment/adornment_" + (if (secondLayer) 2 else 1) + ".png"
+        val string = "textures/adornment_" + (if (secondLayer) 2 else 1) + ".png"
         return Identifier(AdornmentMod.ID, string)
     }
 
