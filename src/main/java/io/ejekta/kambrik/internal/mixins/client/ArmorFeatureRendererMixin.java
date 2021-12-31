@@ -1,6 +1,6 @@
 package io.ejekta.kambrik.internal.mixins.client;
 
-import io.ejekta.adorning.AdornMixinHelperClient;
+import io.ejekta.adorning.MixinHelperClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
@@ -28,15 +28,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
     @Inject(at = @At("RETURN"), method = "renderArmor(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;ILnet/minecraft/client/render/entity/model/BipedEntityModel;)V")
     private void renderArmor(MatrixStack matrices, VertexConsumerProvider vertexConsumers, T entity, EquipmentSlot slot, int light, A armorModel, CallbackInfo cbi)
     {
-        AdornMixinHelperClient.INSTANCE.renderArmor(
-                matrices,
-                vertexConsumers,
-                entity,
-                slot,
-                light,
-                armorModel,
-                (A armorMdl, EquipmentSlot slt) -> useArmor(armorMdl, slt)
-        );
+        MixinHelperClient.INSTANCE.renderArmor(matrices, vertexConsumers, entity, slot, light, armorModel, this::useArmor);
     }
 
     public ArmorFeatureRendererMixin(FeatureRendererContext<T, M> context)

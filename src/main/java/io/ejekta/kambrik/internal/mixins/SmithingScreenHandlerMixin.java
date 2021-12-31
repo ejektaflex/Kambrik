@@ -1,13 +1,9 @@
 package io.ejekta.kambrik.internal.mixins;
 
-import io.ejekta.adorning.AdornMixinHelper;
-import io.ejekta.adorning.Adornment;
-import io.ejekta.adorning.Adornments;
+import io.ejekta.adorning.MixinHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.ForgingScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.ScreenHandlerType;
@@ -31,28 +27,25 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler
     @Inject(at = @At("RETURN"), method = "canTakeOutput(Lnet/minecraft/entity/player/PlayerEntity;Z)Z", cancellable = true)
     protected void canTakeOutput(PlayerEntity player, boolean present, CallbackInfoReturnable<Boolean> cbi)
     {
-        System.out.println("Can take??");
-
-
         if (result != null) {
             cbi.setReturnValue(true);
         }
     }
 
-
+    @Inject(at = @At("TAIL"), method = "onTakeOutput(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;)V", cancellable = true)
+    public void onTakeOutput(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
+        result = null;
+    }
 
     @Inject(at = @At("TAIL"), method = "updateResult()V")
     public void updateResult(CallbackInfo cbi)
     {
-        System.out.println("Can update??");
-
-
         if(!output.isEmpty()) {
             return;
         }
 
         try {
-            result = AdornMixinHelper.INSTANCE.smithingCanTake(
+            result = MixinHelper.INSTANCE.smithingCanTake(
                     this.input.getStack(0),
                     this.input.getStack(1)
             );
@@ -61,11 +54,7 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler
             e.printStackTrace();
         }
 
-
-
-
         if (result != null) {
-            System.out.println("Wooo!");
             output.setStack(0, result);
         }
     }

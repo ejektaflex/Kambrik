@@ -4,7 +4,7 @@ import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrikx.ext.SpecialRecipes
 import net.minecraft.item.ItemStack
 
-object AdornMixinHelper {
+object MixinHelper {
     fun smithingCanTake(stackA: ItemStack, stackB: ItemStack): ItemStack? {
         println("Take check.. $stackA $stackB")
         for (recipe in Kambrik.SpecialRecipes.anvilRecipes.values) {
