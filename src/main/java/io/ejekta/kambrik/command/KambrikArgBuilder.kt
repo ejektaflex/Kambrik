@@ -29,9 +29,9 @@ import net.minecraft.util.Identifier
 class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
     ArgumentBuilder<SRC, KambrikArgBuilder<SRC, A>>() {
 
-    private val subArgs = mutableListOf<KambrikArgBuilder<SRC, *>>()
+    val subArgs = mutableListOf<KambrikArgBuilder<SRC, *>>()
 
-    internal fun finalize(): A {
+    fun finalize(): A {
         for (subArg in subArgs) {
             arg.then(subArg) // used to be `arg.then(subArg.arg)`, changed when refactored for agnostic command source
         }
@@ -51,7 +51,7 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
     /**
      * Specifies a generic required argument.
      */
-    private inline fun <reified ARG> argument(
+    inline fun <reified ARG> argument(
         type: ArgumentType<ARG>,
         word: String,
         items: SuggestionProvider<SRC>? = null,
