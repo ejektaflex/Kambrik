@@ -44,15 +44,10 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler
             return;
         }
 
-        try {
-            result = MixinHelper.INSTANCE.smithingCanTake(
-                    this.input.getStack(0),
-                    this.input.getStack(1)
-            );
-            System.out.println("Result gotten. ");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        result = MixinHelper.INSTANCE.smithingCanTake(
+                this.input.getStack(0),
+                this.input.getStack(1)
+        );
 
         if (result != null) {
             output.setStack(0, result);

@@ -27,8 +27,7 @@ public class ItemRendererMixin
 
     @Inject(at = @At("HEAD"), method = "renderBakedItemQuads(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;Ljava/util/List;Lnet/minecraft/item/ItemStack;II)V", cancellable = true)
     public void onBakedQuadsRender(MatrixStack matrices, VertexConsumer vertices, List<BakedQuad> quads, ItemStack stack, int light, int overlay, CallbackInfo ci) {
-        MixinHelperClient.INSTANCE.newBakedQuads(matrices, vertices, quads, light, overlay, stack, ci);
+        MixinHelperClient.INSTANCE.onRenderBakedItemQuads(matrices, vertices, quads, light, overlay, stack, ci);
     }
-
 }
 

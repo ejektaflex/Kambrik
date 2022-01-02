@@ -79,7 +79,7 @@ object MixinHelperClient {
         EquipmentSlot.FEET to ItemStack(AdornmentMod.DISPLAY_ITEM_FEET)
     )
 
-    fun newBakedQuads(
+    fun onRenderBakedItemQuads(
         matrices: MatrixStack,
         vertices: VertexConsumer,
         quads: List<BakedQuad>,
