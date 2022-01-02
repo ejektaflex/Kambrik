@@ -4,12 +4,7 @@
 	"package": "io.ejekta.kambrik.internal.mixins",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
-		"StructurePoolAccessor",
-		"SmithingScreenHandlerMixin"
-	],
-	"client": [
-		"client.ArmorFeatureRendererMixin",
-		"client.ItemRendererMixin"
+		"StructurePoolAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1

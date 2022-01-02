@@ -14,12 +14,11 @@ class KambrikSpecialRecipeApi internal constructor() {
 
     internal val anvilRecipes = mutableMapOf<Identifier, KambrikCustomAnvilRecipe>()
 
+    val AnvilRecipes: Map<Identifier, KambrikCustomAnvilRecipe>
+        get() = anvilRecipes.toMap()
+
     fun addAnvilRecipe(id: Identifier, func: KambrikCustomAnvilRecipe) {
         anvilRecipes[id] = func
-    }
-
-    internal fun handleOutput() {
-
     }
 
 }

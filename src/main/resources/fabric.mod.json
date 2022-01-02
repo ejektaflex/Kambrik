@@ -29,22 +29,12 @@
       {
         "adapter": "kotlin",
         "value": "io.ejekta.kambrik.internal.KambrikMod"
-      },
-      {
-        "adapter": "kotlin",
-        "value": "io.ejekta.adorning.AdornmentMod"
       }
     ],
     "client": [
       {
         "adapter": "kotlin",
         "value": "io.ejekta.kambrik.internal.client.KambrikClientMod"
-      }
-    ],
-    "kambrik": [
-      {
-        "adapter": "kotlin",
-        "value": "io.ejekta.adorning.AdornmentMod"
       }
     ]
   },
