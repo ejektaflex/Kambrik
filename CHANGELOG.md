@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added some additional shortcut methods for common argument types
 - Auto-Registration
   - Added some additional shortcut methods for common registration types
+  - Added methods for pre as well as post registration of content
 
 ## Fixed
 - Command DSL
