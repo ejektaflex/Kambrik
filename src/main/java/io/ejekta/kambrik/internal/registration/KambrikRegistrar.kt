@@ -23,7 +23,7 @@ internal object KambrikRegistrar {
     }
 
     fun <T> register(requester: KambrikAutoRegistrar, reg: Registry<T>, itemId: String, obj: T): T {
-        KambrikMod.Logger.debug("Kambrik registering '${requester::class.qualifiedName} for $itemId' for autoregistration")
+        KambrikMod.Logger.debug("Kambrik registering '${requester::class.qualifiedName} for $itemId' for auto-registration")
         this[requester].content.add(RegistrationEntry(reg, itemId, obj))
         return obj
     }
@@ -31,10 +31,11 @@ internal object KambrikRegistrar {
     fun doRegistrationFor(container: EntrypointContainer<KambrikMarker>) {
         KambrikMod.Logger.debug("Kambrik doing real registration for mod ${container.provider.metadata.id}")
         this[container.entrypoint as? KambrikAutoRegistrar ?: return].apply {
-            requestor.manualRegister()
+            requestor.beforeRegistration()
             content.forEach { entry ->
                 entry.register(container.provider.metadata.id)
             }
+            requestor.afterRegistration()
         }
     }
 

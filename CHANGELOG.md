@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as closely as it can.
 
+## [3.1.0] for 1.18.1 - 2022-01-06
+
+## Added
+- Special Recipe API (Smithing only right now)
+  - Allows devs to specify special (non-json-standard) recipe types for common crafting methods
+    - Should only be used where a standard recipe file is not enough (e.g. armor dying, tool repair)
+- Command DSL
+  - Added some additional shortcut methods for common argument types
+- Auto-Registration
+  - Added some additional shortcut methods for common registration types
+
+## Fixed
+- Command DSL
+  - Custom argument method is no longer private
+
 ## [3.0.0] for 1.18 - 2021-11-23
 
 ## Changed

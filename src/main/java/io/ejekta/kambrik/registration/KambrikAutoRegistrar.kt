@@ -7,12 +7,15 @@ import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
+import net.minecraft.client.particle.Particle
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.attribute.EntityAttribute
 import net.minecraft.entity.effect.StatusEffect
 import net.minecraft.item.Item
+import net.minecraft.particle.ParticleEffect
+import net.minecraft.particle.ParticleType
 import net.minecraft.potion.Potion
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerType
@@ -20,6 +23,7 @@ import net.minecraft.sound.SoundEvent
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.registry.Registry
+import net.minecraft.village.VillagerProfession
 import net.minecraft.village.VillagerType
 import net.minecraft.world.gen.carver.Carver
 import net.minecraft.world.gen.carver.CarverConfig
@@ -32,8 +36,13 @@ interface KambrikAutoRegistrar : KambrikMarker {
 
     /**
      * Any non-automatic registration that still needs to be done can
-     * be put inside of this method, if desired.
+     * be put inside of these methods method, if desired.
      */
+    fun beforeRegistration() {}
+
+    fun afterRegistration() {}
+
+    @Deprecated("Phased out in favor of before/after registration methods", ReplaceWith("KambrikAutoRegistrar::afterRegistration"), DeprecationLevel.ERROR)
     fun manualRegister() {}
 
     fun <T> String.forRegistration(reg: Registry<T>, obj: T): T {
@@ -57,6 +66,10 @@ interface KambrikAutoRegistrar : KambrikMarker {
     infix fun String.forAttribute(attribute: EntityAttribute): EntityAttribute = forRegistration(Registry.ATTRIBUTE, attribute)
 
     infix fun String.forPotion(potion: Potion): Potion = forRegistration(Registry.POTION, potion)
+
+    infix fun <PE : ParticleEffect> String.forParticle(particle: ParticleType<PE>) = forRegistration(Registry.PARTICLE_TYPE, particle)
+
+    infix fun <R : Registry<*>>String.forVillagerProfession(profession: VillagerProfession) = forRegistration(Registry.VILLAGER_PROFESSION, profession)
 
     infix fun <T : Entity> String.forEntityType(type: EntityType<T>): EntityType<T> = forRegistration(Registry.ENTITY_TYPE, type) as EntityType<T>
 

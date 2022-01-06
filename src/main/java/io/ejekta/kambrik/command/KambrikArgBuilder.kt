@@ -3,6 +3,7 @@ package io.ejekta.kambrik.command
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.arguments.BoolArgumentType.bool
+import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.mojang.brigadier.arguments.FloatArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType.integer
 import com.mojang.brigadier.arguments.StringArgumentType.string
@@ -12,11 +13,10 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionProvider
 import com.mojang.brigadier.tree.CommandNode
-import net.minecraft.command.argument.BlockPosArgumentType
-import net.minecraft.command.argument.ColorArgumentType
+import net.minecraft.command.EntitySelector
+import net.minecraft.command.argument.*
 import net.minecraft.command.argument.IdentifierArgumentType.identifier
 import net.minecraft.command.argument.NumberRangeArgumentType.intRange
-import net.minecraft.command.argument.PosArgument
 import net.minecraft.predicate.NumberRange
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.util.Formatting
@@ -69,6 +69,9 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
         subArgs.add(req)
         return req.arg
     }
+
+    // Pre-made argument methods. If you want a custom one, use `argument()` above
+
     fun argBlockPos(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, PosArgument> = {}
     ) = argument(BlockPosArgumentType.blockPos(), word, items, func)
@@ -102,6 +105,44 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
     fun argString(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, String> = {}
     ) = argument(string(), word, items, func)
+
+    fun argDouble(
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, Double> = {}
+    ) = argument(DoubleArgumentType.doubleArg(), word, items, func)
+
+    fun argPlayer(
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, EntitySelector> = {}
+    ) = argument(EntityArgumentType.player(), word, items, func)
+
+    fun argPlayers(
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, EntitySelector> = {}
+    ) = argument(EntityArgumentType.players(), word, items, func)
+
+    fun argItemStack(
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, ItemStackArgument> = {}
+    ) = argument(ItemStackArgumentType.itemStack(), word, items, func)
+
+    fun argEntity(
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, EntitySelector> = {}
+    ) = argument(EntityArgumentType.entity(), word, items, func)
+
+    fun argEntities(
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, EntitySelector> = {}
+    ) = argument(EntityArgumentType.entities(), word, items, func)
+
+    fun argAngle(
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, AngleArgumentType.Angle> = {}
+    ) = argument(AngleArgumentType.angle(), word, items, func)
+
+    fun argVec2(
+        word: String, centerInts: Boolean? = null,
+        items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, PosArgument> = {}
+    ) = argument(centerInts?.let { Vec2ArgumentType.vec2(it) } ?: Vec2ArgumentType.vec2(), word, items, func)
+
+    fun argVec3(
+        word: String, centerInts: Boolean? = null,
+        items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, PosArgument> = {}
+    ) = argument(centerInts?.let { Vec3ArgumentType.vec3(it) } ?: Vec3ArgumentType.vec3(), word, items, func)
 
     /**
      * A shortcut for creating a literal argument.
