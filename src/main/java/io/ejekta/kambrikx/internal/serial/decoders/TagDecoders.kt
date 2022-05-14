@@ -18,7 +18,7 @@ internal class TagDecoder(
 ) : BaseTagDecoder(config, level) {
 
     override fun readTag(name: String): NbtElement {
-        return NbtNull.INSTANCE
+        return NbtEnd.INSTANCE
     }
 
     override fun decodeElementIndex(descriptor: SerialDescriptor): Int {

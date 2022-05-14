@@ -10,7 +10,7 @@ import net.minecraft.nbt.*
 @KambrikExperimental
 @InternalSerializationApi
 internal class TagEncoder(config: NbtFormatConfig) : BaseTagEncoder(config) {
-    override var root: NbtElement = NbtNull.INSTANCE
+    override var root: NbtElement = NbtEnd.INSTANCE
 
     // Currently, primitive encodings directly call addTag("PRIMITIVE", tag)
     override fun addTag(name: String?, tag: NbtElement) {
