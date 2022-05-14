@@ -9,7 +9,6 @@ import kotlinx.serialization.modules.SerializersModule
 import net.minecraft.block.Block
 import net.minecraft.item.Item
 import net.minecraft.nbt.NbtCompound
-import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos

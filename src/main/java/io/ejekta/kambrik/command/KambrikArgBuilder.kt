@@ -118,9 +118,10 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, EntitySelector> = {}
     ) = argument(EntityArgumentType.players(), word, items, func)
 
-    fun argItemStack(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, ItemStackArgument> = {}
-    ) = argument(ItemStackArgumentType.itemStack(), word, items, func)
+    // TODO Enable itemstack args
+//    fun argItemStack(
+//        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, ItemStackArgument> = {}
+//    ) = argument(ItemStackArgumentType.itemStack(), word, items, func)
 
     fun argEntity(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, EntitySelector> = {}

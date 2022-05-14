@@ -4,9 +4,9 @@ import java.util.Date
 import java.net.URL
 
 plugins {
-	kotlin("jvm") version "1.6.0"
+	kotlin("jvm") version "1.6.20"
 	kotlin("plugin.serialization") version "1.6.0"
-	id("fabric-loom") version "0.10-SNAPSHOT"
+	id("fabric-loom") version "0.11-SNAPSHOT"
 	`maven-publish`
 	signing
 	`idea`
@@ -14,27 +14,27 @@ plugins {
 }
 
 object Versions {
-	const val Minecraft = "1.18.1"
+	const val Minecraft = "22w19a"
 	object Jvm {
 		val Java = JavaVersion.VERSION_17
-		const val Kotlin = "1.6.0"
+		const val Kotlin = "1.6.20"
 		const val TargetKotlin = "17"
 	}
 	object Fabric {
-		const val Yarn = "1.18.1+build.12"
-		const val Loader = "0.12.12"
-		const val Api = "0.45.0+1.18"
+		const val Yarn = "22w19a+build.1"
+		const val Loader = "0.14.5"
+		const val Api = "0.52.2+1.19"
 	}
 	object Mod {
 		const val Group = "io.ejekta"
 		const val ID = "kambrik"
-		const val Version = "3.1.0-1.18"
+		const val Version = "4.0-1.19.x"
 	}
 	object Env {
 		const val Serialization = "1.3.0"
-		const val FLK = "1.7.0+kotlin.1.6.0"
-		const val ClothConfig = "6.0.42"
-		const val ModMenu = "2.0.6"
+		const val FLK = "1.7.2+kotlin.1.6.20"
+		//const val ClothConfig = "6.6.62"
+		//const val ModMenu = "3.0.1"
 	}
 }
 
@@ -69,8 +69,6 @@ repositories {
 	}
 }
 
-minecraft { }
-
 dependencies {
 	//to change the versions see the gradle.properties file
 	minecraft("com.mojang:minecraft:${Versions.Minecraft}")
@@ -85,7 +83,7 @@ dependencies {
 	compileOnly("org.jetbrains:annotations:22.0.0")
 	implementation("com.google.code.findbugs:jsr305:3.0.2")
 
-	modImplementation(group = "net.fabricmc", name = "fabric-language-kotlin", version = "1.6.4+kotlin.1.5.30")
+	modImplementation(group = "net.fabricmc", name = "fabric-language-kotlin", version = Versions.Env.FLK)
 
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${Versions.Fabric.Api}")
 }
