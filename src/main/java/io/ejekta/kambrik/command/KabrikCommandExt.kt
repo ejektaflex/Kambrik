@@ -77,7 +77,7 @@ fun kambrikServerCommand(func: KCommand<ServerCommandSource>): Command<ServerCom
  * Used to ensure that a command requires creative mode permissions to execute
  */
 fun KambrikArgBuilder<ServerCommandSource, *>.requiresCreative() {
-    requires { it.entity is PlayerEntity && it.player.isCreative }
+    requires { it.entity is PlayerEntity && (it.player?.isCreative ?: false) }
 }
 
 /**
@@ -91,7 +91,7 @@ fun KambrikArgBuilder<ServerCommandSource, *>.requiresOp(opLevel: Int = 4) {
  * Used to ensure that a command requires creative mode or a specific op level or higher to execute
  */
 fun KambrikArgBuilder<ServerCommandSource, *>.requiresCreativeOrOp(opLevel: Int = 4) {
-    requires { (it.entity is PlayerEntity && it.player.isCreative) || it.hasPermissionLevel(opLevel) }
+    requires { (it.entity is PlayerEntity && (it.player?.isCreative ?: false)) || it.hasPermissionLevel(opLevel) }
 }
 
 

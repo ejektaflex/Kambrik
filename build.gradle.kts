@@ -4,9 +4,9 @@ import java.util.Date
 import java.net.URL
 
 plugins {
-	kotlin("jvm") version "1.6.20"
+	kotlin("jvm") version "1.7.10"
 	kotlin("plugin.serialization") version "1.6.0"
-	id("fabric-loom") version "0.11-SNAPSHOT"
+	id("fabric-loom") version "0.12-SNAPSHOT"
 	`maven-publish`
 	signing
 	`idea`
@@ -14,16 +14,16 @@ plugins {
 }
 
 object Versions {
-	const val Minecraft = "22w19a"
+	const val Minecraft = "1.19.1"
 	object Jvm {
 		val Java = JavaVersion.VERSION_17
-		const val Kotlin = "1.6.20"
+		const val Kotlin = "1.7.10"
 		const val TargetKotlin = "17"
 	}
 	object Fabric {
-		const val Yarn = "22w19a+build.1"
-		const val Loader = "0.14.5"
-		const val Api = "0.52.2+1.19"
+		const val Yarn = "1.19.1+build.5"
+		const val Loader = "0.14.8"
+		const val Api = "0.58.5+1.19.1"
 	}
 	object Mod {
 		const val Group = "io.ejekta"
@@ -32,7 +32,7 @@ object Versions {
 	}
 	object Env {
 		const val Serialization = "1.3.0"
-		const val FLK = "1.7.2+kotlin.1.6.20"
+		const val FLK = "1.8.2+kotlin.1.7.10"
 		//const val ClothConfig = "6.6.62"
 		//const val ModMenu = "3.0.1"
 	}

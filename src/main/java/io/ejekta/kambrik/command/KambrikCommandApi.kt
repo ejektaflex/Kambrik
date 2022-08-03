@@ -3,8 +3,9 @@ package io.ejekta.kambrik.command
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import net.fabricmc.api.EnvType
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource
+
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.command.ServerCommandSource
 
@@ -43,7 +44,7 @@ class KambrikCommandApi internal constructor() {
         func: ArgDsl<FabricClientCommandSource, LiteralArgumentBuilder<FabricClientCommandSource>>
     ) {
         if (FabricLoader.getInstance().environmentType == EnvType.CLIENT) {
-            addSourcedCommand<FabricClientCommandSource>(baseCommandName, ClientCommandManager.DISPATCHER, func)
+            addSourcedCommand<FabricClientCommandSource>(baseCommandName, ClientCommandManager.getActiveDispatcher()!!, func)
         }
     }
 

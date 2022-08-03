@@ -10,10 +10,12 @@ import io.ejekta.kambrik.ext.identifier
 import io.ejekta.kambrik.text.sendError
 import io.ejekta.kambrik.text.sendFeedback
 import io.ejekta.kambrik.text.textLiteral
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.block.Blocks
+import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.item.ItemStack
+import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.tag.*
 import net.minecraft.util.Formatting
@@ -21,7 +23,12 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 
 internal object KambrikCommands : CommandRegistrationCallback {
-    override fun register(dispatcher: CommandDispatcher<ServerCommandSource>, dedicated: Boolean) {
+
+    override fun register(
+        dispatcher: CommandDispatcher<ServerCommandSource>,
+        registryAccess: CommandRegistryAccess,
+        environment: CommandManager.RegistrationEnvironment
+    ) {
 
         dispatcher.addCommand(KambrikMod.ID) {
 

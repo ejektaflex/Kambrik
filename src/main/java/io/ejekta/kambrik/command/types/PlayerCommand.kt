@@ -12,7 +12,7 @@ import net.minecraft.server.network.ServerPlayerEntity
  *
  * @param func The command context, giving also a player parameter
  */
-class PlayerCommand(val func: CommandContext<ServerCommandSource>.(player: ServerPlayerEntity) -> Int) : Command<ServerCommandSource> {
+class PlayerCommand(val func: CommandContext<ServerCommandSource>.(player: ServerPlayerEntity?) -> Int) : Command<ServerCommandSource> {
 
     override fun run(ctx: CommandContext<ServerCommandSource>): Int {
         val from = ctx.source.entity
