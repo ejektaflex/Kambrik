@@ -1,7 +1,7 @@
 package io.ejekta.kambrik.ext.math
 
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Vec3d
+import net.minecraft.util.math.Vector3d
 import net.minecraft.util.math.Vec3f
 import net.minecraft.util.math.Vec3i
 import kotlin.math.*
@@ -46,10 +46,10 @@ fun Vec3f.toArray(): FloatArray {
 }
 
 /**
- * Converts the Vec3f to a Vec3d
+ * Converts the Vec3f to a Vector3d
  */
-fun Vec3f.toVec3d(): Vec3d {
-    return Vec3d(this)
+fun Vec3f.toVector3d(): Vector3d {
+    return Vector3d(this)
 }
 
 /**

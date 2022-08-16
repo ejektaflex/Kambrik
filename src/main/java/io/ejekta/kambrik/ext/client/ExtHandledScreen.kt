@@ -4,11 +4,11 @@ import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.gui.DrawableHelper
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.client.render.GameRenderer
-import net.minecraft.client.util.math.MatrixStack
+import net.minecraft.client.util.math.PoseStack
 import net.minecraft.util.Identifier
 
 fun HandledScreen<*>.drawSimpleCenteredImage(
-    matrices: MatrixStack,
+    matrices: PoseStack,
     location: Identifier,
     bgWidth: Int,
     bgHeight: Int,

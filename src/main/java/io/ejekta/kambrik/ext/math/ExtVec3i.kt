@@ -1,6 +1,6 @@
 package io.ejekta.kambrik.ext.math
 
-import net.minecraft.util.math.Vec3i
+import net.minecraft.core.Vec3i
 
 operator fun Vec3i.times(other: Vec3i): Vec3i {
     return Vec3i(x * other.x, y * other.y, z * other.z)

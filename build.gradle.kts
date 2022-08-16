@@ -72,7 +72,7 @@ repositories {
 dependencies {
 	//to change the versions see the gradle.properties file
 	minecraft("com.mojang:minecraft:${Versions.Minecraft}")
-	mappings("net.fabricmc:yarn:${Versions.Fabric.Yarn}:v2")
+	mappings(loom.officialMojangMappings())
 	modImplementation("net.fabricmc:fabric-loader:${Versions.Fabric.Loader}")
 
 	modApi("org.jetbrains.kotlinx:kotlinx-serialization-core:${Versions.Env.Serialization}")

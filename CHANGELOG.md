@@ -36,10 +36,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Added some math extensions for:
-  - Vec3d
+  - Vector3d
   - Vec3i
   - Vec3f
-  - MatrixStack
+  - PoseStack
 
 ### Changed
 - Command DSL API
