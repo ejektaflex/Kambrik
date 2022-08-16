@@ -12,14 +12,14 @@ import net.minecraft.server.network.ServerPlayerEntity
  *
  * @param func The command context, giving also a player parameter
  */
-class PlayerCommand(val func: CommandContext<ServerCommandSource>.(player: ServerPlayerEntity?) -> Int) : Command<ServerCommandSource> {
+class PlayerCommand(val func: CommandContext<ServerCommandSource>.(player: ServerPlayerEntity) -> Int) : Command<ServerCommandSource> {
 
     override fun run(ctx: CommandContext<ServerCommandSource>): Int {
         val from = ctx.source.entity
         if (ctx.source !is ServerCommandSource) { // TODO reference player
             ctx.source.sendError("Only Players can send Player commands.")
         }
-        return func(ctx, ctx.source.player)
+        return func(ctx, ctx.source.player!!) // we'll fix this later if need be
     }
 
 }

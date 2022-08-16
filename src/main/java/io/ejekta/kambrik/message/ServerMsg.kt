@@ -9,7 +9,7 @@ import net.minecraft.server.network.ServerPlayNetworkHandler
 import net.minecraft.server.network.ServerPlayerEntity
 
 @Serializable
-abstract class ServerMsg() {
+abstract class ServerMsg {
 
     data class MsgContext(
         val server: MinecraftServer,
