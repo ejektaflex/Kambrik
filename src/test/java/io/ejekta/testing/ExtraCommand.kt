@@ -5,7 +5,7 @@ import io.ejekta.kambrik.command.KCommand
 import io.ejekta.kambrik.command.KambrikArgBuilder
 import io.ejekta.kambrik.command.addCommand
 import io.ejekta.kambrik.internal.KambrikCommands
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.command.CommandSource
 import net.minecraft.server.command.ServerCommandSource
 
@@ -32,7 +32,7 @@ class NewCommandType() : NewCommand<ServerCommandSource> {
 }
 
 fun main() { /* onInitialize */
-    CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback { dispatcher, dedicated ->
+    CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback { dispatcher, dedicated, env ->
         dispatcher.addCommand("test") {
             "apples" runs { println("Apples") }
             newCommandA.apply(this)

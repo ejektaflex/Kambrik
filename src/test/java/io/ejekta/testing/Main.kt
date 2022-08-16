@@ -12,7 +12,6 @@ import kotlinx.serialization.*
 import kotlinx.serialization.modules.overwriteWith
 import kotlinx.serialization.modules.plus
 import net.minecraft.nbt.NbtString
-import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
