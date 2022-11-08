@@ -1,25 +1,17 @@
 package io.ejekta.kambrik.internal
 
 import io.ejekta.kambrik.Kambrik
-import io.ejekta.kambrik.ext.fapi.toMap
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
-import io.ejekta.kambrik.logging.KambrikMarkers
-import io.ejekta.kambrikx.data.ConfigDataFile
 import io.ejekta.kambrikx.data.KambrikPersistence
-import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
-import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint
-import net.fabricmc.loader.api.metadata.CustomValue
 import net.minecraft.util.Identifier
 import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.core.Filter
-import org.apache.logging.log4j.core.Logger
-import org.apache.logging.log4j.core.LoggerContext
-import org.apache.logging.log4j.core.filter.MarkerFilter
 
 internal object KambrikMod : ModInitializer {
 
@@ -51,6 +43,21 @@ internal object KambrikMod : ModInitializer {
             if (FabricLoader.getInstance().environmentType != EnvType.CLIENT) {
                 KambrikPersistence.saveAllConfigResults()
             }
+        }
+
+        Kambrik.Criterion.addCriterionHandler("""
+            {
+              "trigger": "minecraft:enter_block",
+              "conditions": {
+                "block": "minecraft:rose_bush",
+                "state": {
+                  "half": "lower"
+                }
+              }
+            }
+            """.trimIndent()
+        ) {
+            println("Doot!")
         }
     }
 

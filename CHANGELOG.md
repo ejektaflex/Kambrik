@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [5.0] for (1.19.2? 1.20?) - (unreleased)
 
+## Added
+- Criterion Trigger API
+  - This new API allows us to run arbitrary code within a player context when a player triggers Advancement Criterion
+  - These listeners cannot be cancelled, they are intended to be used to update mod logic in response to gameplay
+
 ## Removed
 - Experimental Serialization API
   - This was ancient, and in most situations converting a structure to JSON and storing that in a String Tag was actually more space efficient

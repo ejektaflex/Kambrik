@@ -1,6 +1,7 @@
 package io.ejekta.kambrik
 
 import io.ejekta.kambrik.command.KambrikCommandApi
+import io.ejekta.kambrik.criterion.KambrikCriterionApi
 import io.ejekta.kambrik.file.KambrikFileApi
 import io.ejekta.kambrik.logging.KambrikLoggingApi
 import io.ejekta.kambrik.message.KambrikMessageApi
@@ -38,6 +39,10 @@ object Kambrik {
 
     val Input: KambrikInputApi by lazy {
         KambrikInputApi()
+    }
+
+    val Criterion: KambrikCriterionApi by lazy {
+        KambrikCriterionApi()
     }
 
 }

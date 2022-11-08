@@ -4,6 +4,7 @@
 	"package": "io.ejekta.kambrik.internal.mixins",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
+		"AbstractCriterionTriggerer",
 		"StructurePoolAccessor"
 	],
 	"injectors": {
