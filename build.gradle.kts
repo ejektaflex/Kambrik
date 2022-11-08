@@ -6,11 +6,10 @@ import java.net.URL
 plugins {
 	kotlin("jvm") version "1.7.10"
 	kotlin("plugin.serialization") version "1.6.0"
-	id("fabric-loom") version "0.12-SNAPSHOT"
+	id("dev.architectury.loom") version "0.12.0-SNAPSHOT"
 	`maven-publish`
 	signing
 	`idea`
-	id("org.jetbrains.dokka") version "1.5.30"
 }
 
 object Versions {
@@ -69,10 +68,22 @@ repositories {
 	}
 }
 
+loom {
+	forge {
+		//setProperty("mixinConfigs", "@MODID@.mixins.json")
+	}
+}
+
 dependencies {
+
+
 	//to change the versions see the gradle.properties file
 	minecraft("com.mojang:minecraft:${Versions.Minecraft}")
 	mappings("net.fabricmc:yarn:${Versions.Fabric.Yarn}:v2")
+
+
+	forge("net.minecraftforge:forge:1.19.2-43.0.12")
+
 	modImplementation("net.fabricmc:fabric-loader:${Versions.Fabric.Loader}")
 
 	modApi("org.jetbrains.kotlinx:kotlinx-serialization-core:${Versions.Env.Serialization}")
@@ -181,29 +192,4 @@ tasks.withType<KotlinCompile> {
 	kotlinOptions {
 		jvmTarget = "17"
 	}
-}
-
-tasks.dokkaHtml.configure {
-	outputDirectory.set(buildDir.resolve("dokka"))
-
-	moduleName.set("KambrikDokka")
-
-	dokkaSourceSets {
-		configureEach {
-			skipEmptyPackages.set(true)
-			sourceLink {
-				localDirectory.set(file("src/main/java"))
-
-				noJdkLink.set(true)
-
-				remoteUrl.set(
-					URL(
-						"https://github.com/ejektaflex/Kambrik/tree/master/src/main/java"
-					)
-				)
-				remoteLineSuffix.set("#L")
-			}
-		}
-	}
-
 }
