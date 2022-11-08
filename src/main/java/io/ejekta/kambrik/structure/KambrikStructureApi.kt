@@ -23,7 +23,7 @@ class KambrikStructureApi internal constructor() {
         Registry.STRUCTURE_PROCESSOR_LIST_KEY, Identifier("minecraft", "empty")
     )
 
-    // Meant to be called from inside of a ServerLifecycleEvents.SERVER_STARTING event
+    // Meant to be called from inside a ServerLifecycleEvents.SERVER_STARTING event
     fun addToStructurePool(server: MinecraftServer, nbtLocation: Identifier, poolLocation: Identifier, weight: Int = 10_000) {
         val emptyProcessorList: RegistryEntry<StructureProcessorList> =
             server.registryManager[Registry.STRUCTURE_PROCESSOR_LIST_KEY]

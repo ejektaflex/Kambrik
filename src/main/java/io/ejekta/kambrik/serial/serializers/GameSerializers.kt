@@ -32,7 +32,7 @@ object SimpleNbtSerializer : KSerializer<NbtCompound> {
 @OptIn(ExperimentalSerializationApi::class)
 @Serializer(forClass = Identifier::class)
 object IdentitySer : KSerializer<Identifier> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Identifier", PrimitiveKind.STRING)
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("yarn.Identifier", PrimitiveKind.STRING)
     override fun serialize(encoder: Encoder, value: Identifier) {
         encoder.encodeString(value.toString())
     }
@@ -41,6 +41,7 @@ object IdentitySer : KSerializer<Identifier> {
     }
 }
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializer(forClass = BlockPos::class)
 object BlockPosSerializer : KSerializer<BlockPos> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("yarn.BlockPos") {
@@ -67,6 +68,7 @@ object BlockPosSerializer : KSerializer<BlockPos> {
     }
 }
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializer(forClass = Box::class)
 object BoxSerializer : KSerializer<Box> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("yarn.Box") {

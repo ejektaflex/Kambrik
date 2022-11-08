@@ -7,8 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [5.0] for (1.19.2? 1.20?) - (unreleased)
 
 ## Removed
-- Serialization API
+- Experimental Serialization API
   - This was ancient, and in most situations converting a structure to JSON and storing that in a String Tag was actually more space efficient
+  - The stable serialization API will stay, as the existing serializers can still be used by JSON
 
 ## [4.0] for 1.19.2 - 22-09-16
 

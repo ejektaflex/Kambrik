@@ -9,7 +9,7 @@ plugins {
 	id("fabric-loom") version "0.12-SNAPSHOT"
 	`maven-publish`
 	signing
-	`idea`
+	idea
 	id("org.jetbrains.dokka") version "1.5.30"
 }
 
@@ -17,7 +17,7 @@ object Versions {
 	const val Minecraft = "1.19.2"
 	object Jvm {
 		val Java = JavaVersion.VERSION_17
-		const val Kotlin = "1.7.10"
+		const val Kotlin = "1.7.20"
 		const val TargetKotlin = "17"
 	}
 	object Fabric {
@@ -32,7 +32,7 @@ object Versions {
 	}
 	object Env {
 		const val Serialization = "1.3.0"
-		const val FLK = "1.8.2+kotlin.1.7.10"
+		const val FLK = "1.8.5+kotlin.1.7.20"
 		//const val ClothConfig = "6.6.62"
 		//const val ModMenu = "3.0.1"
 	}
