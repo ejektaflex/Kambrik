@@ -41,7 +41,7 @@ class KambrikCriterionApi internal constructor() {
         }
     }
 
-    fun <T : AbstractCriterionConditions> subscribe(subscriber: KambrikCriterionSubscriber) {
+    fun subscribe(subscriber: KambrikCriterionSubscriber) {
         subscribers.add(subscriber)
     }
 
