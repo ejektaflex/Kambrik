@@ -21,14 +21,14 @@ object Versions {
 		const val TargetKotlin = "17"
 	}
 	object Fabric {
-		const val Yarn = "1.19.2+build.4"
-		const val Loader = "0.14.9"
-		const val Api = "0.60.0+1.19.2"
+		const val Yarn = "1.19.2+build.28"
+		const val Loader = "0.14.10"
+		const val Api = "0.66.0+1.19.2"
 	}
 	object Mod {
 		const val Group = "io.ejekta"
 		const val ID = "kambrik"
-		const val Version = "4.0-1.19.2"
+		const val Version = "5.0-1.19.2-SNAPSHOT"
 	}
 	object Env {
 		const val Serialization = "1.3.0"

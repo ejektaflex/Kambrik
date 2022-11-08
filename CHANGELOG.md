@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as closely as it can.
 
+## [5.0] for (1.19.2? 1.20?) - (unreleased)
+
+## Removed
+- Serialization API
+  - This was ancient, and in most situations converting a structure to JSON and storing that in a String Tag was actually more space efficient
+
+## [4.0] for 1.19.2 - 22-09-16
+
+## Changed
+- General
+  - Updated to 1.19.2
+- Text DSL
+  - Reworked the Text DSL now that Mojang's Text classes have also been reworked
+
 ## [3.1.0] for 1.18.1 - 2022-01-06
 
 ## Added
