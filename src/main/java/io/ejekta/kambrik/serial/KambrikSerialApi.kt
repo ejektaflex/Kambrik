@@ -9,6 +9,7 @@ import kotlinx.serialization.modules.SerializersModule
 import net.minecraft.block.Block
 import net.minecraft.item.Item
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
@@ -30,6 +31,8 @@ class KambrikSerialApi {
         contextual(Block::class, BlockRefSerializer)
         // Simple NBT Compound serializer
         contextual(NbtCompound::class, SimpleNbtSerializer)
+        // Simple MutableText serializer
+        contextual(MutableText::class, MutableTextSerializer)
     }
 
     val Format = formatFor(DefaultSerializers) {

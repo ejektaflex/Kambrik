@@ -2,12 +2,11 @@ package io.ejekta.kambrik.registration
 
 import io.ejekta.kambrik.internal.KambrikMarker
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
-import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
-import net.minecraft.client.particle.Particle
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
@@ -36,14 +35,12 @@ interface KambrikAutoRegistrar : KambrikMarker {
 
     /**
      * Any non-automatic registration that still needs to be done can
-     * be put inside of these methods method, if desired.
+     * be put inside of these methods, if desired.
      */
     fun beforeRegistration() {}
 
     fun afterRegistration() {}
 
-    @Deprecated("Phased out in favor of before/after registration methods", ReplaceWith("KambrikAutoRegistrar::afterRegistration"), DeprecationLevel.ERROR)
-    fun manualRegister() {}
 
     fun <T> String.forRegistration(reg: Registry<T>, obj: T): T {
         return KambrikRegistrar.register(this@KambrikAutoRegistrar, reg, this, obj)
@@ -83,10 +80,12 @@ interface KambrikAutoRegistrar : KambrikMarker {
         }
     }
 
-    fun <T : ScreenHandler> forExtendedScreen(id: Identifier, factory: ScreenHandlerRegistry.ExtendedClientHandlerFactory<T>): ScreenHandlerType<T>? {
-        return ScreenHandlerRegistry.registerExtended(id, factory)
+    infix fun <T : ScreenHandler> String.forScreen(factory: ScreenHandlerType.Factory<T>): ScreenHandlerType<T> {
+        return forRegistration(Registry.SCREEN_HANDLER, ScreenHandlerType(factory)) as ScreenHandlerType<T>
     }
 
-
+    infix fun <T : ScreenHandler> String.forExtendedScreen(factory: ExtendedScreenHandlerType.ExtendedFactory<T>): ScreenHandlerType<T> {
+        return forRegistration(Registry.SCREEN_HANDLER, ExtendedScreenHandlerType(factory)) as ScreenHandlerType<T>
+    }
 
 }

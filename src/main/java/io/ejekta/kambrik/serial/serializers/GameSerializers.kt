@@ -12,6 +12,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonObject
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.StringNbtReader
+import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
@@ -26,6 +27,18 @@ object SimpleNbtSerializer : KSerializer<NbtCompound> {
     }
     override fun deserialize(decoder: Decoder): NbtCompound {
         return StringNbtReader.parse(decoder.decodeString())
+    }
+}
+
+@OptIn(ExperimentalSerializationApi::class)
+@Serializer(forClass = MutableText::class)
+object MutableTextSerializer : KSerializer<MutableText> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("yarn.MutableText", PrimitiveKind.STRING)
+    override fun serialize(encoder: Encoder, value: MutableText) {
+        encoder.encodeString(Text.Serializer.toJson(value))
+    }
+    override fun deserialize(decoder: Decoder): MutableText {
+        return Text.Serializer.fromJson(decoder.decodeString()) ?: Text.literal("ERROR DESERIALIZING MUT-TEXT")
     }
 }
 
