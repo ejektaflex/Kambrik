@@ -2,6 +2,7 @@ package io.ejekta.kambrik.internal
 
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
+import io.ejekta.kambrik.logging.KambrikLogger
 import io.ejekta.kambrikx.data.KambrikPersistence
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject

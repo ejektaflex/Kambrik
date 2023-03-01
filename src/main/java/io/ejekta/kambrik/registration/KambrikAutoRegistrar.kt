@@ -16,12 +16,13 @@ import net.minecraft.item.Item
 import net.minecraft.particle.ParticleEffect
 import net.minecraft.particle.ParticleType
 import net.minecraft.potion.Potion
+import net.minecraft.registry.Registries
+import net.minecraft.registry.Registry
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.sound.SoundEvent
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.registry.Registry
 import net.minecraft.village.VillagerProfession
 import net.minecraft.village.VillagerType
 import net.minecraft.world.gen.carver.Carver
@@ -46,46 +47,46 @@ interface KambrikAutoRegistrar : KambrikMarker {
         return KambrikRegistrar.register(this@KambrikAutoRegistrar, reg, this, obj)
     }
 
-    infix fun String.forItem(item: Item): Item = forRegistration(Registry.ITEM, item)
+    infix fun String.forItem(item: Item): Item = forRegistration(Registries.ITEM, item)
 
-    infix fun String.forBlock(block: Block): Block = forRegistration(Registry.BLOCK, block)
+    infix fun String.forBlock(block: Block): Block = forRegistration(Registries.BLOCK, block)
 
-    infix fun String.forEnchant(enchant: Enchantment): Enchantment = forRegistration(Registry.ENCHANTMENT, enchant)
+    infix fun String.forEnchant(enchant: Enchantment): Enchantment = forRegistration(Registries.ENCHANTMENT, enchant)
 
-    infix fun <C : CarverConfig?> String.forCarver(carver: Carver<C>): Carver<C> = forRegistration(Registry.CARVER, carver) as Carver<C>
+    infix fun <C : CarverConfig?> String.forCarver(carver: Carver<C>): Carver<C> = forRegistration(Registries.CARVER, carver) as Carver<C>
 
-    infix fun <FC : FeatureConfig?> String.forFeature(feature: Feature<FC>): Feature<FC> = forRegistration(Registry.FEATURE, feature) as Feature<FC>
+    infix fun <FC : FeatureConfig?> String.forFeature(feature: Feature<FC>): Feature<FC> = forRegistration(Registries.FEATURE, feature) as Feature<FC>
 
-    infix fun String.forStat(statIdentifier: Identifier): Identifier = forRegistration(Registry.CUSTOM_STAT, statIdentifier)
+    infix fun String.forStat(statIdentifier: Identifier): Identifier = forRegistration(Registries.CUSTOM_STAT, statIdentifier)
 
-    infix fun String.forStatusEffect(status: StatusEffect): StatusEffect = forRegistration(Registry.STATUS_EFFECT, status)
+    infix fun String.forStatusEffect(status: StatusEffect): StatusEffect = forRegistration(Registries.STATUS_EFFECT, status)
 
-    infix fun String.forAttribute(attribute: EntityAttribute): EntityAttribute = forRegistration(Registry.ATTRIBUTE, attribute)
+    infix fun String.forAttribute(attribute: EntityAttribute): EntityAttribute = forRegistration(Registries.ATTRIBUTE, attribute)
 
-    infix fun String.forPotion(potion: Potion): Potion = forRegistration(Registry.POTION, potion)
+    infix fun String.forPotion(potion: Potion): Potion = forRegistration(Registries.POTION, potion)
 
-    infix fun <PE : ParticleEffect> String.forParticle(particle: ParticleType<PE>) = forRegistration(Registry.PARTICLE_TYPE, particle)
+    infix fun <PE : ParticleEffect> String.forParticle(particle: ParticleType<PE>) = forRegistration(Registries.PARTICLE_TYPE, particle)
 
-    infix fun <R : Registry<*>>String.forVillagerProfession(profession: VillagerProfession) = forRegistration(Registry.VILLAGER_PROFESSION, profession)
+    infix fun <R : Registry<*>>String.forVillagerProfession(profession: VillagerProfession) = forRegistration(Registries.VILLAGER_PROFESSION, profession)
 
-    infix fun <T : Entity> String.forEntityType(type: EntityType<T>): EntityType<T> = forRegistration(Registry.ENTITY_TYPE, type) as EntityType<T>
+    infix fun <T : Entity> String.forEntityType(type: EntityType<T>): EntityType<T> = forRegistration(Registries.ENTITY_TYPE, type) as EntityType<T>
 
-    infix fun String.forVillagerType(type: VillagerType): VillagerType = forRegistration(Registry.VILLAGER_TYPE, type)
+    infix fun String.forVillagerType(type: VillagerType): VillagerType = forRegistration(Registries.VILLAGER_TYPE, type)
 
-    infix fun String.forSoundEvent(event: SoundEvent): SoundEvent = forRegistration(Registry.SOUND_EVENT, event)
+    infix fun String.forSoundEvent(event: SoundEvent): SoundEvent = forRegistration(Registries.SOUND_EVENT, event)
 
     fun <T : BlockEntity>String.forBlockEntity(block: Block, factory: (pos: BlockPos, state: BlockState) -> T): BlockEntityType<T>? {
         return BlockEntityType.Builder.create(factory, block).build(null).also {
-            forRegistration(Registry.BLOCK_ENTITY_TYPE, it)
+            forRegistration(Registries.BLOCK_ENTITY_TYPE, it)
         }
     }
 
     infix fun <T : ScreenHandler> String.forScreen(factory: ScreenHandlerType.Factory<T>): ScreenHandlerType<T> {
-        return forRegistration(Registry.SCREEN_HANDLER, ScreenHandlerType(factory)) as ScreenHandlerType<T>
+        return forRegistration(Registries.SCREEN_HANDLER, ScreenHandlerType(factory)) as ScreenHandlerType<T>
     }
 
     infix fun <T : ScreenHandler> String.forExtendedScreen(factory: ExtendedScreenHandlerType.ExtendedFactory<T>): ScreenHandlerType<T> {
-        return forRegistration(Registry.SCREEN_HANDLER, ExtendedScreenHandlerType(factory)) as ScreenHandlerType<T>
+        return forRegistration(Registries.SCREEN_HANDLER, ExtendedScreenHandlerType(factory)) as ScreenHandlerType<T>
     }
 
 }

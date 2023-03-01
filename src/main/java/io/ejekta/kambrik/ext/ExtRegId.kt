@@ -9,32 +9,32 @@ import net.minecraft.fluid.Fluid
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.potion.Potion
+import net.minecraft.registry.Registries
 import net.minecraft.util.Identifier
-import net.minecraft.util.registry.Registry
 
 val Item.identifier: Identifier
-    get() = Registry.ITEM.getId(this)
+    get() = Registries.ITEM.getId(this)
 
 val ItemStack.identifier: Identifier
     get() = item.identifier
 
 val Enchantment.identifier: Identifier?
-    get() = Registry.ENCHANTMENT.getId(this)
+    get() = Registries.ENCHANTMENT.getId(this)
 
 val StatusEffect.identifier: Identifier?
-    get() = Registry.STATUS_EFFECT.getId(this)
+    get() = Registries.STATUS_EFFECT.getId(this)
 
 val Potion.identifier: Identifier
-    get() = Registry.POTION.getId(this)
+    get() = Registries.POTION.getId(this)
 
 val EntityAttribute.identifier: Identifier?
-    get() = Registry.ATTRIBUTE.getId(this)
+    get() = Registries.ATTRIBUTE.getId(this)
 
 val Block.identifier: Identifier
-    get() = Registry.BLOCK.getId(this)
+    get() = Registries.BLOCK.getId(this)
 
 val Fluid.identifier: Identifier
-    get() = Registry.FLUID.getId(this)
+    get() = Registries.FLUID.getId(this)
 
 val EntityType<*>.identifier: Identifier
-    get() = Registry.ENTITY_TYPE.getId(this)
+    get() = Registries.ENTITY_TYPE.getId(this)

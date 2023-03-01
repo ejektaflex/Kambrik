@@ -15,7 +15,8 @@ fun HandledScreen<*>.drawSimpleCenteredImage(
     texWidth: Int = 256,
     texHeight: Int = 256
 ) {
-    RenderSystem.setShader { GameRenderer.getPositionTexShader() }
+    // TODO do we still set shader for this?
+    //RenderSystem.setShader { GameRenderer.getPositionTexShader() }
     RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
     RenderSystem.setShaderTexture(0, location)
     val x = (width - bgWidth) / 2

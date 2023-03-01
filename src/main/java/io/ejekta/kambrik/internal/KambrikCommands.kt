@@ -15,12 +15,12 @@ import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.block.Blocks
 import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.item.ItemStack
+import net.minecraft.registry.Registries
+import net.minecraft.registry.Registry
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.tag.*
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
-import net.minecraft.util.registry.Registry
 
 internal object KambrikCommands : CommandRegistrationCallback {
 
@@ -34,7 +34,7 @@ internal object KambrikCommands : CommandRegistrationCallback {
 
             "dump" {
                 "registry" {
-                    val dumpables = suggestionList { Registry.REGISTRIES.toList().map { it.key.value } }
+                    val dumpables = suggestionList { Registries.REGISTRIES.toList().map { it.key.value } }
                     argIdentifier("dump_what", items = dumpables) runs { what ->
                         dumpRegistry(what()).run(this)
                     }
@@ -58,8 +58,8 @@ internal object KambrikCommands : CommandRegistrationCallback {
 
 
     private fun dumpRegistry(what: Identifier) = kambrikServerCommand {
-        if (Registry.REGISTRIES.containsId(what)) {
-            val reg = Registry.REGISTRIES[what]!!
+        if (Registries.REGISTRIES.containsId(what)) {
+            val reg = Registries.REGISTRIES[what]!!
             KambrikMod.Logger.info("Contents of registry '$what':")
             reg.ids.forEach { id ->
                 KambrikMod.Logger.info("  * [ID] $id")

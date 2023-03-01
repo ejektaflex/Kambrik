@@ -42,9 +42,6 @@ fun Vec3d.toBlockPos(): BlockPos {
     return BlockPos(this)
 }
 
-fun Vec3d.toVec3f(): Vec3f {
-    return Vec3f(x.toFloat(), y.toFloat(), z.toFloat())
-}
 
 // Math Functions
 
