@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.net.URL
@@ -14,21 +13,21 @@ plugins {
 }
 
 object Versions {
-	const val Minecraft = "1.19.3"
+	const val Minecraft = "1.19.4"
 	object Jvm {
 		val Java = JavaVersion.VERSION_17
 		const val Kotlin = "1.8.10"
 		const val TargetKotlin = "17"
 	}
 	object Fabric {
-		const val Yarn = "1.19.3+build.5"
-		const val Loader = "0.14.14"
-		const val Api = "0.75.1+1.19.3"
+		const val Yarn = "1.19.4+build.1"
+		const val Loader = "0.14.17"
+		const val Api = "0.76.0+1.19.4"
 	}
 	object Mod {
 		const val Group = "io.ejekta"
 		const val ID = "kambrik"
-		const val Version = "5.0-1.19.3-SNAPSHOT"
+		const val Version = "5.1.0-1.19.4-SNAPSHOT"
 	}
 	object Env {
 		const val Serialization = "1.4.0"
@@ -85,7 +84,9 @@ dependencies {
 
 	modImplementation(group = "net.fabricmc", name = "fabric-language-kotlin", version = Versions.Env.FLK)
 
-	modImplementation("net.fabricmc.fabric-api:fabric-api:${Versions.Fabric.Api}")
+	modImplementation("net.fabricmc.fabric-api:fabric-api:${Versions.Fabric.Api}") {
+		exclude(group = "net.fabricmc.fabric-api", module = "fabric-biome-api-v1") // err on 23w07a
+	}
 }
 
 val remapJarTask = tasks.named("remapJar").get()
@@ -177,11 +178,7 @@ tasks.getByName<ProcessResources>("processResources") {
 	}
 }
 
-tasks.withType<KotlinCompile> {
-	kotlinOptions {
-		jvmTarget = "17"
-	}
-}
+
 
 tasks.dokkaHtml.configure {
 	outputDirectory.set(buildDir.resolve("dokka"))

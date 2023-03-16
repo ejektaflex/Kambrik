@@ -2,8 +2,6 @@ package io.ejekta.kambrik.structure
 
 import com.mojang.datafixers.util.Pair
 import io.ejekta.kambrik.internal.mixins.StructurePoolAccessor
-import net.minecraft.registry.Registries
-import net.minecraft.registry.Registry
 import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.RegistryKeys
 import net.minecraft.registry.entry.RegistryEntry

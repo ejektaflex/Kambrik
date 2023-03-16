@@ -35,11 +35,11 @@ fun Vec3d.toArray(): DoubleArray {
 }
 
 fun Vec3d.toVec3i(): Vec3i {
-    return Vec3i(x, y, z)
+    return Vec3i(x.toInt(), y.toInt(), z.toInt())
 }
 
 fun Vec3d.toBlockPos(): BlockPos {
-    return BlockPos(this)
+    return BlockPos(toVec3i())
 }
 
 
@@ -81,11 +81,11 @@ fun Vec3d.abs(): Vec3d {
 }
 
 fun Vec3d.ceil(): Vec3i {
-    return BlockPos(ceil(x), ceil(y), ceil(z))
+    return BlockPos(ceil(x).toInt(), ceil(y).toInt(), ceil(z).toInt())
 }
 
 fun Vec3d.floor(): Vec3i {
-    return BlockPos(this)
+    return BlockPos(floor(x).toInt(), floor(y).toInt(), floor(z).toInt())
 }
 
 fun Vec3d.map(func: (it: Double) -> Double): Vec3d {

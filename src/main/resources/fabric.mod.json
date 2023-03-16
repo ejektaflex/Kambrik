@@ -57,8 +57,8 @@
   "depends": {
     "fabricloader": ">=0.14.9",
     "fabric": ">=0.60.0",
-    "minecraft": "~1.19-0",
-    "fabric-language-kotlin": ">=1.7.10"
+    "minecraft": "~1.19.4-0",
+    "fabric-language-kotlin": ">=1.8.10"
   },
   "suggests": {
     "flamingo": "*"

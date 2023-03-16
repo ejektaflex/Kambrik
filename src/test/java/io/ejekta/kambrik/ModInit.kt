@@ -2,7 +2,6 @@ package io.ejekta.kambrik
 
 import net.minecraft.client.MinecraftClient
 import net.minecraft.item.ItemStack
-import net.minecraft.util.registry.Registry
 
 object ModInit {
 

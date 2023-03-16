@@ -18,6 +18,7 @@ import net.minecraft.particle.ParticleType
 import net.minecraft.potion.Potion
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
+import net.minecraft.resource.featuretoggle.FeatureSet
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.sound.SoundEvent
@@ -81,8 +82,8 @@ interface KambrikAutoRegistrar : KambrikMarker {
         }
     }
 
-    infix fun <T : ScreenHandler> String.forScreen(factory: ScreenHandlerType.Factory<T>): ScreenHandlerType<T> {
-        return forRegistration(Registries.SCREEN_HANDLER, ScreenHandlerType(factory)) as ScreenHandlerType<T>
+    fun <T : ScreenHandler> String.forScreen(factory: ScreenHandlerType.Factory<T>, requiredFeatures: FeatureSet): ScreenHandlerType<T> {
+        return forRegistration(Registries.SCREEN_HANDLER, ScreenHandlerType(factory, requiredFeatures)) as ScreenHandlerType<T>
     }
 
     infix fun <T : ScreenHandler> String.forExtendedScreen(factory: ExtendedScreenHandlerType.ExtendedFactory<T>): ScreenHandlerType<T> {
