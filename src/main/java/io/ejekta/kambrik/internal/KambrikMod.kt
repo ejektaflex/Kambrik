@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.util.Identifier
 import org.apache.logging.log4j.LogManager
+import org.lwjgl.glfw.GLFW
 
 internal object KambrikMod : ModInitializer {
 
@@ -45,6 +46,10 @@ internal object KambrikMod : ModInitializer {
             }
         }
 
+        if (FabricLoader.getInstance().isDevelopmentEnvironment) {
+            devTestingInit()
+        }
+
         Kambrik.Criterion.addCriterionHandler("""
             {
               "trigger": "minecraft:enter_block",
@@ -58,6 +63,25 @@ internal object KambrikMod : ModInitializer {
             """.trimIndent()
         ) {
             println("Doot!")
+        }
+    }
+
+    private fun devTestingInit() {
+        Kambrik.Input.registerKeyboardBinding(
+            GLFW.GLFW_KEY_RIGHT_BRACKET,
+            "test-keybind", "KambrikTesting",
+            modifiers = listOf(
+                GLFW.GLFW_KEY_LEFT_SHIFT
+            ),
+            realTime = true
+        ) {
+            onDown {
+                println("Pressed test keybind!")
+            }
+
+            onUp {
+                println("Unpressed test keybind!")
+            }
         }
     }
 

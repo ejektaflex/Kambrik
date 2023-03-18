@@ -6,18 +6,30 @@ import org.lwjgl.glfw.GLFW
 
 class KambrikInputApi internal constructor() {
 
-    private fun registerBinding(
+    fun registerBinding(
         key: Int,
         keyTranslation: String,
         keyCategory: String,
         type: InputUtil.Type,
+        modifiers: List<Int>? = null,
         realTime: Boolean = false,
-        bindingDsl: KambrikKeybind.() -> Unit
+        bindingDsl: (KambrikKeybind.() -> Unit)? = null
     ): KambrikKeybind {
-        val kambrikKeybind = KambrikKeybind(keyTranslation, type, key, keyCategory, realTime).apply(bindingDsl)
+        // Create modified key from params
+        val keyWithMods = when {
+            modifiers?.isNotEmpty() == true -> KambrikKeybind.ModifiedKeyCode(key, modifiers)
+            else -> KambrikKeybind.ModifiedKeyCode(key, emptyList())
+        }
+        // Create Kambrik keybind
+        val kambrikKeybind = KambrikKeybind(keyTranslation, type, keyWithMods, keyCategory, realTime).apply {
+            bindingDsl?.let { it() }
+        }
+
+        // Register keybind
         KeyBindingHelper.registerKeyBinding(
-            kambrikKeybind.binding
+            kambrikKeybind
         )
+
         return kambrikKeybind
     }
 
@@ -33,9 +45,10 @@ class KambrikInputApi internal constructor() {
         key: Int = GLFW.GLFW_KEY_UNKNOWN,
         keyTranslation: String,
         keyCategory: String,
+        modifiers: List<Int>? = null,
         realTime: Boolean = false,
-        keybindDsl: KambrikKeybind.() -> Unit
-    ) = registerBinding(key, keyTranslation, keyCategory, InputUtil.Type.KEYSYM, realTime, keybindDsl)
+        keybindDsl: (KambrikKeybind.() -> Unit)? = null
+    ) = registerBinding(key, keyTranslation, keyCategory, InputUtil.Type.KEYSYM, modifiers, realTime, keybindDsl)
 
     /**
      * Registers a new Kambrik Mouse Keybind.
@@ -49,8 +62,9 @@ class KambrikInputApi internal constructor() {
         key: Int = GLFW.GLFW_KEY_UNKNOWN,
         keyTranslation: String,
         keyCategory: String,
+        modifiers: List<Int>? = null,
         realTime: Boolean = false,
         keybindDsl: KambrikKeybind.() -> Unit
-    ) = registerBinding(key, keyTranslation, keyCategory, InputUtil.Type.MOUSE, realTime, keybindDsl)
+    ) = registerBinding(key, keyTranslation, keyCategory, InputUtil.Type.MOUSE, modifiers, realTime, keybindDsl)
 
 }
