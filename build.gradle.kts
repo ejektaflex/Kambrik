@@ -6,11 +6,15 @@ import java.net.URL
 plugins {
 	kotlin("jvm") version "1.7.10"
 	kotlin("plugin.serialization") version "1.6.0"
-	id("fabric-loom") version "0.12-SNAPSHOT"
+	id("fabric-loom") version "1.1-SNAPSHOT"
 	`maven-publish`
 	signing
 	idea
 	id("org.jetbrains.dokka") version "1.5.30"
+}
+
+loom {
+	accessWidenerPath.set(file("src/main/resources/kambrik.accesswidener"))
 }
 
 object Versions {

@@ -1,11 +1,13 @@
 package io.ejekta.kambrik.input
 
+import io.ejekta.kambrik.ext.client.getBoundKey
 import kotlinx.serialization.Transient
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
+import net.minecraft.text.Text
 
 data class KambrikKeybind(
     val translation: String,
@@ -15,7 +17,10 @@ data class KambrikKeybind(
     val realTime: Boolean = false
 ) : KeyBinding(translation, type, modKey.keycode, keyCategory) {
 
-    data class ModifiedKeyCode(val keycode: Int, val modifiers: List<Int>) {
+    val boundKeyKey: InputUtil.Key
+        get() = getBoundKey()
+
+    data class ModifiedKeyCode(var keycode: Int, val modifiers: List<Int>) {
         fun areModifiersAllPressed(): Boolean {
             return modifiers.all {
                 InputUtil.isKeyPressed(
@@ -24,6 +29,18 @@ data class KambrikKeybind(
             }
         }
     }
+
+    val moddedText: Text
+        get() {
+            val mKeys = (listOf(getBoundKey()) + modKey.modifiers.map {
+                InputUtil.Type.KEYSYM.createFromCode(it)
+            }).map {
+                it.localizedText
+            }.reduce { a, b ->
+                a.copy().append(Text.literal(" + ").append(b.copy()))
+            }
+            return mKeys
+        }
 
     private var keyDown = {}
 
@@ -46,6 +63,17 @@ data class KambrikKeybind(
     var isDown = false
         private set
 
+    override fun getTranslationKey(): String {
+        return super.getTranslationKey()
+    }
+
+    fun actualTranslation(): Text {
+        return Text.literal("Hello!")
+    }
+
+    override fun getBoundKeyLocalizedText(): Text {
+        return moddedText
+    }
 
     // Only considered pressed when all modifiers are also pressed!
     override fun setPressed(pressed: Boolean) {

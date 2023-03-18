@@ -1,0 +1,7 @@
+accessWidener	v2	named
+accessible field net/minecraft/client/gui/screen/option/ControlsListWidget$KeyBindingEntry bindingName Lnet/minecraft/text/Text;
+mutable field net/minecraft/client/gui/screen/option/ControlsListWidget$KeyBindingEntry bindingName Lnet/minecraft/text/Text;
+accessible field net/minecraft/client/gui/screen/option/ControlsListWidget$KeyBindingEntry binding Lnet/minecraft/client/option/KeyBinding;
+mutable field net/minecraft/client/gui/screen/option/ControlsListWidget$KeyBindingEntry binding Lnet/minecraft/client/option/KeyBinding;
+
+accessible field net/minecraft/client/util/InputUtil$Type map Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;

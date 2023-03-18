@@ -7,6 +7,9 @@
 		"AbstractCriterionTriggerer",
 		"StructurePoolAccessor"
 	],
+	"client": [
+		"KeybindNameViewer"
+	],
 	"injectors": {
 		"defaultRequire": 1
 	}
