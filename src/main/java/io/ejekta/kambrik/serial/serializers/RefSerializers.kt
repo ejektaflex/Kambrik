@@ -11,6 +11,7 @@ import net.minecraft.block.Block
 import net.minecraft.item.Item
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
+import net.minecraft.sound.SoundEvent
 import net.minecraft.util.Identifier
 
 open class RegistryObjectSerializer<T>(private val reg: () -> Registry<T>, serialName: String) : KSerializer<T> {
@@ -27,13 +28,10 @@ open class RegistryObjectSerializer<T>(private val reg: () -> Registry<T>, seria
 
 }
 
-// Commenting these two lines out causes it to compile
 
-//@Serializer(forClass = Item::class)
 object ItemRefSerializer : RegistryObjectSerializer<Item>({ Registries.ITEM }, "ref.yarn.Item")
 
-//@Serializer(forClass = Block::class)
 object BlockRefSerializer : RegistryObjectSerializer<Block>({ Registries.BLOCK }, "ref.yarn.Block")
 
-
+object SoundEventRefSerializer : RegistryObjectSerializer<SoundEvent>({ Registries.SOUND_EVENT }, "ref.yarn.SoundEvent")
 
