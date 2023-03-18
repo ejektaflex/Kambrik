@@ -22,8 +22,10 @@ interface INetworkLink<M> {
     }
 
     companion object {
-        val defaultJson = Json {
-            serializersModule = Kambrik.Serial.DefaultSerializers
+        internal fun createJson(): Json {
+            return Json {
+                serializersModule = Kambrik.Serial.DefaultSerializers
+            }
         }
     }
 

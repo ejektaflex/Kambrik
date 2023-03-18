@@ -1,5 +1,6 @@
 package io.ejekta.kambrik.message
 
+import io.ejekta.kambrik.Kambrik
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import net.fabricmc.api.EnvType
@@ -14,7 +15,7 @@ class ClientNetworkLink<M : ClientMsg>(
 
     override val id: Identifier,
     override val ser: KSerializer<M>,
-    override val json: Json = INetworkLink.defaultJson
+    override val json: Json = INetworkLink.createJson()
 
     ) : INetworkLink<M> {
 
@@ -42,5 +43,6 @@ class ClientNetworkLink<M : ClientMsg>(
             )
         }
     }
+
 
 }

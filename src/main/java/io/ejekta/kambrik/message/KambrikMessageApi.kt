@@ -1,6 +1,9 @@
 package io.ejekta.kambrik.message
 
+import io.ejekta.kambrik.Kambrik
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 import kotlin.reflect.KClass
@@ -12,6 +15,9 @@ class KambrikMessageApi internal constructor() {
 
     @PublishedApi
     internal val serverLinks = mutableMapOf<KClass<*>, ServerNetworkLink<*>>()
+
+    var serializersModule: SerializersModule = Kambrik.Serial.DefaultSerializers
+        private set
 
     @PublishedApi
     internal inline fun <reified M : Any> registerMessage(
@@ -28,6 +34,14 @@ class KambrikMessageApi internal constructor() {
         reg[M::class] = linkage
         return linkage
     }
+
+    fun addSerializerModule(newSerializersModule: SerializersModule) {
+        serializersModule = SerializersModule {
+            include(serializersModule)
+            include(newSerializersModule)
+        }
+    }
+
 
     inline fun <reified C : ClientMsg> registerClientMessage(ser: KSerializer<C>, id: Identifier): INetworkLink<C> {
         return registerMessage({ ClientNetworkLink(id, ser) }, clientLinks as MutableMap<KClass<*>, INetworkLink<C>>)

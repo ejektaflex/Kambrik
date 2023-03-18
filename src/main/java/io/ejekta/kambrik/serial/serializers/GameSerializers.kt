@@ -22,6 +22,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
+import net.minecraft.util.math.Vec3d
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializer(forClass = NbtCompound::class)
@@ -124,6 +125,34 @@ object BlockPosSerializer : KSerializer<BlockPos> {
                 decodeIntElement(descriptor, decodeElementIndex(descriptor))
             }
             BlockPos(els[0], els[1], els[2])
+        }
+    }
+}
+
+
+@OptIn(ExperimentalSerializationApi::class)
+@Serializer(forClass = Vec3d::class)
+object Vec3dSerializer : KSerializer<Vec3d> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("yarn.Vec3d") {
+        element<Double>("x")
+        element<Double>("y")
+        element<Double>("z")
+    }
+
+    override fun serialize(encoder: Encoder, value: Vec3d) {
+        encoder.doStructure(descriptor) {
+            encodeDoubleElement(descriptor, 0, value.x)
+            encodeDoubleElement(descriptor, 1, value.y)
+            encodeDoubleElement(descriptor, 2, value.z)
+        }
+    }
+
+    override fun deserialize(decoder: Decoder): Vec3d {
+        return decoder.doStructure(descriptor) {
+            val els = (0 until 3).map {
+                decodeDoubleElement(descriptor, decodeElementIndex(descriptor))
+            }
+            Vec3d(els[0], els[1], els[2])
         }
     }
 }

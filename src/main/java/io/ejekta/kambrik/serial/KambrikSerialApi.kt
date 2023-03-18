@@ -16,6 +16,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
+import net.minecraft.util.math.Vec3d
 
 @Suppress("PropertyName")
 class KambrikSerialApi {
@@ -30,6 +31,7 @@ class KambrikSerialApi {
         contextual(Identifier::class, IdentitySer)
         contextual(PacketByteBuf::class, PacketByteBuffSer)
         contextual(ItemStack::class, ItemStackSer)
+        contextual(Vec3d::class, Vec3dSerializer)
         // Referential serializers
         contextual(Item::class, ItemRefSerializer)
         contextual(Block::class, BlockRefSerializer)
