@@ -17,18 +17,18 @@ object Versions {
 	const val Minecraft = "1.19.2"
 	object Jvm {
 		val Java = JavaVersion.VERSION_17
-		const val Kotlin = "1.7.20"
+		const val Kotlin = "1.8.20"
 		const val TargetKotlin = "17"
 	}
 	object Fabric {
 		const val Yarn = "1.19.2+build.28"
-		const val Loader = "0.14.10"
-		const val Api = "0.66.0+1.19.2"
+		const val Loader = "0.14.17"
+		const val Api = "0.76.0+1.19.2"
 	}
 	object Mod {
 		const val Group = "io.ejekta"
 		const val ID = "kambrik"
-		const val Version = "5.0-1.19.2-SNAPSHOT"
+		const val Version = "5.0.0-1.19.2-SNAPSHOT"
 	}
 	object Env {
 		const val Serialization = "1.3.0"

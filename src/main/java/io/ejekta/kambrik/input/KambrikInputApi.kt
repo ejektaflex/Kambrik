@@ -16,7 +16,7 @@ class KambrikInputApi internal constructor() {
     ): KambrikKeybind {
         val kambrikKeybind = KambrikKeybind(keyTranslation, type, key, keyCategory, realTime).apply(bindingDsl)
         KeyBindingHelper.registerKeyBinding(
-            kambrikKeybind
+            kambrikKeybind.binding
         )
         return kambrikKeybind
     }

@@ -8,7 +8,9 @@ import kotlinx.serialization.json.JsonBuilder
 import kotlinx.serialization.modules.SerializersModule
 import net.minecraft.block.Block
 import net.minecraft.item.Item
+import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.network.PacketByteBuf
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
@@ -26,6 +28,8 @@ class KambrikSerialApi {
         contextual(BlockPos::class, BlockPosSerializer)
         contextual(Box::class, BoxSerializer)
         contextual(Identifier::class, IdentitySer)
+        contextual(PacketByteBuf::class, PacketByteBuffSer)
+        contextual(ItemStack::class, ItemStackSer)
         // Referential serializers
         contextual(Item::class, ItemRefSerializer)
         contextual(Block::class, BlockRefSerializer)

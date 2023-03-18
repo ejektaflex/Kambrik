@@ -1,23 +1,22 @@
 package io.ejekta.kambrik.input
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
 
-class KambrikKeybind(
-    translation: String,
-    type: InputUtil.Type,
-    key: Int,
-    category: String,
-    realTime: Boolean = false
-) : KeyBinding(
-    translation,
-    type,
-    key,
-    category
+@Serializable
+data class KambrikKeybind(
+    val translation: String,
+    val type: InputUtil.Type,
+    val key: Int,
+    val category: String,
+    val realTime: Boolean = false
 ) {
 
+    @Transient var binding: KeyBinding = KeyBinding(translation, type, key, category)
 
     private var keyDown = {}
 
@@ -41,18 +40,18 @@ class KambrikKeybind(
         } else if (isDown && !wasPressed) {
             isDown = wasPressed
             keyUp()
-            isPressed = false
+            binding.isPressed = false
         }
     }
 
     init {
         if (realTime) {
             WorldRenderEvents.LAST.register(WorldRenderEvents.Last {
-                update(isPressed)
+                update(binding.isPressed)
             })
         } else {
             ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick {
-                update(isPressed)
+                update(binding.isPressed)
             })
         }
     }

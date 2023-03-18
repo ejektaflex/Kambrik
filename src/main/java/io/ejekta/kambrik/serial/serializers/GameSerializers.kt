@@ -2,6 +2,8 @@ package io.ejekta.kambrik.serial.serializers
 
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.ext.internal.doStructure
+import io.netty.buffer.ByteBuf
+import io.netty.buffer.Unpooled
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -10,8 +12,11 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonObject
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
+import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.StringNbtReader
+import net.minecraft.network.PacketByteBuf
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
@@ -51,6 +56,48 @@ object IdentitySer : KSerializer<Identifier> {
     }
     override fun deserialize(decoder: Decoder): Identifier {
         return Identifier(decoder.decodeString())
+    }
+}
+
+@OptIn(ExperimentalSerializationApi::class)
+@Serializer(forClass = Identifier::class)
+object PacketByteBuffSer : KSerializer<PacketByteBuf> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("yarn.PacketByteBuf", PrimitiveKind.STRING)
+    override fun serialize(encoder: Encoder, value: PacketByteBuf) {
+        encoder.encodeString(packetByteBufferToString(value))
+    }
+    override fun deserialize(decoder: Decoder): PacketByteBuf {
+        return packetByteBufferFromString(decoder.decodeString())
+    }
+
+    fun packetByteBufferToString(packetByteBuf: PacketByteBuf): String {
+        return String(packetByteBuf.writtenBytes)
+    }
+
+    fun packetByteBufferFromString(str: String): PacketByteBuf {
+        val ba = str.toByteArray()
+        val bb = Unpooled.buffer().writeBytes(ba)
+        return PacketByteBufs.duplicate(bb)
+    }
+}
+
+@OptIn(ExperimentalSerializationApi::class)
+@Serializer(forClass = Identifier::class)
+object ItemStackSer : KSerializer<ItemStack> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("yarn.ItemStack", PrimitiveKind.STRING)
+    override fun serialize(encoder: Encoder, value: ItemStack) {
+        encoder.encodeString(PacketByteBuffSer.packetByteBufferToString(
+            PacketByteBufs.create().apply {
+                writeItemStack(value)
+            }
+        ))
+    }
+    override fun deserialize(decoder: Decoder): ItemStack {
+        return PacketByteBuffSer.packetByteBufferFromString(
+            decoder.decodeString()
+        ).run {
+            readItemStack()
+        }
     }
 }
 
