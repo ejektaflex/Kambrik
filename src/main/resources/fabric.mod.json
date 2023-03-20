@@ -17,6 +17,8 @@
   "license": "GPL 3.0",
   "icon": "assets/kambrik/icon.png",
 
+  "accessWidener" : "kambrik.accesswidener",
+
   "environment": "*",
   "entrypoints": {
     "preLaunch": [

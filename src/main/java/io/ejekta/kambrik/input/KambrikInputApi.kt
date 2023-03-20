@@ -13,6 +13,7 @@ class KambrikInputApi internal constructor() {
         type: InputUtil.Type,
         modifiers: List<Int>? = null,
         realTime: Boolean = false,
+        register: Boolean = true,
         bindingDsl: (KambrikKeybind.() -> Unit)? = null
     ): KambrikKeybind {
         // Create modified key from params
@@ -25,10 +26,12 @@ class KambrikInputApi internal constructor() {
             bindingDsl?.let { it() }
         }
 
-        // Register keybind
-        KeyBindingHelper.registerKeyBinding(
-            kambrikKeybind
-        )
+        if (register) {
+            // Register keybind
+            KeyBindingHelper.registerKeyBinding(
+                kambrikKeybind
+            )
+        }
 
         return kambrikKeybind
     }
@@ -47,8 +50,9 @@ class KambrikInputApi internal constructor() {
         keyCategory: String,
         modifiers: List<Int>? = null,
         realTime: Boolean = false,
+        register: Boolean = true,
         keybindDsl: (KambrikKeybind.() -> Unit)? = null
-    ) = registerBinding(key, keyTranslation, keyCategory, InputUtil.Type.KEYSYM, modifiers, realTime, keybindDsl)
+    ) = registerBinding(key, keyTranslation, keyCategory, InputUtil.Type.KEYSYM, modifiers, realTime, register, keybindDsl)
 
     /**
      * Registers a new Kambrik Mouse Keybind.
@@ -64,7 +68,8 @@ class KambrikInputApi internal constructor() {
         keyCategory: String,
         modifiers: List<Int>? = null,
         realTime: Boolean = false,
+        register: Boolean = true,
         keybindDsl: KambrikKeybind.() -> Unit
-    ) = registerBinding(key, keyTranslation, keyCategory, InputUtil.Type.MOUSE, modifiers, realTime, keybindDsl)
+    ) = registerBinding(key, keyTranslation, keyCategory, InputUtil.Type.MOUSE, modifiers, realTime, register, keybindDsl)
 
 }

@@ -1,13 +1,13 @@
 package io.ejekta.kambrik.input
 
 import io.ejekta.kambrik.ext.client.getBoundKey
-import kotlinx.serialization.Transient
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
 import net.minecraft.text.Text
+import org.lwjgl.glfw.GLFW
 
 data class KambrikKeybind(
     val translation: String,
@@ -17,10 +17,17 @@ data class KambrikKeybind(
     val realTime: Boolean = false
 ) : KeyBinding(translation, type, modKey.keycode, keyCategory) {
 
-    val boundKeyKey: InputUtil.Key
-        get() = getBoundKey()
 
-    data class ModifiedKeyCode(var keycode: Int, val modifiers: List<Int>) {
+    override fun setBoundKey(boundKey: InputUtil.Key?) {
+        super.setBoundKey(boundKey)
+        val heldCodes = getAllHeldKeyCodes().toMutableList()
+        boundKey?.let {
+            heldCodes -= boundKey.code
+        }
+        modKey.modifiers = heldCodes
+    }
+
+    data class ModifiedKeyCode(var keycode: Int, var modifiers: List<Int>) {
         fun areModifiersAllPressed(): Boolean {
             return modifiers.all {
                 InputUtil.isKeyPressed(
@@ -30,12 +37,28 @@ data class KambrikKeybind(
         }
     }
 
+    private fun getAllHeldKeyCodes(): List<Int> {
+        val allKeyNums = InputUtil.Type.KEYSYM.map.keys
+        val pressedList = allKeyNums.filter {
+            InputUtil.isKeyPressed(MinecraftClient.getInstance().window.handle, it)
+        }
+        return pressedList
+    }
+
     val moddedText: Text
         get() {
-            val mKeys = (listOf(getBoundKey()) + modKey.modifiers.map {
+            val mKeys = (modKey.modifiers.map {
                 InputUtil.Type.KEYSYM.createFromCode(it)
-            }).map {
-                it.localizedText
+            } + listOf(getBoundKey())).map {
+                when (it.code) {
+                    GLFW.GLFW_KEY_LEFT_SHIFT -> Text.literal("LShft")
+                    GLFW.GLFW_KEY_RIGHT_SHIFT -> Text.literal("RShft")
+                    GLFW.GLFW_KEY_LEFT_CONTROL -> Text.literal("LCtrl")
+                    GLFW.GLFW_KEY_RIGHT_CONTROL -> Text.literal("RCtrl")
+                    GLFW.GLFW_KEY_LEFT_ALT -> Text.literal("LAlt")
+                    GLFW.GLFW_KEY_RIGHT_ALT -> Text.literal("RAlt")
+                    else -> it.localizedText
+                }
             }.reduce { a, b ->
                 a.copy().append(Text.literal(" + ").append(b.copy()))
             }
