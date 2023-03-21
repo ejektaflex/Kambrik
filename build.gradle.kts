@@ -27,7 +27,7 @@ object Versions {
 	object Mod {
 		const val Group = "io.ejekta"
 		const val ID = "kambrik"
-		const val Version = "5.1.0-1.19.4"
+		const val Version = "5.1.0-1.19.4-SNAPSHOT"
 	}
 	object Env {
 		const val Serialization = "1.4.0"

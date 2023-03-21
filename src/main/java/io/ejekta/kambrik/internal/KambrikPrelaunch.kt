@@ -39,7 +39,7 @@ object KambrikPrelaunch : PreLaunchEntrypoint {
 
     private fun configureLoggerFilters() {
         val ctx = LogManager.getContext(false) as LoggerContext
-        ctx.reconfigure()
+        //ctx.reconfigure()
 
         for (logger in ctx.loggers.filterIsInstance<Logger>()) {
             logger.context.configuration.removeFilter(logger.context.configuration.filter)
