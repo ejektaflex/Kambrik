@@ -11,14 +11,18 @@ import io.ejekta.kambrik.text.sendError
 import io.ejekta.kambrik.text.sendFeedback
 import io.ejekta.kambrik.text.textLiteral
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.registry.Registries
+import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 
 object KambrikCommands {
     fun register(
-        dispatcher: CommandDispatcher<ServerCommandSource>
+        dispatcher: CommandDispatcher<ServerCommandSource>,
+        registryAccess: CommandRegistryAccess,
+        environment: CommandManager.RegistrationEnvironment
     ) {
 
         dispatcher.addCommand(Kambrik.ID) {
