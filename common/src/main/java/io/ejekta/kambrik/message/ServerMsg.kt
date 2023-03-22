@@ -11,10 +11,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 abstract class ServerMsg {
 
     data class MsgContext(
-        val server: MinecraftServer,
-        val player: ServerPlayerEntity,
-        val handler: ServerPlayNetworkHandler,
-        val buf: PacketByteBuf
+        val player: ServerPlayerEntity
     )
 
     open fun onServerReceived(ctx: MsgContext) {

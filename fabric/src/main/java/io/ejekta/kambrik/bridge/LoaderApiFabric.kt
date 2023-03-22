@@ -47,7 +47,7 @@ class LoaderApiFabric : LoaderApi {
             val contents = buf.readString()
             val data = link.deserializePacket(contents)
             client.execute {
-                data.onClientReceived(ClientMsg.MsgContext(client, handler, buf))
+                data.onClientReceived(ClientMsg.MsgContext(client))
             }
         }
     }
@@ -67,7 +67,7 @@ class LoaderApiFabric : LoaderApi {
             val contents = buf.readString()
             val data = link.deserializePacket(contents)
             server.execute {
-                data.onServerReceived(ServerMsg.MsgContext(server, player, handler, buf))
+                data.onServerReceived(ServerMsg.MsgContext(player))
             }
         }
     }

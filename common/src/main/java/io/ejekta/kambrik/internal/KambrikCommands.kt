@@ -36,6 +36,13 @@ object KambrikCommands {
                 }
             }
 
+            "net" {
+                "send" runs {
+                    println("Sending!")
+                    TestMsg("hai").sendToClient(source.playerOrThrow)
+                }
+            }
+
             if (Kambridge.side == BridgeSide.FABRIC) {
                 if (FabricLoader.getInstance().isDevelopmentEnvironment) {
                     "test" {

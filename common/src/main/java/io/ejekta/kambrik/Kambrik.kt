@@ -7,6 +7,7 @@ import io.ejekta.kambrik.message.KambrikMessageApi
 import io.ejekta.kambrik.serial.KambrikSerialApi
 import io.ejekta.kambrik.structure.KambrikStructureApi
 import io.ejekta.kambrik.input.KambrikInputApi
+import io.ejekta.kambrik.internal.TestMsg
 import net.minecraft.util.Identifier
 import org.apache.logging.log4j.LogManager
 
@@ -14,6 +15,8 @@ import org.apache.logging.log4j.LogManager
 object Kambrik {
 
     const val ID = "kambrik"
+
+
     fun idOf(unique: String) = Identifier(ID, unique)
 
     val Logger = LogManager.getLogger("Kambrik")
@@ -44,6 +47,15 @@ object Kambrik {
 
     val Input: KambrikInputApi by lazy {
         KambrikInputApi()
+    }
+
+
+    init {
+        Message.registerClientMessage(
+            TestMsg.serializer(),
+            TestMsg::class,
+            idOf("test_msg")
+        )
     }
 
 }

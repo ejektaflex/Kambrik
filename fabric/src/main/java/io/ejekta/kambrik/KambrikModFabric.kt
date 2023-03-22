@@ -44,21 +44,6 @@ class KambrikModFabric : ModInitializer {
             }
         }
 
-//        Kambrik.Criterion.addCriterionHandler("""
-//            {
-//              "trigger": "minecraft:enter_block",
-//              "conditions": {
-//                "block": "minecraft:rose_bush",
-//                "state": {
-//                  "half": "lower"
-//                }
-//              }
-//            }
-//            """.trimIndent()
-//        ) {
-//            println("Doot!")
-//        }
-
     }
 }
 

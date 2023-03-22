@@ -4,10 +4,12 @@ import io.ejekta.kambrik.Kambrik
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import net.minecraft.util.Identifier
+import kotlin.reflect.KClass
 
-interface INetworkLink<M> {
+interface INetworkLink<M : Any> {
 
     val id: Identifier
+    val kClass: KClass<M>
     val ser: KSerializer<M>
     val json: Json
 

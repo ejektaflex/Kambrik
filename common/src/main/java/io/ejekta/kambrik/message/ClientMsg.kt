@@ -17,9 +17,7 @@ abstract class ClientMsg {
 
     @Environment(EnvType.CLIENT)
     data class MsgContext(
-        val client: MinecraftClient,
-        val handler: ClientPlayNetworkHandler,
-        val buf: PacketByteBuf
+        val client: MinecraftClient
     )
 
     @Environment(EnvType.CLIENT)

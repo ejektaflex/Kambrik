@@ -29,12 +29,12 @@ class KambrikMessageApi internal constructor() {
         return linkage
     }
 
-    inline fun <reified C : ClientMsg> registerClientMessage(ser: KSerializer<C>, id: Identifier): INetworkLink<C> {
-        return registerMessage({ ClientNetworkLink(id, ser) }, clientLinks as MutableMap<KClass<*>, INetworkLink<C>>)
+    inline fun <reified C : ClientMsg> registerClientMessage(ser: KSerializer<C>, klass: KClass<C>, id: Identifier): INetworkLink<C> {
+        return registerMessage({ ClientNetworkLink(id, klass, ser) }, clientLinks as MutableMap<KClass<*>, INetworkLink<C>>)
     }
 
-    inline fun <reified S : ServerMsg> registerServerMessage(ser: KSerializer<S>, id: Identifier): INetworkLink<S> {
-        return registerMessage({ ServerNetworkLink(id, ser) }, serverLinks as MutableMap<KClass<*>, INetworkLink<S>>)
+    inline fun <reified S : ServerMsg> registerServerMessage(ser: KSerializer<S>, klass: KClass<S>, id: Identifier): INetworkLink<S> {
+        return registerMessage({ ServerNetworkLink(id, klass, ser) }, serverLinks as MutableMap<KClass<*>, INetworkLink<S>>)
     }
 
     internal fun <C : ClientMsg> sendClientMsg(msg: C, players: Collection<ServerPlayerEntity>) {
