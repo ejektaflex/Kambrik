@@ -19,9 +19,6 @@ class ClientNetworkLink<M : ClientMsg>(
     ) : INetworkLink<M> {
 
     override fun register(): Boolean {
-        if (FabricLoader.getInstance().environmentType == EnvType.SERVER) {
-            return true // fake it w/o registering on Server
-        }
         return Kambridge.registerClientMessage(this, id)
     }
 

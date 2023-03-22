@@ -50,12 +50,4 @@ object Kambrik {
     }
 
 
-    init {
-        Message.registerClientMessage(
-            TestMsg.serializer(),
-            TestMsg::class,
-            idOf("test_msg")
-        )
-    }
-
 }

@@ -5,12 +5,11 @@ import io.ejekta.kambrik.bridge.LoaderApiForge
 import io.ejekta.kambrik.bridge.LoaderBridge
 import io.ejekta.kambrik.client.KambrikModForgeClient
 import io.ejekta.kambrik.internal.KambrikCommands
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent
+import io.ejekta.kambrik.internal.TestMsg
 import net.minecraftforge.event.RegisterCommandsEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import thedarkcolour.kotlinforforge.forge.FORGE_BUS
-import thedarkcolour.kotlinforforge.forge.MOD_BUS
 import thedarkcolour.kotlinforforge.forge.MOD_CONTEXT
 import thedarkcolour.kotlinforforge.forge.runForDist
 
@@ -34,6 +33,12 @@ object KambrikModForge {
             }
         )
 
+        Kambrik.Message.registerClientMessage(
+            TestMsg.serializer(),
+            TestMsg::class,
+            Kambrik.idOf("test_msg")
+        )
+        
     }
 
     @JvmStatic
