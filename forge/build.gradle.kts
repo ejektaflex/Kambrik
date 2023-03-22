@@ -29,11 +29,11 @@ repositories {
 
 dependencies {
     // Add dependency on Forge. This is mainly used for generating the patched Minecraft jar with Forge classes.
-    forge("net.minecraftforge:forge:${Versions.MC}-45.0.0")
+    forge("net.minecraftforge:forge:${Versions.MC}-45.0.20")
 
     // Add Kotlin for Forge.
     // Based on their own instructions: https://github.com/thedarkcolour/KotlinForForge/blob/70385f5/thedarkcolour/kotlinforforge/gradle/kff-3.0.0.gradle
-    implementation("thedarkcolour:kotlinforforge:4.0.0")
+    implementation("thedarkcolour:kotlinforforge:4.1.0")
     // Without the manually specified versions, Loom's generateDLIConfig fails??
     //forgeRuntimeLibrary(kotlin("stdlib-jdk8", version = "1.8.0"))
     //forgeRuntimeLibrary(kotlin("reflect", version = "1.8.0"))

@@ -13,7 +13,7 @@ import org.apache.logging.log4j.LogManager
 
 object Kambrik {
 
-    val ID = "kambrik"
+    const val ID = "kambrik"
     fun idOf(unique: String) = Identifier(ID, unique)
 
     val Logger = LogManager.getLogger("Kambrik")
