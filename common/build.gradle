@@ -6,7 +6,7 @@ architectury {
 }
 
 loom {
-    accessWidenerPath = file("src/main/resources/examplemod.accesswidener")
+    accessWidenerPath = file("src/main/resources/kambrik.accesswidener")
 }
 
 dependencies {

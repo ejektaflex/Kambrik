@@ -3,11 +3,6 @@ import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.fabricmc.loom.task.RemapJarTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-object Versions {
-    val Mod = "0.1"
-    val MC = "1.19.4"
-    val Yarn = "1.19.4+build.1"
-}
 
 plugins {
     // Apply the base plugin which mostly defines useful "build lifecycle" tasks like
@@ -27,6 +22,12 @@ plugins {
     kotlin("jvm") version "1.8.20-RC"
     kotlin("plugin.serialization") version "1.6.0"
 
+}
+
+object Versions {
+    val Mod = "0.1"
+    val MC = "1.19.4"
+    val Yarn = "1.19.4+build.1"
 }
 
 // Set the Minecraft version for Architectury.
