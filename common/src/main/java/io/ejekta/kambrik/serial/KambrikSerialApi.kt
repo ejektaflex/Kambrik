@@ -9,7 +9,6 @@ import kotlinx.serialization.modules.SerializersModule
 import net.minecraft.block.Block
 import net.minecraft.item.Item
 import net.minecraft.nbt.NbtCompound
-import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
@@ -17,9 +16,6 @@ import net.minecraft.util.math.Box
 
 @Suppress("PropertyName")
 class KambrikSerialApi {
-
-    @Serializable
-    data class StringHolder(val str: String)
 
     val DefaultSerializers = SerializersModule {
         // Built in data classes

@@ -1,16 +1,13 @@
 package io.ejekta.kambrikx.data
 
 import io.ejekta.kambrik.Kambrik
-import io.ejekta.kambrik.serial.serializers.TextSerializer
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.serializer
-import net.minecraft.text.Text
 import java.io.File
 import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.full.starProjectedType
 
 abstract class DataFile(val src: File) {
 

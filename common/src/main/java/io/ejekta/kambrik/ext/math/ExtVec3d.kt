@@ -35,11 +35,6 @@ fun Vec3d.toArray(): DoubleArray {
 }
 
 
-fun Vec3d.toBlockPos(): BlockPos {
-    return BlockPos(toVec3i())
-}
-
-
 // Math Functions
 
 fun List<Vec3d>.average(): Vec3d {

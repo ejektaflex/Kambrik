@@ -8,7 +8,7 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionProvider
 import io.ejekta.kambrik.Kambrik
-import io.ejekta.kambrik.ext.addAll
+import io.ejekta.kambrik.ext.commands.addAll
 import net.minecraft.command.CommandSource
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.command.ServerCommandSource

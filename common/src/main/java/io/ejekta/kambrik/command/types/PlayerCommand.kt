@@ -19,7 +19,7 @@ class PlayerCommand(val func: CommandContext<ServerCommandSource>.(player: Serve
         if (ctx.source !is ServerCommandSource) { // TODO reference player
             ctx.source.sendError("Only Players can send Player commands.")
         }
-        return func(ctx, ctx.source.player)
+        return func(ctx, ctx.source.player!!)
     }
 
 }

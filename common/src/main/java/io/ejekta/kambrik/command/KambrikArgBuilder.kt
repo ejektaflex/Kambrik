@@ -18,7 +18,6 @@ import net.minecraft.command.argument.*
 import net.minecraft.command.argument.IdentifierArgumentType.identifier
 import net.minecraft.command.argument.NumberRangeArgumentType.intRange
 import net.minecraft.predicate.NumberRange
-import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 
@@ -118,9 +117,10 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, EntitySelector> = {}
     ) = argument(EntityArgumentType.players(), word, items, func)
 
-    fun argItemStack(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, ItemStackArgument> = {}
-    ) = argument(ItemStackArgumentType.itemStack(), word, items, func)
+    // TODO reimplement argItemStack
+//    fun argItemStack(
+//        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, ItemStackArgument> = {}
+//    ) = argument(ItemStackArgumentType.itemStack(), word, items, func)
 
     fun argEntity(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, EntitySelector> = {}

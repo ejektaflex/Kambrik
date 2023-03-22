@@ -1,7 +1,7 @@
 package io.ejekta.kambrik.input
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
+
+import io.ejekta.kambrik.bridge.Kambridge
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
 
@@ -10,7 +10,7 @@ class KambrikKeybind(
     type: InputUtil.Type,
     key: Int,
     category: String,
-    realTime: Boolean = false
+    val realTime: Boolean = false
 ) : KeyBinding(
     translation,
     type,
@@ -47,13 +47,13 @@ class KambrikKeybind(
 
     init {
         if (realTime) {
-            WorldRenderEvents.LAST.register(WorldRenderEvents.Last {
+            Kambridge.hookKeybindUpdatesRealtime(this) {
                 update(isPressed)
-            })
+            }
         } else {
-            ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick {
+            Kambridge.hookKeybindUpdates(this) {
                 update(isPressed)
-            })
+            }
         }
     }
 

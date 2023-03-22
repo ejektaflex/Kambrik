@@ -2,8 +2,6 @@ package io.ejekta.kambrik.command
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
-import net.fabricmc.api.EnvType
-import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.command.ServerCommandSource
 
 /**

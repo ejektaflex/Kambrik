@@ -1,4 +1,4 @@
-package io.ejekta.kambrik.ext
+package io.ejekta.kambrik.ext.jvm
 
 import io.ejekta.kambrik.ext.internal.assured
 import java.nio.file.Path

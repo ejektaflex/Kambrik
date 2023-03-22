@@ -25,6 +25,8 @@ plugins {
 
     id("com.github.johnrengelman.shadow") version "7.1.2" apply false
     kotlin("jvm") version "1.8.20-RC"
+    kotlin("plugin.serialization") version "1.6.0"
+
 }
 
 // Set the Minecraft version for Architectury.
@@ -93,6 +95,8 @@ subprojects {
         // Note that the configuration name has to be in quotes (a string) since Loom isn't applied to the root project,
         // and so the Kotlin accessor method for it isn't generated for this file.
         "minecraft"("net.minecraft:minecraft:${Versions.MC}")
+
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
 
         // Find the loom extension. Since it's not applied to the root project, we can't access it directly
         // by name in this file.

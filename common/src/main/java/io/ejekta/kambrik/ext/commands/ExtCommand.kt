@@ -1,4 +1,4 @@
-package io.ejekta.kambrik.ext
+package io.ejekta.kambrik.ext.commands
 
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 

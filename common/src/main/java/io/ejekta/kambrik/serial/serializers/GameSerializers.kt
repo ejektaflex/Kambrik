@@ -1,9 +1,7 @@
 package io.ejekta.kambrik.serial.serializers
 
 import io.ejekta.kambrik.Kambrik
-import io.ejekta.kambrik.ext.internal.doStructure
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.descriptors.*
@@ -41,6 +39,7 @@ object IdentitySer : KSerializer<Identifier> {
     }
 }
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializer(forClass = BlockPos::class)
 object BlockPosSerializer : KSerializer<BlockPos> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("yarn.BlockPos") {
@@ -50,23 +49,24 @@ object BlockPosSerializer : KSerializer<BlockPos> {
     }
 
     override fun serialize(encoder: Encoder, value: BlockPos) {
-        encoder.doStructure(descriptor) {
-            encodeIntElement(descriptor, 0, value.x)
-            encodeIntElement(descriptor, 1, value.y)
-            encodeIntElement(descriptor, 2, value.z)
+        encoder.apply {
+            encodeInt(value.x)
+            encodeInt(value.y)
+            encodeInt(value.z)
         }
     }
 
     override fun deserialize(decoder: Decoder): BlockPos {
-        return decoder.doStructure(descriptor) {
+        return decoder.run {
             val els = (0 until 3).map {
-                decodeIntElement(descriptor, decodeElementIndex(descriptor))
+                decodeInt()
             }
             BlockPos(els[0], els[1], els[2])
         }
     }
 }
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializer(forClass = Box::class)
 object BoxSerializer : KSerializer<Box> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("yarn.Box") {
@@ -79,18 +79,18 @@ object BoxSerializer : KSerializer<Box> {
     }
 
     override fun serialize(encoder: Encoder, value: Box) {
-        encoder.doStructure(descriptor) {
+        encoder.apply {
             value.run {
                 listOf(minX, minY, minZ, maxX, maxY, maxZ).mapIndexed { index, d ->
-                    encodeDoubleElement(descriptor, index, d)
+                    encodeDouble(d)
                 }
             }
         }
     }
 
     override fun deserialize(decoder: Decoder): Box {
-        return decoder.doStructure(descriptor) {
-            (0 until 6).map { decodeDoubleElement(descriptor, decodeElementIndex(descriptor)) }.let {
+        return decoder.run {
+            (0 until 6).map { decodeDouble() }.let {
                 Box(it[0], it[1], it[2], it[3], it[4], it[5])
             }
         }
@@ -104,7 +104,6 @@ object BlockPosSerializerOptimized : KSerializer<BlockPos> {
 }
 
 object TextSerializer : KSerializer<Text> {
-    @OptIn(InternalSerializationApi::class)
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("yarn.Text")
     override fun serialize(encoder: Encoder, value: Text) {
         val str = Text.Serializer.toJson(value)

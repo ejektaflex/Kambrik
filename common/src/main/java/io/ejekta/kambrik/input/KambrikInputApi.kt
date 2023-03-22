@@ -1,7 +1,6 @@
 package io.ejekta.kambrik.input
 
 import io.ejekta.kambrik.bridge.Kambridge
-import io.ejekta.kambrik.bridge.LoaderBridge
 import net.minecraft.client.util.InputUtil
 import org.lwjgl.glfw.GLFW
 

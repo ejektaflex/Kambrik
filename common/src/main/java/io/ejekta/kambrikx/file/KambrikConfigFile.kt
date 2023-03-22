@@ -1,7 +1,7 @@
 package io.ejekta.kambrikx.file
 
+import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.ext.internal.assured
-import io.ejekta.kambrik.internal.KambrikMod
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -30,18 +30,18 @@ data class KambrikConfigFile<T>(val location: Path, val name: String, val format
             try {
                 format.decodeFromString(serializer, contents)
             } catch (e: Exception) {
-                KambrikMod.Logger.warn("Kambrik could not correctly load config data at: $location => $name, reason: ${e.message}")
-                KambrikMod.Logger.warn("Kambrik is set to ${mode.name} this file data for safety")
+                Kambrik.Logger.warn("Kambrik could not correctly load config data at: $location => $name, reason: ${e.message}")
+                Kambrik.Logger.warn("Kambrik is set to ${mode.name} this file data for safety")
 
                 e.printStackTrace()
 
                 return when (mode) {
                     KambrikParseFailMode.LEAVE -> {
-                        KambrikMod.Logger.warn("File will be left alone and default data will be loaded instead.")
+                        Kambrik.Logger.warn("File will be left alone and default data will be loaded instead.")
                         default()
                     }
                     KambrikParseFailMode.OVERWRITE -> {
-                        KambrikMod.Logger.warn("File will be overwritten with default data and loaded instead.")
+                        Kambrik.Logger.warn("File will be overwritten with default data and loaded instead.")
                         write()
                         default()
                     }

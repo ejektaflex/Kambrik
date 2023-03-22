@@ -1,7 +1,7 @@
 package io.ejekta.kambrik.ext
 
+import net.minecraft.registry.Registry
 import net.minecraft.util.Identifier
-import net.minecraft.util.registry.Registry
 
 
 fun <T> Registry<T>.register(id: Identifier, obj: T) {
