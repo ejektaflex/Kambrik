@@ -5,6 +5,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
 plugins {
+
+    kotlin("jvm") version "1.8.10"
+    kotlin("plugin.serialization") version "1.6.0"
     // Apply the base plugin which mostly defines useful "build lifecycle" tasks like
     // assemble, check and build. The root project doesn't contain any Java or Kotlin code,
     // so we won't apply those plugins here. Only the assemble task is used in the root project.
@@ -19,8 +22,6 @@ plugins {
     id("dev.architectury.loom") version "1.0.302" apply false
 
     id("com.github.johnrengelman.shadow") version "7.1.2" apply false
-    kotlin("jvm") version "1.8.20-RC"
-    kotlin("plugin.serialization") version "1.6.0"
 
 }
 
