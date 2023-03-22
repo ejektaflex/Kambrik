@@ -15,6 +15,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
+import net.minecraftforge.network.NetworkDirection
 import net.minecraftforge.network.NetworkEvent
 import net.minecraftforge.network.NetworkRegistry
 import net.minecraftforge.network.PacketDistributor
@@ -70,6 +71,7 @@ class LoaderApiForge : LoaderApi {
                 enqueueWork {
                     msg.onServerReceived(ServerMsg.MsgContext(sender!!))
                 }
+                packetHandled = true
             }
         }
     }
@@ -80,6 +82,7 @@ class LoaderApiForge : LoaderApi {
                 enqueueWork {
                     msg.onClientReceived(ClientMsg.MsgContext(MinecraftClient.getInstance()))
                 }
+                packetHandled = true
             }
         }
     }
@@ -88,7 +91,7 @@ class LoaderApiForge : LoaderApi {
         val dummy = createDummyChannel(id)
         val wrapper = ForgeServerMsgWrapper(link)
         channelMap[link] = dummy
-        dummy?.registerMessage(1, link.kClass.java, wrapper::writer, wrapper::reader, wrapper::handler)
+        dummy.registerMessage(1, link.kClass.java, wrapper::writer, wrapper::reader, wrapper::handler)
         return dummy != null
     }
 
@@ -107,7 +110,7 @@ class LoaderApiForge : LoaderApi {
 
     override fun <M : ClientMsg> sendMsgToClient(link: INetworkLink<M>, msg: M, player: ServerPlayerEntity, msgId: Identifier) {
         val channel = channelMap[link]
-        channel!!.send(PacketDistributor.PLAYER.with { player }, msg)
+        channel!!.sendTo(msg, player.networkHandler.connection, NetworkDirection.PLAY_TO_CLIENT)
     }
 
     override fun hookKeybindUpdatesRealtime(kambrikKeybind: KambrikKeybind, func: KambrikKeybind.() -> Unit) {

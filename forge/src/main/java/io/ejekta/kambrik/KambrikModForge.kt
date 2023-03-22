@@ -38,7 +38,7 @@ object KambrikModForge {
             TestMsg::class,
             Kambrik.idOf("test_msg")
         )
-        
+
     }
 
     @JvmStatic
