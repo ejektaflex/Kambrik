@@ -1,6 +1,8 @@
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.8.10"
     kotlin("plugin.serialization") version "1.6.0"
+    `maven-publish`
+    signing
 }
 
 architectury {
@@ -10,6 +12,19 @@ architectury {
             "fabric",
             "forge",
     )
+}
+
+
+publishing {
+    publications {
+        create<MavenPublication>("Kambrik") {
+            groupId = "io.ejekta"
+            artifactId = "kambrik-common"
+            version = "123"
+            println(components.names)
+            from(components.getByName("java"))
+        }
+    }
 }
 
 loom {

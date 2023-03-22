@@ -14,6 +14,9 @@ plugins {
     // See https://docs.gradle.org/current/userguide/base_plugin.html.
     base
 
+    `maven-publish`
+    signing
+
     // Set up specific versions of the plugins we're using.
     // Note that of all these plugins, only the Architectury plugin needs to be applied.
     //kotlin("jvm") version "1.8.0" apply false

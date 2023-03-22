@@ -1,4 +1,6 @@
 package io.ejekta.kambrik.bridge
 
-val Kambridge: LoaderApi
-    get() = LoaderBridge()
+var kambrik_loader_bridge = LoaderBridge<KambrikSharedApi>()
+
+val Kambridge: KambrikSharedApi
+    get() = kambrik_loader_bridge()

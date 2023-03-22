@@ -10,7 +10,7 @@ import net.minecraft.registry.Registry
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 
-interface LoaderApi {
+interface KambrikSharedApi {
 
     // Loader
 

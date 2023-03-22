@@ -1,8 +1,8 @@
 package io.ejekta.kambrik
 
 import io.ejekta.kambrik.bridge.Kambridge
-import io.ejekta.kambrik.bridge.LoaderApiForge
-import io.ejekta.kambrik.bridge.LoaderBridge
+import io.ejekta.kambrik.bridge.KambrikSharedApiForge
+import io.ejekta.kambrik.bridge.kambrik_loader_bridge
 import io.ejekta.kambrik.client.KambrikModForgeClient
 import io.ejekta.kambrik.internal.KambrikCommands
 import io.ejekta.kambrik.internal.TestMsg
@@ -18,7 +18,7 @@ import thedarkcolour.kotlinforforge.forge.runForDist
 @Mod("kambrik")
 object KambrikModForge {
     init {
-        LoaderBridge.setupApi(LoaderApiForge())
+        kambrik_loader_bridge.setupApi(KambrikSharedApiForge())
         FORGE_BUS.addListener(this::registerCommands)
 
         runForDist(

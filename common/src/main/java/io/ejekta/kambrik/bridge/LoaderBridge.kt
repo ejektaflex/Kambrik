@@ -1,13 +1,13 @@
 package io.ejekta.kambrik.bridge
 
-object LoaderBridge {
-    private lateinit var api: LoaderApi
+open class LoaderBridge<API : Any> {
+    private lateinit var api: API
 
-    operator fun invoke(): LoaderApi {
+    operator fun invoke(): API {
         return api
     }
 
-    fun setupApi(newApi: LoaderApi) {
+    fun setupApi(newApi: API) {
         api = newApi
     }
 }

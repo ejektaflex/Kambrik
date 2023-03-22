@@ -1,9 +1,25 @@
+plugins {
+    `maven-publish`
+    signing
+}
 
 architectury {
     // Create the IDE launch configurations for this subproject.
     platformSetupLoomIde()
     // Set up Architectury for Fabric.
     fabric()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("Kambrik") {
+            groupId = "io.ejekta"
+            artifactId = "kambrik-fabric"
+            version = "123"
+            println(components.names)
+            from(components.getByName("java"))
+        }
+    }
 }
 
 // The files below are for using the access widener for the common project.

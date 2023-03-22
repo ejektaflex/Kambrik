@@ -17,7 +17,7 @@ import net.minecraft.registry.Registry
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 
-class LoaderApiFabric : LoaderApi {
+class KambrikSharedApiFabric : KambrikSharedApi {
 
     override val side: BridgeSide
         get() = BridgeSide.FABRIC
