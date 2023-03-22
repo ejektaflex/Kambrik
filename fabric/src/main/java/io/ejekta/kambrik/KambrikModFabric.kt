@@ -1,5 +1,6 @@
 package io.ejekta.kambrik
 
+import io.ejekta.kambrik.bridge.LoaderApiFabric
 import io.ejekta.kambrik.bridge.LoaderBridge
 import net.fabricmc.api.ModInitializer
 

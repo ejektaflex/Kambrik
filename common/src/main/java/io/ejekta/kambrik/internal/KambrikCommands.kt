@@ -1,31 +1,24 @@
 package io.ejekta.kambrik.internal
 
 import com.mojang.brigadier.CommandDispatcher
-import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import io.ejekta.kambrik.Kambrik
-import io.ejekta.kambrik.command.KambrikArgBuilder
+import io.ejekta.kambrik.bridge.BridgeSide
+import io.ejekta.kambrik.bridge.Kambridge
 import io.ejekta.kambrik.command.addCommand
 import io.ejekta.kambrik.command.kambrikServerCommand
 import io.ejekta.kambrik.command.suggestionList
-import io.ejekta.kambrik.ext.identifier
 import io.ejekta.kambrik.text.sendError
 import io.ejekta.kambrik.text.sendFeedback
 import io.ejekta.kambrik.text.textLiteral
 import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.registry.Registries
-import net.minecraft.registry.tag.BlockTags
-import net.minecraft.registry.tag.EntityTypeTags
-import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 
 object KambrikCommands {
     fun register(
-        dispatcher: CommandDispatcher<ServerCommandSource>,
-        registryAccess: CommandRegistryAccess,
-        environment: CommandManager.RegistrationEnvironment
+        dispatcher: CommandDispatcher<ServerCommandSource>
     ) {
 
         dispatcher.addCommand(Kambrik.ID) {
@@ -39,12 +32,14 @@ object KambrikCommands {
                 }
             }
 
-            if (FabricLoader.getInstance().isDevelopmentEnvironment) {
-                "test" {
-                    "text" runs text()
-                    argString("doot") { doot ->
-                        this runs {
-                            println(doot())
+            if (Kambridge.side == BridgeSide.FABRIC) {
+                if (FabricLoader.getInstance().isDevelopmentEnvironment) {
+                    "test" {
+                        "text" runs text()
+                        argString("doot") { doot ->
+                            this runs {
+                                println(doot())
+                            }
                         }
                     }
                 }

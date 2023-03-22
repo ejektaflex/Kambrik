@@ -28,7 +28,7 @@ class KambrikStructureApi internal constructor() {
 
         val poolGrabber = server.registryManager[RegistryKeys.TEMPLATE_POOL].getOrEmpty(poolLocation)
 
-        if (poolGrabber.isEmpty) {
+        if (!poolGrabber.isPresent) {
             throw Exception("Cannot add to '$poolLocation' as it cannot be found!")
         }
 

@@ -4,7 +4,6 @@ import io.ejekta.kambrik.Kambrik
 import kotlinx.serialization.Serializable
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
-import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.ClientPlayNetworkHandler
 import net.minecraft.network.PacketByteBuf
@@ -20,8 +19,7 @@ abstract class ClientMsg {
     data class MsgContext(
         val client: MinecraftClient,
         val handler: ClientPlayNetworkHandler,
-        val buf: PacketByteBuf,
-        val responseSender: PacketSender
+        val buf: PacketByteBuf
     )
 
     @Environment(EnvType.CLIENT)

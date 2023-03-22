@@ -28,8 +28,7 @@ class ServerNetworkLink<M : ServerMsg>(
         server: MinecraftServer,
         player: ServerPlayerEntity,
         handler: ServerPlayNetworkHandler,
-        buf: PacketByteBuf,
-        responseSender: PacketSender
+        buf: PacketByteBuf
     ) {
         val contents = buf.readString()
         val data = deserializePacket(contents)
