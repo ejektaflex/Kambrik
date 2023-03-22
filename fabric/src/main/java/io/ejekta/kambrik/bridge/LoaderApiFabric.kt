@@ -4,6 +4,7 @@ import io.ejekta.kambrik.input.KambrikKeybind
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import io.ejekta.kambrik.message.ClientMsg
 import io.ejekta.kambrik.message.INetworkLink
+import io.ejekta.kambrik.message.ServerMsg
 import io.ejekta.kambrik.registration.KambrikAutoRegistrar
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
@@ -46,7 +47,6 @@ class LoaderApiFabric : LoaderApi {
             val contents = buf.readString()
             val data = link.deserializePacket(contents)
             client.execute {
-
                 data.onClientReceived(ClientMsg.MsgContext(client, handler, buf))
             }
         }
@@ -55,6 +55,25 @@ class LoaderApiFabric : LoaderApi {
     override fun <M : ClientMsg> sendMsgToClient(link: INetworkLink<M>, msg: M, player: ServerPlayerEntity, msgId: Identifier) {
         ServerPlayNetworking.send(
             player,
+            msgId,
+            PacketByteBufs.create().apply {
+                writeString(link.serializePacket(msg))
+            }
+        )
+    }
+
+    override fun <M : ServerMsg> registerServerMessage(link: INetworkLink<M>, id: Identifier): Boolean {
+        return ServerPlayNetworking.registerGlobalReceiver(id) { server, player, handler, buf, responseSender ->
+            val contents = buf.readString()
+            val data = link.deserializePacket(contents)
+            server.execute {
+                data.onServerReceived(ServerMsg.MsgContext(server, player, handler, buf))
+            }
+        }
+    }
+
+    override fun <M : ServerMsg> sendMsgToServer(link: INetworkLink<M>, msg: M, msgId: Identifier) {
+        ClientPlayNetworking.send(
             msgId,
             PacketByteBufs.create().apply {
                 writeString(link.serializePacket(msg))

@@ -3,6 +3,7 @@ package io.ejekta.kambrik.bridge
 import io.ejekta.kambrik.input.KambrikKeybind
 import io.ejekta.kambrik.message.ClientMsg
 import io.ejekta.kambrik.message.INetworkLink
+import io.ejekta.kambrik.message.ServerMsg
 import io.ejekta.kambrik.registration.KambrikAutoRegistrar
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.registry.Registry
@@ -25,9 +26,17 @@ interface LoaderApi {
 
     // Messaging
 
+    // * Client
+
     fun <M : ClientMsg> registerClientMessage(link: INetworkLink<M>, id: Identifier): Boolean
 
     fun <M : ClientMsg> sendMsgToClient(link: INetworkLink<M>, msg: M, player: ServerPlayerEntity, msgId: Identifier)
+
+    // * Server
+
+    fun <M : ServerMsg> registerServerMessage(link: INetworkLink<M>, id: Identifier): Boolean
+
+    fun <M : ServerMsg> sendMsgToServer(link: INetworkLink<M>, msg: M, msgId: Identifier)
 
     // Registration
 
