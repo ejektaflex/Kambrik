@@ -31,6 +31,8 @@ import net.minecraft.world.gen.feature.FeatureConfig
 @Suppress("UNCHECKED_CAST")
 interface KambrikAutoRegistrar : KambrikMarker {
 
+    fun getId(): String
+
     /**
      * Any non-automatic registration that still needs to be done can
      * be put inside of these methods, if desired.

@@ -6,9 +6,11 @@ import io.ejekta.kambrik.bridge.LoaderBridge
 import io.ejekta.kambrik.client.KambrikModForgeClient
 import io.ejekta.kambrik.internal.KambrikCommands
 import io.ejekta.kambrik.internal.TestMsg
+import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import net.minecraftforge.event.RegisterCommandsEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
+import net.minecraftforge.registries.RegisterEvent
 import thedarkcolour.kotlinforforge.forge.FORGE_BUS
 import thedarkcolour.kotlinforforge.forge.MOD_CONTEXT
 import thedarkcolour.kotlinforforge.forge.runForDist
@@ -41,6 +43,8 @@ object KambrikModForge {
 
     }
 
+
+
     @JvmStatic
     @SubscribeEvent
     fun registerCommands(evt: RegisterCommandsEvent) {
@@ -48,6 +52,11 @@ object KambrikModForge {
         KambrikCommands.register(evt.dispatcher, evt.buildContext, evt.commandSelection)
     }
 
+    @JvmStatic
+    @SubscribeEvent
+    fun registryEvent(evt: RegisterEvent) {
+        KambrikRegistrar.doAllRegistrations()
+    }
 
 
 }

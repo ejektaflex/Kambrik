@@ -22,11 +22,7 @@ class KambrikModFabric : ModInitializer {
     override fun onInitialize() {
         println("Kambrik init!")
 
-        // Auto Registration feature
-        FabricLoader.getInstance().getEntrypointContainers(Kambrik.ID, KambrikMarker::class.java).forEach {
-            Kambrik.Logger.debug("Got mod entrypoint: $it, ${it.entrypoint} from ${it.provider.metadata.id}, will do Kambrik init here")
-            KambrikRegistrar.doRegistrationFor(it)
-        }
+        KambrikRegistrar.doAllRegistrations()
 
         // Kambrik commands
         CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback(KambrikCommands::register))

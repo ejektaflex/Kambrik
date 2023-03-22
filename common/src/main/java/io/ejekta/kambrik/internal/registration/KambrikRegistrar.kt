@@ -28,15 +28,13 @@ object KambrikRegistrar {
         return obj
     }
 
-    fun doRegistrationFor(container: EntrypointContainer<KambrikMarker>) {
-        Kambrik.Logger.debug("Kambrik doing real registration for mod ${container.provider.metadata.id}")
-        this[container.entrypoint as? KambrikAutoRegistrar ?: return].apply {
-            requestor.beforeRegistration()
-            content.forEach { entry ->
-                entry.register(container.provider.metadata.id)
+    fun doAllRegistrations() {
+        for ((autoReg, regItems) in registrars) {
+            for (item in regItems.content) {
+                item.register(item.itemId)
             }
-            requestor.afterRegistration()
         }
     }
+
 
 }
