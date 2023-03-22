@@ -1,5 +1,6 @@
 package io.ejekta.kambrik
 
+import io.ejekta.kambrik.bridge.Kambridge
 import io.ejekta.kambrik.bridge.LoaderApiForge
 import io.ejekta.kambrik.bridge.LoaderBridge
 import io.ejekta.kambrik.client.KambrikModForgeClient
@@ -25,6 +26,7 @@ object KambrikModForge {
 
                 // Register mod event bus
                 MOD_CONTEXT.getKEventBus().register(KambrikModForgeClient::class.java)
+                MOD_CONTEXT.getKEventBus().register(Kambridge)
 
             },
             serverTarget = {

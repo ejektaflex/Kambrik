@@ -11,13 +11,26 @@ import net.minecraft.client.option.KeyBinding
 import net.minecraft.registry.Registry
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent
+import net.minecraftforge.eventbus.api.SubscribeEvent
 
 class LoaderApiForge : LoaderApi {
     override val side: BridgeSide
         get() = BridgeSide.FORGE
 
+    // Event methods
+
+    val keysToRegister = mutableListOf<KeyBinding>()
+
+    @SubscribeEvent
+    fun registerKeys(evt: RegisterKeyMappingsEvent) {
+        for (key in keysToRegister) {
+            evt.register(key)
+        }
+    }
+
     override fun registerKeybind(kb: KeyBinding) {
-        //TODO("Not yet implemented")
+        keysToRegister.add(kb)
     }
 
     override fun <M : ServerMsg> registerServerMessage(link: INetworkLink<M>, id: Identifier): Boolean {

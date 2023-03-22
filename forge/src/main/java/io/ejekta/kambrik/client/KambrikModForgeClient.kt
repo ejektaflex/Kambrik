@@ -16,11 +16,4 @@ object KambrikModForgeClient {
         println("Kambrik setting up forge client init!")
     }
 
-
-    @SubscribeEvent @JvmStatic
-    fun registerKeys(evt: RegisterKeyMappingsEvent) {
-        println("Registering keys..")
-        println("OH WOW IT WORKED!")
-    }
-
 }
