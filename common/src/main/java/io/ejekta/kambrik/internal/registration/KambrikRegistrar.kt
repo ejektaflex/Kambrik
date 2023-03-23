@@ -28,9 +28,9 @@ object KambrikRegistrar {
         return obj
     }
 
-    fun doAllRegistrations() {
-        for ((autoReg, regItems) in registrars) {
-            for (item in regItems.content) {
+    fun doRegistrationsFor(modId: String) {
+        registrars.filter { it.key.getId() == modId }.forEach { r, items ->
+            for (item in items.content) {
                 item.register(item.itemId)
             }
         }

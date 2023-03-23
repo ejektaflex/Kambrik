@@ -14,7 +14,7 @@ architectury {
 
 loom {
     forge {
-
+        mixinConfig("kambrik.mixins.json")
     }
 }
 

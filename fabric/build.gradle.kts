@@ -1,3 +1,6 @@
+import java.text.SimpleDateFormat
+import java.util.*
+
 plugins {
     `maven-publish`
     signing
@@ -13,6 +16,9 @@ architectury {
 publishing {
     publications {
         create<MavenPublication>("Kambrik") {
+            groupId = "io.ejekta"
+            artifactId = "kambrik-fabric"
+            version = "123-SNAPSHOT.8"
             from(components.getByName("java"))
         }
     }

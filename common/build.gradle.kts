@@ -1,3 +1,6 @@
+import java.text.SimpleDateFormat
+import java.util.*
+
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.8.10"
     kotlin("plugin.serialization") version "1.6.0"
@@ -20,7 +23,7 @@ publishing {
         create<MavenPublication>("Kambrik") {
             groupId = "io.ejekta"
             artifactId = "kambrik-common"
-            version = "123"
+            version = "123-SNAPSHOT.8"
             println(components.names)
             from(components.getByName("java"))
         }

@@ -23,8 +23,6 @@ class KambrikModFabric : ModInitializer {
             Kambrik.idOf("test_msg")
         )
 
-        KambrikRegistrar.doAllRegistrations()
-
         // Kambrik commands
         CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback(KambrikCommands::register))
 

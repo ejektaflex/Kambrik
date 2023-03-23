@@ -19,6 +19,9 @@
 		"io.ejekta.kambrik.KambrikModFabric"
     ]
   },
+  "mixins": [
+    "kambrik.mixins.json"
+  ],
   "depends": {
     "fabric": "*",
     "minecraft": "~1.19-0"

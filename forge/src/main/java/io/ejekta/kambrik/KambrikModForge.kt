@@ -52,7 +52,7 @@ object KambrikModForge {
     @JvmStatic
     @SubscribeEvent
     fun registryEvent(evt: RegisterEvent) {
-        KambrikRegistrar.doAllRegistrations()
+        //KambrikRegistrar.doAllRegistrations()
     }
 
 

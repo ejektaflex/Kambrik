@@ -2,6 +2,7 @@ package io.ejekta.kambrik.registration
 
 import io.ejekta.kambrik.bridge.Kambridge
 import io.ejekta.kambrik.internal.KambrikMarker
+import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
@@ -43,7 +44,7 @@ interface KambrikAutoRegistrar : KambrikMarker {
 
 
     fun <T> String.forRegistration(reg: Registry<T>, obj: T): T {
-        return Kambridge.register(this@KambrikAutoRegistrar, reg, this, obj)
+        return KambrikRegistrar.register(this@KambrikAutoRegistrar, reg, this, obj)
     }
 
     infix fun String.forItem(item: Item): Item = forRegistration(Registries.ITEM, item)
@@ -79,7 +80,5 @@ interface KambrikAutoRegistrar : KambrikMarker {
             forRegistration(Registries.BLOCK_ENTITY_TYPE, it)
         }
     }
-
-
 
 }
