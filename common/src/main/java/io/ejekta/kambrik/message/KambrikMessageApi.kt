@@ -14,7 +14,7 @@ class KambrikMessageApi internal constructor() {
     internal val serverLinks = mutableMapOf<KClass<*>, ServerNetworkLink<*>>()
 
     @PublishedApi
-    internal inline fun <reified M : Any> registerMessage(
+    internal fun <M : Any> registerMessage(
         linkMaker: () -> INetworkLink<M>,
         reg: MutableMap<KClass<*>, INetworkLink<M>>
     ) : INetworkLink<M> {
@@ -25,15 +25,15 @@ class KambrikMessageApi internal constructor() {
             throw Exception("Cannot register ${linkage.id}! This global channel already exists.")
         }
 
-        reg[M::class] = linkage
+        reg[linkage.kClass] = linkage
         return linkage
     }
 
-    inline fun <reified C : ClientMsg> registerClientMessage(ser: KSerializer<C>, klass: KClass<C>, id: Identifier): INetworkLink<C> {
+    fun <C : ClientMsg> registerClientMessage(ser: KSerializer<C>, klass: KClass<C>, id: Identifier): INetworkLink<C> {
         return registerMessage({ ClientNetworkLink(id, klass, ser) }, clientLinks as MutableMap<KClass<*>, INetworkLink<C>>)
     }
 
-    inline fun <reified S : ServerMsg> registerServerMessage(ser: KSerializer<S>, klass: KClass<S>, id: Identifier): INetworkLink<S> {
+    fun <S : ServerMsg> registerServerMessage(ser: KSerializer<S>, klass: KClass<S>, id: Identifier): INetworkLink<S> {
         return registerMessage({ ServerNetworkLink(id, klass, ser) }, serverLinks as MutableMap<KClass<*>, INetworkLink<S>>)
     }
 

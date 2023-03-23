@@ -13,10 +13,6 @@ architectury {
 publishing {
     publications {
         create<MavenPublication>("Kambrik") {
-            groupId = "io.ejekta"
-            artifactId = "kambrik-fabric"
-            version = "123"
-            println(components.names)
             from(components.getByName("java"))
         }
     }
@@ -81,12 +77,6 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:0.14.17")
     modImplementation("net.fabricmc.fabric-api:fabric-api:0.76.0+1.19.4")
     modApi("net.fabricmc:fabric-language-kotlin:1.9.2+kotlin.1.8.10")
-
-    // Bundle Jankson in the mod and use it as a regular "implementation" library.
-    //bundle(implementation("blue.endless:jankson:${rootProject.property("jankson")}")!!)
-
-    // Mod compat
-    //modLocalRuntime(modCompileOnly("com.terraformersmc:modmenu:${rootProject.property("modmenu")}")!!)
 
 }
 

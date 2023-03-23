@@ -38,8 +38,13 @@ object KambrikCommands {
 
             "net" {
                 "send" runs {
-                    println("Sending!")
-                    TestMsg("hai").sendToClient(source.playerOrThrow)
+                    try {
+                        println("Sending!")
+                        TestMsg("hai").sendToClient(source.playerOrThrow)
+                    } catch (e: Exception) {
+                        println("Could not send:")
+                        e.printStackTrace()
+                    }
                 }
             }
 
