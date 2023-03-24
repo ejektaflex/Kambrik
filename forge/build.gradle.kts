@@ -1,3 +1,7 @@
+plugins {
+    `maven-publish`
+    signing
+}
 
 object Versions {
     val Mod = "0.1"
@@ -18,6 +22,17 @@ loom {
     }
 }
 
+publishing {
+    publications {
+        create<MavenPublication>("Kambrik") {
+            groupId = "io.ejekta"
+            artifactId = "kambrik-forge"
+            version = "123-SNAPSHOT.12"
+            from(components.getByName("java"))
+        }
+    }
+}
+
 repositories {
     // Set up Kotlin for Forge's Maven repository.
     maven {
@@ -31,21 +46,12 @@ dependencies {
     // Add dependency on Forge. This is mainly used for generating the patched Minecraft jar with Forge classes.
     forge("net.minecraftforge:forge:${Versions.MC}-45.0.20")
 
-    // Add Kotlin for Forge.
-    // Based on their own instructions: https://github.com/thedarkcolour/KotlinForForge/blob/70385f5/thedarkcolour/kotlinforforge/gradle/kff-3.0.0.gradle
     implementation("thedarkcolour:kotlinforforge:4.1.0")
-    // Without the manually specified versions, Loom's generateDLIConfig fails??
-    //forgeRuntimeLibrary(kotlin("stdlib-jdk8", version = "1.8.0"))
-    //forgeRuntimeLibrary(kotlin("reflect", version = "1.8.0"))
 
-    // Depend on the common project. The "namedElements" configuration contains the non-remapped
-    // classes and resources of the project.
-    // It follows Gradle's own convention of xyzElements for "outgoing" configurations like apiElements.
     implementation(project(":common", configuration = "namedElements")) {
         isTransitive = false
     }
-    // Bundle the transformed version of the common project in the mod.
-    // The transformed version includes things like fixed refmaps.
+
     bundle(project(path = ":common", configuration = "transformProductionForge")) {
         isTransitive = false
     }

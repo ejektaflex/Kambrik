@@ -11,7 +11,10 @@ import net.minecraft.util.Identifier
 object KambrikRegistrar {
 
     data class RegistrationEntry<T>(val registry: Registry<T>, val itemId: String, val item: T) {
-        fun register(modId: String) = registry.register(Identifier(modId, itemId), item)
+        fun register(modId: String) {
+            Kambrik.Logger.debug("Registering item: ${modId}:${itemId}")
+            registry.register(Identifier(modId, itemId), item)
+        }
     }
 
     data class ModRegistrar(val requestor: KambrikAutoRegistrar, val content: MutableList<RegistrationEntry<*>> = mutableListOf())
@@ -29,9 +32,9 @@ object KambrikRegistrar {
     }
 
     fun doRegistrationsFor(modId: String) {
-        registrars.filter { it.key.getId() == modId }.forEach { r, items ->
+        registrars.filter { it.key.getId() == modId }.forEach { (_, items) ->
             for (item in items.content) {
-                item.register(item.itemId)
+                item.register(modId)
             }
         }
     }

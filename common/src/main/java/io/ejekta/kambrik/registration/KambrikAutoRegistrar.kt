@@ -18,6 +18,9 @@ import net.minecraft.particle.ParticleType
 import net.minecraft.potion.Potion
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
+import net.minecraft.resource.featuretoggle.FeatureFlags
+import net.minecraft.screen.ScreenHandler
+import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.sound.SoundEvent
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
@@ -79,6 +82,11 @@ interface KambrikAutoRegistrar : KambrikMarker {
         return BlockEntityType.Builder.create(factory, block).build(null).also {
             forRegistration(Registries.BLOCK_ENTITY_TYPE, it)
         }
+    }
+
+    fun <T : ScreenHandler> String.forScreen(factory: ScreenHandlerType.Factory<T>): ScreenHandlerType<T> {
+        println("Registering SCREEN")
+        return forRegistration(Registries.SCREEN_HANDLER, ScreenHandlerType(factory, FeatureFlags.VANILLA_FEATURES)) as ScreenHandlerType<T>
     }
 
 }

@@ -20,7 +20,7 @@
     ]
   },
   "mixins": [
-    "kambrik.mixins.json"
+	  "kambrik.mixins.json"
   ],
   "depends": {
     "fabric": "*",
