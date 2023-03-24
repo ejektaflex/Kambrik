@@ -1,6 +1,3 @@
-import java.text.SimpleDateFormat
-import java.util.*
-
 plugins {
     `maven-publish`
     signing
@@ -13,17 +10,6 @@ architectury {
     fabric()
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("Kambrik") {
-            groupId = "io.ejekta"
-            artifactId = "kambrik-fabric"
-            version = "123-SNAPSHOT.16"
-            from(components.getByName("java"))
-        }
-    }
-}
-
 // The files below are for using the access widener for the common project.
 // We need to copy the file from common resources to fabric resource
 // for Fabric Loader to find it and not crash.
@@ -33,18 +19,11 @@ val generatedResources = file("src/generated/resources")
 // The path to the AW file in the common subproject.
 val accessWidenerFile = project(":common").file("src/main/resources/kambrik.accesswidener")
 
-loom {
-    // Make the Fabric project use the common access widener.
-    // Technically useless, BUT this file is also needed at dev runtime of course
-    accessWidenerPath.set(accessWidenerFile)
-}
+loom { accessWidenerPath.set(accessWidenerFile) }
 
 sourceSets {
     main {
         resources {
-            // Mark the AW generated resource directory as
-            // a source directory for the resources of
-            // the "main" source set.
             srcDir(generatedResources)
         }
     }
@@ -52,29 +31,14 @@ sourceSets {
 
 // Set up various Maven repositories for mod compat.
 repositories {
-
-    // TerraformersMC maven for Mod Menu and EMI.
-    maven {
-        name = "TerraformersMC"
-        url = uri("https://maven.terraformersmc.com/releases")
-
-        content {
-            includeGroup("com.terraformersmc")
-        }
-    }
-
+    maven("https://maven.terraformersmc.com/releases/") // Mod Menu
 }
 
 dependencies {
-
-    // Depend on the common project. The "namedElements" configuration contains the non-remapped
-    // classes and resources of the project.
-    // It follows Gradle's own convention of xyzElements for "outgoing" configurations like apiElements.
     implementation(project(":common", configuration = "namedElements")) {
         isTransitive = false
     }
-    // Bundle the transformed version of the common project in the mod.
-    // The transformed version includes things like fixed refmaps.
+
     bundle(project(path = ":common", configuration = "transformProductionFabric")) {
         isTransitive = false
     }
@@ -106,5 +70,16 @@ tasks {
             expand("version" to project.version)
         }
     }
+}
 
+
+publishing {
+    publications {
+        create<MavenPublication>("Kambrik") {
+            groupId = "io.ejekta"
+            artifactId = "kambrik-fabric"
+            version = "123-SNAPSHOT.16"
+            from(components.getByName("java"))
+        }
+    }
 }
