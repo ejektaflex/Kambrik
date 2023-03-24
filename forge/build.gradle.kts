@@ -15,19 +15,23 @@ architectury {
     // Set up Architectury for Forge.
     forge()
 }
-
 loom {
     forge {
         mixinConfig("kambrik.mixins.json")
+        accessWidenerPath.set(project(":common").file("src/main/resources/kambrik.accesswidener"))
+        convertAccessWideners.set(true)
     }
 }
 
+val javaComponent = components["java"] as AdhocComponentWithVariants
+javaComponent.withVariantsFromConfiguration(project.configurations["shadowRuntimeElements"]) { skip() }
+
 publishing {
     publications {
-        create<MavenPublication>("Kambrik") {
+        create<MavenPublication>("mavenForge") {
             groupId = "io.ejekta"
             artifactId = "kambrik-forge"
-            version = "123-SNAPSHOT.12"
+            version = "123-SNAPSHOT.20"
             from(components.getByName("java"))
         }
     }

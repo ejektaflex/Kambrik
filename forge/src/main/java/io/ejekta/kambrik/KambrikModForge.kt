@@ -19,14 +19,12 @@ object KambrikModForge {
         runForDist(
             clientTarget = {
                 println("Registering client listeners..")
-
                 // Register mod event bus
                 MOD_CONTEXT.getKEventBus().register(KambrikModForgeClient::class.java)
-                MOD_CONTEXT.getKEventBus().register(Kambridge)
 
             },
             serverTarget = {
-
+                MOD_CONTEXT.getKEventBus().register(Kambridge)
             }
         )
 

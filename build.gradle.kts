@@ -80,6 +80,19 @@ subprojects {
         // for bundling the common mod code in the platform jars.
         apply(plugin = "com.github.johnrengelman.shadow")
 
+        extensions.configure<LoomGradleExtensionAPI> {
+            runConfigs.getByName("server") {
+                runDir = "run/server"
+            }
+
+            // "main" matches the default Forge mod's name
+            with(mods.maybeCreate("main")) {
+                fun Project.sourceSets() = extensions.getByName<SourceSetContainer>("sourceSets")
+                sourceSet(sourceSets().getByName("main"))
+                sourceSet(project(":common").sourceSets().getByName("main"))
+            }
+        }
+
         // Define the "bundle" configuration which will be included in the shadow jar.
         val bundle by configurations.creating {
             // This configuration is only meant to be resolved to its files but not published in
