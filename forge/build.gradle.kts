@@ -26,16 +26,6 @@ loom {
 val javaComponent = components["java"] as AdhocComponentWithVariants
 javaComponent.withVariantsFromConfiguration(project.configurations["shadowRuntimeElements"]) { skip() }
 
-publishing {
-    publications {
-        create<MavenPublication>("mavenForge") {
-            groupId = "io.ejekta"
-            artifactId = "kambrik-forge"
-            version = "123-SNAPSHOT.20"
-            from(components.getByName("java"))
-        }
-    }
-}
 
 repositories {
     // Set up Kotlin for Forge's Maven repository.
@@ -78,4 +68,16 @@ tasks {
 }
 kotlin {
     jvmToolchain(17)
+}
+
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenForge") {
+            groupId = "io.ejekta"
+            artifactId = "kambrik-forge"
+            version = "123-SNAPSHOT.23"
+            from(components.getByName("java"))
+        }
+    }
 }

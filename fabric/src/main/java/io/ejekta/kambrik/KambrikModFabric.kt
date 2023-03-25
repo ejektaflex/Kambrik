@@ -1,9 +1,6 @@
 package io.ejekta.kambrik
 
-import io.ejekta.kambrik.bridge.KambrikSharedApiFabric
 import io.ejekta.kambrik.internal.KambrikCommands
-import io.ejekta.kambrik.internal.TestMsg
-import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import io.ejekta.kambrikx.data.KambrikPersistence
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.ModInitializer
@@ -16,12 +13,6 @@ class KambrikModFabric : ModInitializer {
 
     override fun onInitialize() {
         println("Kambrik init!")
-
-        Kambrik.Message.registerClientMessage(
-            TestMsg.serializer(),
-            TestMsg::class,
-            Kambrik.idOf("test_msg")
-        )
 
         // Kambrik commands
         CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback(KambrikCommands::register))

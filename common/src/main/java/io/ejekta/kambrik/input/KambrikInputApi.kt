@@ -15,7 +15,8 @@ class KambrikInputApi internal constructor() {
         bindingDsl: KambrikKeybind.() -> Unit
     ): KambrikKeybind {
         val kambrikKeybind = KambrikKeybind(keyTranslation, type, key, keyCategory, realTime).apply(bindingDsl)
-        Kambridge.registerKeybind(kambrikKeybind)
+        // TODO keybind registration
+        //Kambridge.registerKeybind(kambrikKeybind)
         return kambrikKeybind
     }
 

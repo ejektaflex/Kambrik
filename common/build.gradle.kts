@@ -31,7 +31,7 @@ publishing {
         create<MavenPublication>("Kambrik") {
             groupId = "io.ejekta"
             artifactId = "kambrik-common"
-            version = "123-SNAPSHOT.16"
+            version = "123-SNAPSHOT.19"
             println(components.names)
             from(components.getByName("java"))
         }

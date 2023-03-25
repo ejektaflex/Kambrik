@@ -28,19 +28,6 @@ class KambrikSharedApiForge : KambrikSharedApi {
 
     // Event methods
 
-    val keysToRegister = mutableListOf<KeyBinding>()
-
-    @SubscribeEvent
-    fun registerKeys(evt: RegisterKeyMappingsEvent) {
-        for (key in keysToRegister) {
-            evt.register(key)
-        }
-    }
-
-    override fun registerKeybind(kb: KeyBinding) {
-        keysToRegister.add(kb)
-    }
-
     // Messaging
 
     val channelMap = mutableMapOf<INetworkLink<*>, SimpleChannel>()
@@ -110,14 +97,6 @@ class KambrikSharedApiForge : KambrikSharedApi {
     override fun <M : ClientMsg> sendMsgToClient(link: INetworkLink<M>, msg: M, player: ServerPlayerEntity, msgId: Identifier) {
         val channel = channelMap[link]
         channel!!.sendTo(msg, player.networkHandler.connection, NetworkDirection.PLAY_TO_CLIENT)
-    }
-
-    override fun hookKeybindUpdatesRealtime(kambrikKeybind: KambrikKeybind, func: KambrikKeybind.() -> Unit) {
-        //TODO("Not yet implemented")
-    }
-
-    override fun hookKeybindUpdates(kambrikKeybind: KambrikKeybind, func: KambrikKeybind.() -> Unit) {
-        //TODO("Not yet implemented")
     }
 
     override fun <T> register(autoReg: KambrikAutoRegistrar, reg: Registry<T>, thingId: String, obj: T): T {

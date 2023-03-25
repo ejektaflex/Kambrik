@@ -46,15 +46,15 @@ class KambrikKeybind(
     }
 
     init {
-        if (realTime) {
-            Kambridge.hookKeybindUpdatesRealtime(this) {
-                update(isPressed)
-            }
-        } else {
-            Kambridge.hookKeybindUpdates(this) {
-                update(isPressed)
-            }
-        }
+//        if (realTime) {
+//            Kambridge.hookKeybindUpdatesRealtime(this) {
+//                update(isPressed)
+//            }
+//        } else {
+//            Kambridge.hookKeybindUpdates(this) {
+//                update(isPressed)
+//            }
+//        }
     }
 
 }

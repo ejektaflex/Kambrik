@@ -16,14 +16,6 @@ interface KambrikSharedApi {
 
     val side: BridgeSide
 
-    // Input
-
-    fun registerKeybind(kb: KeyBinding)
-
-    fun hookKeybindUpdates(kambrikKeybind: KambrikKeybind, func: KambrikKeybind.() -> Unit)
-
-    fun hookKeybindUpdatesRealtime(kambrikKeybind: KambrikKeybind, func: KambrikKeybind.() -> Unit)
-
     // Messaging
 
     // * Client

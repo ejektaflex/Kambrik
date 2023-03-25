@@ -9,6 +9,7 @@ import kotlinx.serialization.modules.SerializersModule
 import net.minecraft.block.Block
 import net.minecraft.item.Item
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.sound.SoundEvent
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
@@ -25,6 +26,7 @@ class KambrikSerialApi {
         // Referential serializers
         contextual(Item::class, ItemRefSerializer)
         contextual(Block::class, BlockRefSerializer)
+        contextual(SoundEvent::class, SoundEventRefSerializer)
         // Simple NBT Compound serializer
         contextual(NbtCompound::class, SimpleNbtSerializer)
     }
