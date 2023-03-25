@@ -3,6 +3,7 @@ package io.ejekta.kambrik
 import io.ejekta.kambrik.bridge.Kambridge
 import io.ejekta.kambrik.client.KambrikModForgeClient
 import io.ejekta.kambrik.internal.KambrikCommands
+import io.ejekta.kambrik.internal.TestMsg
 import net.minecraftforge.event.RegisterCommandsEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
@@ -14,6 +15,16 @@ import thedarkcolour.kotlinforforge.forge.runForDist
 object KambrikModForge {
     init {
         FORGE_BUS.addListener(this::registerCommands)
+
+        try {
+            Kambrik.Message.registerClientMessage(
+                TestMsg.serializer(),
+                TestMsg::class,
+                Kambrik.idOf("test_msg")
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         runForDist(
             clientTarget = {

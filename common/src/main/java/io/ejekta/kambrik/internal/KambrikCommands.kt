@@ -36,15 +36,18 @@ object KambrikCommands {
                 }
             }
 
-            if (Kambridge.side == BridgeSide.FABRIC) {
-                if (FabricLoader.getInstance().isDevelopmentEnvironment) {
-                    "test" {
-                        "text" runs text()
-                        argString("doot") { doot ->
-                            this runs {
-                                println(doot())
-                            }
-                        }
+            "test" {
+                "text" runs text()
+                argString("doot") { doot ->
+                    this runs {
+                        println(doot())
+                    }
+                }
+                "net" runs {
+                    try {
+                        TestMsg("net send here").sendToClient(source.playerOrThrow)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
                 }
             }

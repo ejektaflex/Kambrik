@@ -17,6 +17,12 @@
   "entrypoints": {
     "main": [
 		"io.ejekta.kambrik.KambrikModFabric"
+    ],
+    "client": [
+      {
+        "adapter": "kotlin",
+        "value": "io.ejekta.kambrik.internal.client.KambrikClientMod"
+      }
     ]
   },
   "mixins": [

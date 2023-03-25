@@ -1,10 +1,12 @@
 package io.ejekta.kambrik.internal.client
 
+import io.ejekta.kambrik.Kambrik
+import io.ejekta.kambrik.internal.TestMsg
 import io.ejekta.kambrikx.data.KambrikPersistence
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 
-internal object KambrikClientMod : ClientModInitializer {
+object KambrikClientMod : ClientModInitializer {
 
     override fun onInitializeClient() {
 

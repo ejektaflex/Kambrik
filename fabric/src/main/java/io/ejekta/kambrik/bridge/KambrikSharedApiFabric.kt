@@ -6,12 +6,14 @@ import io.ejekta.kambrik.message.ClientMsg
 import io.ejekta.kambrik.message.INetworkLink
 import io.ejekta.kambrik.message.ServerMsg
 import io.ejekta.kambrik.registration.KambrikAutoRegistrar
+import net.fabricmc.api.EnvType
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.registry.Registry
 import net.minecraft.server.network.ServerPlayerEntity
@@ -23,6 +25,14 @@ class KambrikSharedApiFabric : KambrikSharedApi {
         get() = BridgeSide.FABRIC
 
     // Messaging
+
+    override fun isOnClient(): Boolean {
+        return FabricLoader.getInstance().environmentType == EnvType.CLIENT
+    }
+
+    override fun isOnServer(): Boolean {
+        return FabricLoader.getInstance().environmentType == EnvType.SERVER
+    }
 
     override fun <M : ClientMsg> registerClientMessage(link: INetworkLink<M>, id: Identifier): Boolean {
         return ClientPlayNetworking.registerGlobalReceiver(id) { client, handler, buf, responseSender ->

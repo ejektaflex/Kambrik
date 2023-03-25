@@ -20,6 +20,10 @@ interface KambrikSharedApi {
 
     // * Client
 
+    fun isOnClient(): Boolean
+
+    fun isOnServer(): Boolean
+
     fun <M : ClientMsg> registerClientMessage(link: INetworkLink<M>, id: Identifier): Boolean
 
     fun <M : ClientMsg> sendMsgToClient(link: INetworkLink<M>, msg: M, player: ServerPlayerEntity, msgId: Identifier)

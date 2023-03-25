@@ -13,8 +13,10 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraft.registry.Registry
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
+import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
+import net.minecraftforge.fml.loading.FMLEnvironment
 import net.minecraftforge.network.NetworkDirection
 import net.minecraftforge.network.NetworkEvent
 import net.minecraftforge.network.NetworkRegistry
@@ -27,6 +29,14 @@ class KambrikSharedApiForge : KambrikSharedApi {
         get() = BridgeSide.FORGE
 
     // Event methods
+
+    override fun isOnClient(): Boolean {
+        return FMLEnvironment.dist == Dist.CLIENT
+    }
+
+    override fun isOnServer(): Boolean {
+        return FMLEnvironment.dist == Dist.DEDICATED_SERVER
+    }
 
     // Messaging
 
