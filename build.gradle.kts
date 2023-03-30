@@ -1,206 +1,154 @@
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.net.URL
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import net.fabricmc.loom.api.LoomGradleExtensionAPI
+import net.fabricmc.loom.task.RemapJarTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 
 plugins {
-	kotlin("jvm") version "1.8.10"
-	kotlin("plugin.serialization") version "1.6.0"
-	id("fabric-loom") version "1.1-SNAPSHOT"
-	`maven-publish`
-	signing
-	idea
-	id("org.jetbrains.dokka") version "1.5.30"
+
+    kotlin("jvm") version "1.8.10"
+    kotlin("plugin.serialization") version "1.6.0"
+    base
+    `maven-publish`
+    signing
+    id("architectury-plugin") version "3.4.143"
+    id("dev.architectury.loom") version "1.0.302" apply false
+
+    id("com.github.johnrengelman.shadow") version "7.1.2" apply false
 }
 
 object Versions {
-	const val Minecraft = "1.19.4"
-	object Jvm {
-		val Java = JavaVersion.VERSION_17
-		const val Kotlin = "1.8.10"
-		const val TargetKotlin = "17"
-	}
-	object Fabric {
-		const val Yarn = "1.19.4+build.1"
-		const val Loader = "0.14.17"
-		const val Api = "0.76.0+1.19.4"
-	}
-	object Mod {
-		const val Group = "io.ejekta"
-		const val ID = "kambrik"
-		const val Version = "5.1.0-1.19.4"
-	}
-	object Env {
-		const val Serialization = "1.4.0"
-		const val FLK = "1.9.1+kotlin.1.8.10"
-		//const val ClothConfig = "6.6.62"
-		//const val ModMenu = "3.0.1"
-	}
+    val Mod = "6.0.0-beta.2"
+    val MC = "1.19.4"
+    val Yarn = "1.19.4+build.1"
 }
 
-
-java {
-	sourceCompatibility = Versions.Jvm.Java
-	targetCompatibility = Versions.Jvm.Java
-	withSourcesJar()
-	withJavadocJar()
+// Set the Minecraft version for Architectury.
+architectury {
+    minecraft = Versions.MC
 }
 
-val pkgName: String by project
-val pkgDesc: String by project
-val pkgAuthor: String by project
-val pkgEmail: String by project
-val pkgHub: String by project
+// Set up basic Maven artifact metadata, including the project version
+// and archive names.
+group = "io.ejekta.kambrik"
+// Set the project version to be <mod version>+<Minecraft version> so the MC version is semver build metadata.
+// The "mod-version" and "minecraft-version" properties are read from gradle.properties.
+version = "${Versions.Mod}+${Versions.MC}"
+base.archivesName.set("Kambrik")
 
-// EZ local Maven updates
-val buildVersion = if (Versions.Mod.Version.endsWith("SNAPSHOT")) {
-	Versions.Mod.Version + ".${SimpleDateFormat("YYYY.MMdd.HHmmss").format(Date())}"
-} else {
-	Versions.Mod.Version
+tasks {
+    // Register a custom "collect jars" task that copies the Fabric and Forge mod jars into the root project's build/libs.
+    val collectJars by registering(Copy::class) {
+        // Find the remapJar tasks of projects that aren't :common (so :fabric and :forge) and depend on them.
+        val tasks = subprojects.filter { it.path != ":common" }.map { it.tasks.named("remapJar") }
+        dependsOn(tasks)
+
+        // Copy the outputs of the tasks...
+        from(tasks)
+        // ...into build/libs.
+        into(buildDir.resolve("libs"))
+    }
+
+    // Set up assemble to depend on the collectJars task, so it gets run on gradlew build.
+    assemble {
+        dependsOn(collectJars)
+    }
 }
 
-project.group = group
-version = buildVersion
+// Do the shared setup for the Minecraft subprojects.
+subprojects {
+    apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "dev.architectury.loom")
+    apply(plugin = "architectury-plugin")
 
-repositories {
-	mavenCentral()
-	maven(url = "https://maven.terraformersmc.com/") {
-		name = "Mod Menu"
-	}
+    extensions.configure<JavaPluginExtension> {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    group = rootProject.group
+    version = rootProject.version
+    base.archivesName.set(rootProject.base.archivesName)
+
+    dependencies {
+        // Note that the configuration name has to be in quotes (a string) since Loom isn't applied to the root project,
+        // and so the Kotlin accessor method for it isn't generated for this file.
+        "minecraft"("net.minecraft:minecraft:${Versions.MC}")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+        "mappings"("net.fabricmc:yarn:${Versions.Yarn}:v2")
+    }
+
+    tasks {
+        withType<JavaCompile> {
+            options.encoding = "UTF-8"
+            options.release.set(17)
+        }
+        withType<KotlinCompile> {
+            kotlinOptions.jvmTarget = "17"
+            kotlinOptions.freeCompilerArgs = listOf("-Xlambdas=indy", "-Xjvm-default=all",)
+        }
+    }
 }
 
+// Set up "platform" subprojects (non-common subprojects).
+subprojects {
+    if (path != ":common") {
+
+        // Apply the shadow plugin which lets us include contents
+        // of any libraries in our mod jars. Architectury uses it
+        // for bundling the common mod code in the platform jars.
+        apply(plugin = "com.github.johnrengelman.shadow")
+
+        extensions.configure<LoomGradleExtensionAPI> {
+            runConfigs.getByName("server") {
+                runDir = "run/server"
+            }
+
+            // "main" matches the default Forge mod's name
+            with(mods.maybeCreate("main")) {
+                fun Project.sourceSets() = extensions.getByName<SourceSetContainer>("sourceSets")
+                sourceSet(sourceSets().getByName("main"))
+                sourceSet(project(":common").sourceSets().getByName("main"))
+            }
+        }
+
+        // Define the "bundle" configuration which will be included in the shadow jar.
+        val bundle by configurations.creating {
+            // This configuration is only meant to be resolved to its files but not published in
+            // any way, so we set canBeConsumed = false and canBeResolved = true.
+            // See https://docs.gradle.org/current/userguide/declaring_dependencies.html#sec:resolvable-consumable-configs.
+            isCanBeConsumed = false
+            isCanBeResolved = true
+        }
+
+        tasks.withType<JavaCompile> {
+            options.encoding = "UTF-8"
+            options.release.set(17)
+        }
+
+        tasks {
+            "shadowJar"(ShadowJar::class) {
+                archiveClassifier.set("dev-shadow")
+                if (path == ":forge") { exclude("fabric.mod.json") }
+                exclude("architectury.common.json")
+                configurations = listOf(bundle)
+            }
+            "remapJar"(RemapJarTask::class) {
+                injectAccessWidener.set(true)
+                inputFile.set(named<ShadowJar>("shadowJar").flatMap { it.archiveFile })
+                dependsOn("shadowJar")
+                archiveClassifier.set(project.name)
+            }
+            "jar"(Jar::class) { archiveClassifier.set("dev") }
+        }
+    }
+}
 dependencies {
-	//to change the versions see the gradle.properties file
-	minecraft("com.mojang:minecraft:${Versions.Minecraft}")
-	mappings("net.fabricmc:yarn:${Versions.Fabric.Yarn}:v2")
-	modImplementation("net.fabricmc:fabric-loader:${Versions.Fabric.Loader}")
-
-	modApi("org.jetbrains.kotlinx:kotlinx-serialization-core:${Versions.Env.Serialization}")
-	include("org.jetbrains.kotlinx:kotlinx-serialization-core:${Versions.Env.Serialization}")
-	modApi("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.Env.Serialization}")
-	include("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.Env.Serialization}")
-
-	compileOnly("org.jetbrains:annotations:22.0.0")
-	implementation("com.google.code.findbugs:jsr305:3.0.2")
-
-	modImplementation(group = "net.fabricmc", name = "fabric-language-kotlin", version = Versions.Env.FLK)
-
-	modImplementation("net.fabricmc.fabric-api:fabric-api:${Versions.Fabric.Api}") {
-		exclude(group = "net.fabricmc.fabric-api", module = "fabric-biome-api-v1") // err on 23w07a
-	}
+    implementation(kotlin("stdlib-jdk8"))
 }
-
-val remapJarTask = tasks.named("remapJar").get()
-val javadocJarTask = tasks.getByName("javadocJar")
-val sourcesJarTask = tasks.named("sourcesJar").get()
-val remapSourcesJarTask = tasks.named("remapSourcesJar").get()
-
-publishing {
-
-	publications {
-		create<MavenPublication>("Kambrik") {
-
-			groupId = Versions.Mod.Group
-			artifactId = Versions.Mod.ID
-			version = buildVersion
-
-			artifact(remapJarTask) { builtBy(remapJarTask) }
-			artifact(sourcesJarTask) { builtBy(remapSourcesJarTask) }
-			artifact(javadocJarTask)
-
-			pom {
-				name.set(pkgName)
-				description.set(pkgDesc)
-				url.set(pkgHub)
-
-				licenses {
-					license {
-						name.set("MIT License")
-						url.set("https://opensource.org/licenses/MIT")
-					}
-				}
-
-				developers {
-					developer {
-						name.set(pkgAuthor)
-						id.set(pkgAuthor)
-						email.set(pkgEmail)
-					}
-				}
-
-				scm {
-					connection.set("$pkgHub.git")
-					url.set(pkgHub)
-				}
-
-			}
-
-
-		}
-	}
-
-	repositories {
-		if (hasProperty("ossrh.username") && hasProperty("ossrh.password")) {
-			maven("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2") {
-				name = "Central"
-				credentials {
-					username = property("ossrh.username") as? String
-					password = property("ossrh.password") as? String
-				}
-			}
-		}
-		if (hasProperty("gpr.user") && hasProperty("gpr.key")) {
-			maven("https://maven.pkg.github.com/ejektaflex/kambrik") {
-				name = "GitHub"
-				credentials {
-					username = property("gpr.user") as? String
-					password = property("gpr.key") as? String
-				}
-			}
-		}
-	}
-
+repositories {
+    mavenCentral()
 }
-
-signing {
-	sign(publishing.publications)
-}
-
-tasks.getByName<ProcessResources>("processResources") {
-	filesMatching("fabric.mod.json") {
-		expand(
-			mutableMapOf<String, String>(
-				"modid" to Versions.Mod.ID,
-				"version" to Versions.Mod.Version,
-				"kotlinVersion" to Versions.Jvm.Kotlin,
-				"fabricApiVersion" to Versions.Fabric.Api
-			)
-		)
-	}
-}
-
-
-
-tasks.dokkaHtml.configure {
-	outputDirectory.set(buildDir.resolve("dokka"))
-
-	moduleName.set("KambrikDokka")
-
-	dokkaSourceSets {
-		configureEach {
-			skipEmptyPackages.set(true)
-			sourceLink {
-				localDirectory.set(file("src/main/java"))
-
-				noJdkLink.set(true)
-
-				remoteUrl.set(
-					URL(
-						"https://github.com/ejektaflex/Kambrik/tree/master/src/main/java"
-					)
-				)
-				remoteLineSuffix.set("#L")
-			}
-		}
-	}
-
+kotlin {
+    jvmToolchain(8)
 }

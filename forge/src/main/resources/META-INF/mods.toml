@@ -1,0 +1,28 @@
+modLoader = "kotlinforforge"
+loaderVersion = "[4,)"
+issueTrackerURL = "https://github.com/ejektaflex/Kambrik/issues"
+license = "GPL 3.0"
+
+[[mods]]
+modId = "kambrik"
+version = "${version}"
+displayName = "Kambrik"
+authors = "Me!"
+description = '''
+A Light-weight Kotlin Library Mod!
+'''
+#logoFile = ""
+
+[[dependencies.kambrik]]
+modId = "forge"
+mandatory = true
+versionRange = "[43,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.kambrik]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.19.4,)"
+ordering = "NONE"
+side = "BOTH"
