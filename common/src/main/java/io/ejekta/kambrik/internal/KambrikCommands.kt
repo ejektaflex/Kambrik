@@ -4,10 +4,7 @@ import com.mojang.brigadier.CommandDispatcher
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.bridge.BridgeSide
 import io.ejekta.kambrik.bridge.Kambridge
-import io.ejekta.kambrik.command.addCommand
-import io.ejekta.kambrik.command.kambrikServerCommand
-import io.ejekta.kambrik.command.requiresOp
-import io.ejekta.kambrik.command.suggestionList
+import io.ejekta.kambrik.command.*
 import io.ejekta.kambrik.text.sendError
 import io.ejekta.kambrik.text.sendFeedback
 import io.ejekta.kambrik.text.textLiteral
@@ -28,14 +25,11 @@ object KambrikCommands {
 
         dispatcher.addCommand(Kambrik.ID) {
 
-
-            withRequirement({ hasPermissionLevel(2) }, literal("merp")) {
-                "dump" {
-                    "registry" {
-                        val dumpables = suggestionList { Registries.REGISTRIES.toList().map { it.key.value } }
-                        argIdentifier("dump_what", items = dumpables) runs { what ->
-                            dumpRegistry(what()).run(this)
-                        }
+            "dump" {
+                "registry" {
+                    val dumpables = suggestionList { Registries.REGISTRIES.toList().map { it.key.value } }
+                    argIdentifier("dump_what", items = dumpables) runs { what ->
+                        dumpRegistry(what()).run(this)
                     }
                 }
             }

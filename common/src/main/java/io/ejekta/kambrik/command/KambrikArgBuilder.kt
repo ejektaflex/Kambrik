@@ -20,6 +20,7 @@ import net.minecraft.command.argument.NumberRangeArgumentType.intRange
 import net.minecraft.predicate.NumberRange
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
+import java.util.function.Predicate
 
 /**
  * Nearly the entirety of Kambrik's Command DSL
@@ -45,6 +46,11 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(var arg: A) :
         newArg.finalize()
         subArgs.add(newArg)
         return newArg.arg
+    }
+
+    override fun requires(requirement: Predicate<SRC>?): KambrikArgBuilder<SRC, A> {
+        arg.requires(requirement)
+        return super.requires(requirement)
     }
 
     fun withRequirement(pred: SRC.() -> Boolean, newArg: ArgumentBuilder<SRC, *>, func: ArgDsl<SRC, ArgumentBuilder<SRC, *>>) {
