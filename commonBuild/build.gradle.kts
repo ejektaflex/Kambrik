@@ -4,8 +4,8 @@ plugins {
     `kotlin-dsl`
 }
 
-group = "io.ejekta.kambrik"
-version = "0.1+1.19.4"
+group = rootProject.group
+version = rootProject.version
 
 repositories {
     mavenCentral()

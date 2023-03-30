@@ -28,7 +28,6 @@ object KambrikModForge {
 
         runForDist(
             clientTarget = {
-                println("Registering client listeners..")
                 // Register mod event bus
                 MOD_CONTEXT.getKEventBus().register(KambrikModForgeClient::class.java)
             },
@@ -41,7 +40,6 @@ object KambrikModForge {
     @JvmStatic
     @SubscribeEvent
     fun registerCommands(evt: RegisterCommandsEvent) {
-        println("Forge evt bus registering Kambrik commands")
         KambrikCommands.register(evt.dispatcher, evt.buildContext, evt.commandSelection)
     }
 

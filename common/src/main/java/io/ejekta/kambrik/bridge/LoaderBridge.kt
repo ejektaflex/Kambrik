@@ -12,7 +12,6 @@ open class LoaderBridge<API : Any>(fabricApi: String, forgeApi: String) {
             Class.forName("net.fabricmc.loader.api.FabricLoader")
             true
         } catch (e: ClassNotFoundException) {
-            println("Fab loader not found!")
             false
         }
         api = if (fabLoader) {

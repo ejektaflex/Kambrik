@@ -6,6 +6,7 @@ import io.ejekta.kambrik.bridge.BridgeSide
 import io.ejekta.kambrik.bridge.Kambridge
 import io.ejekta.kambrik.command.addCommand
 import io.ejekta.kambrik.command.kambrikServerCommand
+import io.ejekta.kambrik.command.requiresOp
 import io.ejekta.kambrik.command.suggestionList
 import io.ejekta.kambrik.text.sendError
 import io.ejekta.kambrik.text.sendFeedback
@@ -27,11 +28,14 @@ object KambrikCommands {
 
         dispatcher.addCommand(Kambrik.ID) {
 
-            "dump" {
-                "registry" {
-                    val dumpables = suggestionList { Registries.REGISTRIES.toList().map { it.key.value } }
-                    argIdentifier("dump_what", items = dumpables) runs { what ->
-                        dumpRegistry(what()).run(this)
+
+            withRequirement({ hasPermissionLevel(2) }, literal("merp")) {
+                "dump" {
+                    "registry" {
+                        val dumpables = suggestionList { Registries.REGISTRIES.toList().map { it.key.value } }
+                        argIdentifier("dump_what", items = dumpables) runs { what ->
+                            dumpRegistry(what()).run(this)
+                        }
                     }
                 }
             }

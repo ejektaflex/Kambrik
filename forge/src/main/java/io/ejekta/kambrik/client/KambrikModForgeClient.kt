@@ -14,7 +14,7 @@ object KambrikModForgeClient {
 
     @SubscribeEvent @JvmStatic
     fun initClient(evt: FMLClientSetupEvent) {
-        println("Kambrik setting up forge client init!")
+        // nothing to do right now
     }
 
     val keysToRegister = mutableListOf<KeyBinding>()

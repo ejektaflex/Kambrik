@@ -4,7 +4,7 @@ plugins {
 }
 
 object Versions {
-    val Mod = "0.1"
+    val Mod = "6.0.0"
     val MC = "1.19.4"
     val Yarn = "1.19.4+build.1"
 }
@@ -76,7 +76,7 @@ publishing {
         create<MavenPublication>("mavenForge") {
             groupId = "io.ejekta"
             artifactId = "kambrik-forge"
-            version = "123-SNAPSHOT.23"
+            version = "123-SNAPSHOT.25"
             from(components.getByName("java"))
         }
     }

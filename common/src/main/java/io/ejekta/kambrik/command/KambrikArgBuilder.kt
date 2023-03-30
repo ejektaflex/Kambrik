@@ -25,14 +25,14 @@ import net.minecraft.util.Identifier
  * Nearly the entirety of Kambrik's Command DSL
  * @see [Command DSL Docs](https://kambrik.ejekta.io/apis/stable/Command)
  */
-class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
+class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(var arg: A) :
     ArgumentBuilder<SRC, KambrikArgBuilder<SRC, A>>() {
 
     val subArgs = mutableListOf<KambrikArgBuilder<SRC, *>>()
 
     fun finalize(): A {
         for (subArg in subArgs) {
-            arg.then(subArg) // used to be `arg.then(subArg.arg)`, changed when refactored for agnostic command source
+            arg.then(subArg.build())
         }
         return arg
     }
@@ -41,10 +41,18 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(val arg: A) :
      * Specifies a literal argument.
      */
     fun literal(word: String, func: ArgDsl<SRC, LiteralArgumentBuilder<SRC>> = {}): LiteralArgumentBuilder<SRC> {
-        val req = KambrikArgBuilder<SRC, LiteralArgumentBuilder<SRC>>(LiteralArgumentBuilder.literal(word)).apply(func)
-        req.finalize()
-        subArgs.add(req)
-        return req.arg
+        val newArg = KambrikArgBuilder<SRC, LiteralArgumentBuilder<SRC>>(LiteralArgumentBuilder.literal(word)).apply(func)
+        newArg.finalize()
+        subArgs.add(newArg)
+        return newArg.arg
+    }
+
+    fun withRequirement(pred: SRC.() -> Boolean, newArg: ArgumentBuilder<SRC, *>, func: ArgDsl<SRC, ArgumentBuilder<SRC, *>>) {
+        val built = KambrikArgBuilder(newArg).apply {
+            arg.requires(pred)
+        }.apply(func)
+        built.finalize()
+        subArgs.add(built)
     }
 
     /**

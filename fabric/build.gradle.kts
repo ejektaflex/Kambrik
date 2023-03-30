@@ -63,11 +63,11 @@ tasks {
         dependsOn(copyAccessWidener)
         // Mark that this task depends on the project version,
         // and should reset when the project version changes.
-        inputs.property("version", project.version)
+        inputs.property("version", rootProject.version.toString())
 
         // Replace the $version template in fabric.mod.json with the project version.
         filesMatching("fabric.mod.json") {
-            expand("version" to project.version)
+            expand("version" to rootProject.version.toString())
         }
     }
 }
@@ -78,7 +78,7 @@ publishing {
         create<MavenPublication>("Kambrik") {
             groupId = "io.ejekta"
             artifactId = "kambrik-fabric"
-            version = "123-SNAPSHOT.19"
+            version = rootProject.version.toString()
             from(components.getByName("java"))
         }
     }

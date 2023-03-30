@@ -26,7 +26,6 @@ class KambrikMessageApi internal constructor() {
         val result = if (shouldRegLink) {
             linkage.register()
         } else {
-            println("Skipping linkage registration for ${linkage.kClass.simpleName}")
             true
         }
 

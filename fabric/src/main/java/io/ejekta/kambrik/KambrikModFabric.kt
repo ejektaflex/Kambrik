@@ -13,7 +13,6 @@ import net.fabricmc.loader.api.FabricLoader
 class KambrikModFabric : ModInitializer {
 
     override fun onInitialize() {
-        println("Kambrik init!")
 
         // Kambrik commands
         CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback(KambrikCommands::register))

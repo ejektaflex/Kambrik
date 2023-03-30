@@ -52,7 +52,6 @@ abstract class DataFile(val src: File) {
     fun hasRequested(key: String) = key in requests
 
     open fun <T : Any> request(key: String, serializer: KSerializer<T>, default: T) {
-        println("Requested serializer: $serializer")
         requests[key] = DataRequest(serializer, default)
         //println("Requested $key and serializer $serializer")
     }

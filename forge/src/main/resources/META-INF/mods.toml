@@ -1,7 +1,7 @@
 modLoader = "kotlinforforge"
 loaderVersion = "[4,)"
-#issueTrackerURL = ""
-license = "Insert License Here"
+issueTrackerURL = "https://github.com/ejektaflex/Kambrik/issues"
+license = "GPL 3.0"
 
 [[mods]]
 modId = "kambrik"
@@ -9,7 +9,7 @@ version = "${version}"
 displayName = "Kambrik"
 authors = "Me!"
 description = '''
-This is an example description! Tell everyone what your mod is about!
+A Light-weight Kotlin Library Mod!
 '''
 #logoFile = ""
 
