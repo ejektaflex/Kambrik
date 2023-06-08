@@ -1,8 +1,7 @@
 package io.ejekta.kambrik.bridge
 
-val Kambridge by lazy {
-    LoaderBridge<KambrikSharedApi>(
-        "io.ejekta.kambrik.bridge.KambrikSharedApiFabric",
-        "io.ejekta.kambrik.bridge.KambrikSharedApiForge"
-    )()
+import java.util.ServiceLoader
+
+val Kambridge: KambrikSharedApi by lazy {
+    ServiceLoader.load(KambrikSharedApi::class.java).findFirst().get()
 }

@@ -11,8 +11,8 @@ plugins {
     base
     `maven-publish`
     signing
-    id("architectury-plugin") version "3.4.143"
-    id("dev.architectury.loom") version "1.0.302" apply false
+    id("architectury-plugin") version "3.4.145"
+    id("dev.architectury.loom") version "1.1-SNAPSHOT" apply false
 
     id("com.github.johnrengelman.shadow") version "7.1.2" apply false
 }
@@ -140,6 +140,10 @@ subprojects {
                 archiveClassifier.set(project.name)
             }
             "jar"(Jar::class) { archiveClassifier.set("dev") }
+        }
+
+        dependencies {
+            implementation("com.google.auto.service:auto-service:1.0.1")
         }
     }
 }

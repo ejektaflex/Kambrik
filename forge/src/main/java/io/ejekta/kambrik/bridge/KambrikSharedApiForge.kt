@@ -1,5 +1,6 @@
 package io.ejekta.kambrik.bridge
 
+import com.google.auto.service.AutoService
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.ext.register
 import io.ejekta.kambrik.input.KambrikKeybind
@@ -24,6 +25,7 @@ import net.minecraftforge.network.simple.SimpleChannel
 import java.util.function.Supplier
 
 
+@AutoService(KambrikSharedApi::class)
 class KambrikSharedApiForge : KambrikSharedApi {
     override val side: BridgeSide
         get() = BridgeSide.FORGE

@@ -1,6 +1,7 @@
 package io.ejekta.kambrik
 
 import io.ejekta.kambrik.bridge.Kambridge
+import io.ejekta.kambrik.bridge.KambrikSharedApi
 import io.ejekta.kambrik.client.KambrikModForgeClient
 import io.ejekta.kambrik.internal.KambrikCommands
 import io.ejekta.kambrik.internal.TestMsg
@@ -10,11 +11,15 @@ import net.minecraftforge.fml.common.Mod
 import thedarkcolour.kotlinforforge.forge.FORGE_BUS
 import thedarkcolour.kotlinforforge.forge.MOD_CONTEXT
 import thedarkcolour.kotlinforforge.forge.runForDist
+import java.util.ServiceLoader
 
 @Mod("kambrik")
 object KambrikModForge {
     init {
         FORGE_BUS.addListener(this::registerCommands)
+
+        ServiceLoader.load(KambrikSharedApi::class.java).reload()
+        println("Service loaders found: ${ServiceLoader.load(KambrikSharedApi::class.java).toList()}")
 
         try {
             Kambrik.Message.registerClientMessage(
