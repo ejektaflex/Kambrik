@@ -8,6 +8,7 @@ import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.LivingEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.loot.context.LootContext
+import net.minecraft.loot.context.LootContextParameterSet
 import net.minecraft.loot.context.LootContextParameters
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
@@ -22,8 +23,11 @@ abstract class KambrikBlockWithEntitySavesDrop(settings: Settings) : BlockWithEn
 
     abstract val entitySubTagName: String
 
-    override fun getDroppedStacks(state: BlockState?, builder: LootContext.Builder?): MutableList<ItemStack> {
-        val blockEntity = builder?.getNullable(LootContextParameters.BLOCK_ENTITY) ?: return mutableListOf()
+    override fun getDroppedStacks(
+        state: BlockState,
+        builder: LootContextParameterSet.Builder
+    ): MutableList<ItemStack> {
+        val blockEntity = builder.get(LootContextParameters.BLOCK_ENTITY) ?: return mutableListOf()
         if (blockEntity.type == getBlockEntityType()) {
             return super.getDroppedStacks(state, builder).map {
                 it.apply {

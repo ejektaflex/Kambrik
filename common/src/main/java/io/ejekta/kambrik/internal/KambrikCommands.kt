@@ -75,7 +75,7 @@ object KambrikCommands {
                 addLiteral("How are you?")
             }
         }
-        source.sendFeedback(test, false)
+        source.sendFeedback({ test }, false)
     }
 
 }

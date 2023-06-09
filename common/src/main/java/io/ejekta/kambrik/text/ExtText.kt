@@ -11,7 +11,7 @@ fun ServerCommandSource.sendError(literal: String, text: KambrikTextBuilder<Muta
 }
 
 fun ServerCommandSource.sendFeedback(literal: String, broadcastToOps: Boolean = false, dsl: KambrikTextBuilder<MutableText>.() -> Unit = {}) {
-    sendFeedback(textLiteral(literal, dsl), broadcastToOps)
+    sendFeedback({ textLiteral(literal, dsl) }, broadcastToOps)
 }
 
 fun MinecraftServer.broadcast(literal: String = "", overlay: Boolean = false, text: KambrikTextBuilder<MutableText>.() -> Unit) {

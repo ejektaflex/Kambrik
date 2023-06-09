@@ -44,9 +44,15 @@ dependencies {
     }
 
     // Standard Fabric mod setup.
-    modImplementation("net.fabricmc:fabric-loader:0.14.17")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.76.0+1.19.4")
-    modApi("net.fabricmc:fabric-language-kotlin:1.9.2+kotlin.1.8.10")
+    modImplementation("net.fabricmc:fabric-loader:0.14.21") {
+        exclude("net.fabricmc", "fabric-loader")
+    }
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.83.0+1.20") {
+        exclude("net.fabricmc", "fabric-loader")
+    }
+    modApi("net.fabricmc:fabric-language-kotlin:1.9.4+kotlin.1.8.21") {
+        exclude("net.fabricmc", "fabric-loader")
+    }
 
 }
 

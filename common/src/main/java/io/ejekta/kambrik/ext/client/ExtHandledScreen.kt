@@ -1,14 +1,13 @@
 package io.ejekta.kambrik.ext.client
 
 import com.mojang.blaze3d.systems.RenderSystem
-import net.minecraft.client.gui.DrawableHelper
+import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.client.render.GameRenderer
-import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.util.Identifier
 
 fun HandledScreen<*>.drawSimpleCenteredImage(
-    matrices: MatrixStack,
+    context: DrawContext,
     location: Identifier,
     bgWidth: Int,
     bgHeight: Int,
@@ -20,5 +19,5 @@ fun HandledScreen<*>.drawSimpleCenteredImage(
     RenderSystem.setShaderTexture(0, location)
     val x = (width - bgWidth) / 2
     val y = (height - bgHeight) / 2
-    DrawableHelper.drawTexture(matrices, x, y, 0f, 0f, bgWidth, bgHeight,  texWidth, texHeight)
+    context.drawTexture(location, x, y, 0f, 0f, bgWidth, bgHeight,  texWidth, texHeight)
 }

@@ -14,7 +14,7 @@ val Screen.client: MinecraftClient
     get() = Screens.getClient(this)
 
 val Screen.itemRenderer: ItemRenderer
-    get() = Screens.getItemRenderer(this)
+    get() = MinecraftClient.getInstance().itemRenderer
 
 val Screen.textRenderer: TextRenderer
     get() = Screens.getTextRenderer(this)
