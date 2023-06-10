@@ -5,8 +5,8 @@ plugins {
 
 object Versions {
     val Mod = "6.0.0"
-    val MC = "1.19.4"
-    val Yarn = "1.19.4+build.1"
+    val MC = "1.19.3"
+    val Yarn = "1.19.3+build.1"
 }
 
 architectury {
@@ -38,7 +38,7 @@ repositories {
 
 dependencies {
     // Add dependency on Forge. This is mainly used for generating the patched Minecraft jar with Forge classes.
-    forge("net.minecraftforge:forge:${Versions.MC}-45.0.20")
+    forge("net.minecraftforge:forge:${Versions.MC}-44.1.23")
 
     implementation("thedarkcolour:kotlinforforge:4.1.0")
 
