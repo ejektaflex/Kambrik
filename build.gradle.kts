@@ -19,8 +19,8 @@ plugins {
 
 object Versions {
     val Mod = "6.0.0-beta.2"
-    val MC = "1.19.4"
-    val Yarn = "1.19.4+build.1"
+    val MC = "1.19.3"
+    val Yarn = "1.19.3+build.1"
 }
 
 // Set the Minecraft version for Architectury.

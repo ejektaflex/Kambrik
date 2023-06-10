@@ -7,6 +7,7 @@ import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
+import net.minecraft.client.MinecraftClient
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
@@ -85,7 +86,8 @@ interface KambrikAutoRegistrar : KambrikMarker {
     }
 
     fun <T : ScreenHandler> String.forScreen(factory: ScreenHandlerType.Factory<T>): ScreenHandlerType<T> {
-        return forRegistration(Registries.SCREEN_HANDLER, ScreenHandlerType(factory, FeatureFlags.VANILLA_FEATURES)) as ScreenHandlerType<T>
+        MinecraftClient.getInstance().itemRenderer
+        return forRegistration(Registries.SCREEN_HANDLER, ScreenHandlerType(factory)) as ScreenHandlerType<T>
     }
 
 }
