@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.8.21"
+    id("org.jetbrains.kotlin.jvm") version "1.8.22"
     kotlin("plugin.serialization") version "1.6.0"
     `maven-publish`
     signing
@@ -17,7 +17,7 @@ dependencies {
     // Add dependencies on the required Kotlin modules.
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
-    modImplementation("net.fabricmc:fabric-loader:0.14.17")
+    modImplementation("net.fabricmc:fabric-loader:0.14.21")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 }
 

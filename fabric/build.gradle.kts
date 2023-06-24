@@ -47,7 +47,7 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:0.14.21") {
         exclude("net.fabricmc", "fabric-loader")
     }
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.83.0+1.20") {
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.84.0+1.20.1") {
         exclude("net.fabricmc", "fabric-loader")
     }
     modApi("net.fabricmc:fabric-language-kotlin:1.9.4+kotlin.1.8.21") {
