@@ -38,4 +38,9 @@ interface KambrikSharedApi {
 
     fun <T> register(autoReg: KambrikAutoRegistrar, reg: Registry<T>, thingId: String, obj: T): T
 
+    // Keybinds
+
+    fun hookKeybindUpdatesRealtime(keybind: KambrikKeybind, func: KambrikKeybind.() -> Unit)
+    fun hookKeybindUpdates(keybind: KambrikKeybind, func: KambrikKeybind.() -> Unit)
+
 }

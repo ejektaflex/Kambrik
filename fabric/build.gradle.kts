@@ -1,3 +1,6 @@
+import java.text.SimpleDateFormat
+import java.util.*
+
 plugins {
     `maven-publish`
     signing
@@ -84,7 +87,7 @@ publishing {
         create<MavenPublication>("Kambrik") {
             groupId = "io.ejekta"
             artifactId = "kambrik-fabric"
-            version = rootProject.version.toString()
+            version = rootProject.version.toString() + "SNAPSHOT.${SimpleDateFormat("YYYY.MMdd.HHmmss").format(Date())}"
             from(components.getByName("java"))
         }
     }

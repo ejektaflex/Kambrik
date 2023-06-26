@@ -116,4 +116,14 @@ class KambrikSharedApiForge : KambrikSharedApi {
         return obj
     }
 
+    // Keybinds
+
+    override fun hookKeybindUpdatesRealtime(keybind: KambrikKeybind, func: KambrikKeybind.() -> Unit) {
+        TODO("Not yet implemented")
+    }
+
+    override fun hookKeybindUpdates(keybind: KambrikKeybind, func: KambrikKeybind.() -> Unit) {
+        TODO("Not yet implemented")
+    }
+
 }

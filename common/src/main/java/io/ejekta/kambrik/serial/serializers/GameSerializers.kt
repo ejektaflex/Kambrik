@@ -4,6 +4,7 @@ import io.ejekta.kambrik.Kambrik
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializer
+import kotlinx.serialization.builtins.DoubleArraySerializer
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -66,33 +67,24 @@ object BlockPosSerializer : KSerializer<BlockPos> {
     }
 }
 
-@OptIn(ExperimentalSerializationApi::class)
 @Serializer(forClass = Box::class)
 object BoxSerializer : KSerializer<Box> {
-    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("yarn.Box") {
-        element<Double>("ax")
-        element<Double>("ay")
-        element<Double>("az")
-        element<Double>("bx")
-        element<Double>("by")
-        element<Double>("bz")
-    }
+    private val delegateSerializer = DoubleArraySerializer()
+    @OptIn(ExperimentalSerializationApi::class)
+    override val descriptor: SerialDescriptor = SerialDescriptor("yarn.Box", delegateSerializer.descriptor)
 
     override fun serialize(encoder: Encoder, value: Box) {
         encoder.apply {
             value.run {
-                listOf(minX, minY, minZ, maxX, maxY, maxZ).mapIndexed { index, d ->
-                    encodeDouble(d)
-                }
+                encoder.encodeSerializableValue(delegateSerializer, doubleArrayOf(minX, minY, minZ, maxX, maxY, maxZ))
             }
         }
     }
 
     override fun deserialize(decoder: Decoder): Box {
-        return decoder.run {
-            (0 until 6).map { decodeDouble() }.let {
-                Box(it[0], it[1], it[2], it[3], it[4], it[5])
-            }
+        val arr = decoder.decodeSerializableValue(delegateSerializer)
+        return arr.run {
+            Box(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5])
         }
     }
 }

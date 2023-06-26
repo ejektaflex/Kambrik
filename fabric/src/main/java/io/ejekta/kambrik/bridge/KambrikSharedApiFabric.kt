@@ -79,4 +79,18 @@ class KambrikSharedApiFabric : KambrikSharedApi {
         return KambrikRegistrar.register(autoReg, reg, thingId, obj)
     }
 
+    // Keybinds
+
+    override fun hookKeybindUpdatesRealtime(keybind: KambrikKeybind, func: KambrikKeybind.() -> Unit) {
+        WorldRenderEvents.LAST.register(WorldRenderEvents.Last {
+            keybind.func()
+        })
+    }
+
+    override fun hookKeybindUpdates(keybind: KambrikKeybind, func: KambrikKeybind.() -> Unit) {
+        ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick {
+            keybind.func()
+        })
+    }
+
 }

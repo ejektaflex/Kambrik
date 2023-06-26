@@ -18,10 +18,11 @@ class KambrikKeybind(
     category
 ) {
 
-
     private var keyDown = {}
 
     private var keyUp = {}
+
+    private var keyRepeat = {}
 
     fun onDown(func: () -> Unit) {
         keyDown = func
@@ -31,10 +32,21 @@ class KambrikKeybind(
         keyUp = func
     }
 
+    fun onRepeat(func: () -> Unit) {
+        keyRepeat = func
+    }
+
     var isDown = false
         private set
 
-    private fun update(wasPressed: Boolean) {
+    override fun setPressed(pressed: Boolean) {
+        if (pressed && isPressed) {
+            keyRepeat()
+        }
+        super.setPressed(pressed)
+    }
+
+    fun update(wasPressed: Boolean) {
         if (!isDown && wasPressed) {
             isDown = wasPressed
             keyDown()
@@ -46,15 +58,15 @@ class KambrikKeybind(
     }
 
     init {
-//        if (realTime) {
-//            Kambridge.hookKeybindUpdatesRealtime(this) {
-//                update(isPressed)
-//            }
-//        } else {
-//            Kambridge.hookKeybindUpdates(this) {
-//                update(isPressed)
-//            }
-//        }
+        if (realTime) {
+            Kambridge.hookKeybindUpdatesRealtime(this) {
+                update(isPressed)
+            }
+        } else {
+            Kambridge.hookKeybindUpdates(this) {
+                update(isPressed)
+            }
+        }
     }
 
 }
