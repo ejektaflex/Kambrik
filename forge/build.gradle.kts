@@ -1,12 +1,9 @@
+import java.text.SimpleDateFormat
+import java.util.*
+
 plugins {
     `maven-publish`
     signing
-}
-
-object Versions {
-    val Mod = "6.0.1"
-    val MC = "1.20.1"
-    val Yarn = "1.20.1+build.8"
 }
 
 architectury {
@@ -38,7 +35,7 @@ repositories {
 
 dependencies {
     // Add dependency on Forge. This is mainly used for generating the patched Minecraft jar with Forge classes.
-    forge("net.minecraftforge:forge:${Versions.MC}-47.0.19")
+    forge("net.minecraftforge:forge:1.20.1-47.0.19")
 
     implementation("thedarkcolour:kotlinforforge:4.3.0")
 
@@ -76,7 +73,7 @@ publishing {
         create<MavenPublication>("mavenForge") {
             groupId = "io.ejekta"
             artifactId = "kambrik-forge"
-            version = rootProject.version.toString()
+            version = rootProject.version.toString() + ".SNAPSHOT.${SimpleDateFormat("YYYY.MMdd.HHmmss").format(Date())}"
             from(components.getByName("java"))
         }
     }

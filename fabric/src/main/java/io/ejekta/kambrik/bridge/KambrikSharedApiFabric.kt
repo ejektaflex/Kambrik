@@ -34,8 +34,8 @@ class KambrikSharedApiFabric : KambrikSharedApi {
         return FabricLoader.getInstance().environmentType == EnvType.SERVER
     }
 
-    override fun <M : ClientMsg> registerClientMessage(link: INetworkLink<M>, id: Identifier): Boolean {
-        return ClientPlayNetworking.registerGlobalReceiver(id) { client, handler, buf, responseSender ->
+    override fun <M : ClientMsg> registerClientMessage(link: INetworkLink<M>): Boolean {
+        return ClientPlayNetworking.registerGlobalReceiver(link.id) { client, handler, buf, responseSender ->
             val contents = buf.readString()
             val data = link.deserializePacket(contents)
             client.execute {
@@ -54,8 +54,8 @@ class KambrikSharedApiFabric : KambrikSharedApi {
         )
     }
 
-    override fun <M : ServerMsg> registerServerMessage(link: INetworkLink<M>, id: Identifier): Boolean {
-        return ServerPlayNetworking.registerGlobalReceiver(id) { server, player, handler, buf, responseSender ->
+    override fun <M : ServerMsg> registerServerMessage(link: INetworkLink<M>): Boolean {
+        return ServerPlayNetworking.registerGlobalReceiver(link.id) { server, player, handler, buf, responseSender ->
             val contents = buf.readString()
             val data = link.deserializePacket(contents)
             server.execute {
@@ -77,20 +77,6 @@ class KambrikSharedApiFabric : KambrikSharedApi {
 
     override fun <T> register(autoReg: KambrikAutoRegistrar, reg: Registry<T>, thingId: String, obj: T): T {
         return KambrikRegistrar.register(autoReg, reg, thingId, obj)
-    }
-
-    // Keybinds
-
-    override fun hookKeybindUpdatesRealtime(keybind: KambrikKeybind, func: KambrikKeybind.() -> Unit) {
-        WorldRenderEvents.LAST.register(WorldRenderEvents.Last {
-            keybind.func()
-        })
-    }
-
-    override fun hookKeybindUpdates(keybind: KambrikKeybind, func: KambrikKeybind.() -> Unit) {
-        ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick {
-            keybind.func()
-        })
     }
 
 }

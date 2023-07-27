@@ -1,3 +1,6 @@
+import java.text.SimpleDateFormat
+import java.util.*
+
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.8.21"
     kotlin("plugin.serialization") version "1.6.0"
@@ -31,8 +34,7 @@ publishing {
         create<MavenPublication>("Kambrik") {
             groupId = "io.ejekta"
             artifactId = "kambrik-common"
-            version = rootProject.version.toString()
-            println(components.names)
+            version = rootProject.version.toString() + ".SNAPSHOT.${SimpleDateFormat("YYYY.MMdd.HHmmss").format(Date())}"
             from(components.getByName("java"))
         }
     }

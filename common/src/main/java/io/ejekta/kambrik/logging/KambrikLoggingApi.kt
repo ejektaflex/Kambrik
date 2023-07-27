@@ -11,7 +11,6 @@ class KambrikLoggingApi internal constructor() {
 
     init {
         val ctx = LogManager.getContext(false) as LoggerContext
-        ctx.reconfigure()
     }
 
     fun createLogger(modid: String): Logger {

@@ -84,7 +84,7 @@ interface KambrikAutoRegistrar : KambrikMarker {
         }
     }
 
-    fun <T : ScreenHandler> String.forScreen(factory: ScreenHandlerType.Factory<T>): ScreenHandlerType<T> {
+    infix fun <T : ScreenHandler> String.forScreen(factory: ScreenHandlerType.Factory<T>): ScreenHandlerType<T> {
         return forRegistration(Registries.SCREEN_HANDLER, ScreenHandlerType(factory, FeatureFlags.VANILLA_FEATURES)) as ScreenHandlerType<T>
     }
 

@@ -25,8 +25,12 @@ import net.minecraftforge.network.simple.SimpleChannel
 import java.util.function.Supplier
 
 
-@AutoService(KambrikSharedApi::class)
 class KambrikSharedApiForge : KambrikSharedApi {
+
+    init {
+        Kambrik.Logger.debug("Kambrik Shared API (Forge) Initialized.")
+    }
+
     override val side: BridgeSide
         get() = BridgeSide.FORGE
 
@@ -42,19 +46,27 @@ class KambrikSharedApiForge : KambrikSharedApi {
 
     // Messaging
 
-    val channelMap = mutableMapOf<INetworkLink<*>, SimpleChannel>()
+    private val clientMsgMap = mutableMapOf<INetworkLink<*>, SimpleChannel>()
+    private val serverMsgMap = mutableMapOf<INetworkLink<*>, SimpleChannel>()
 
-    abstract class ForgeMsgWrapper<MSG : Any>(open val link: INetworkLink<MSG>) {
+    abstract class ForgeMsgWrapper<MSG : Any>(open val link: INetworkLink<MSG>, val workFunc: NetworkEvent.Context.(msg: MSG) -> Unit) {
         fun writer(msg: MSG, buff: PacketByteBuf) {
             buff.writeString(link.serializePacket(msg))
         }
         fun reader(buff: PacketByteBuf): MSG {
             return link.deserializePacket(buff.readString())
         }
-        abstract fun handler(msg: MSG, ctx: Supplier<NetworkEvent.Context>)
+        fun handler(msg: MSG, ctx: Supplier<NetworkEvent.Context>) {
+            ctx.get().run {
+                enqueueWork {
+                    workFunc(msg)
+                }
+                packetHandled = true
+            }
+        }
     }
 
-    fun createDummyChannel(id: Identifier): SimpleChannel {
+    private fun createDummyChannel(id: Identifier): SimpleChannel {
         val version = "1"
         return NetworkRegistry.newSimpleChannel(
             id, { version },
@@ -63,67 +75,46 @@ class KambrikSharedApiForge : KambrikSharedApi {
         )
     }
 
-    class ForgeServerMsgWrapper<MSG : ServerMsg>(override val link: INetworkLink<MSG>) : ForgeMsgWrapper<MSG>(link) {
-        override fun handler(msg: MSG, ctx: Supplier<NetworkEvent.Context>) {
-            ctx.get().run {
-                enqueueWork {
-                    msg.onServerReceived(ServerMsg.MsgContext(sender!!))
-                }
-                packetHandled = true
-            }
-        }
-    }
+    class ForgeServerMsgWrapper<MSG : ServerMsg>(override val link: INetworkLink<MSG>) : ForgeMsgWrapper<MSG>(link, { msg ->
+        msg.onServerReceived(ServerMsg.MsgContext(sender!!))
+    })
 
-    class ForgeClientMsgWrapper<MSG : ClientMsg>(override val link: INetworkLink<MSG>) : ForgeMsgWrapper<MSG>(link) {
-        override fun handler(msg: MSG, ctx: Supplier<NetworkEvent.Context>) {
-            ctx.get().run {
-                enqueueWork {
-                    msg.onClientReceived(ClientMsg.MsgContext(MinecraftClient.getInstance()))
-                }
-                packetHandled = true
-            }
-        }
-    }
+    class ForgeClientMsgWrapper<MSG : ClientMsg>(override val link: INetworkLink<MSG>) : ForgeMsgWrapper<MSG>(link, { msg ->
+        msg.onClientReceived(ClientMsg.MsgContext(MinecraftClient.getInstance()))
+    })
 
-    override fun <M : ServerMsg> registerServerMessage(link: INetworkLink<M>, id: Identifier): Boolean {
-        val dummy = createDummyChannel(id)
-        val wrapper = ForgeServerMsgWrapper(link)
-        channelMap[link] = dummy
+    private fun <M : Any> registerGenericMsg(link: INetworkLink<M>, regMap: MutableMap<INetworkLink<*>, SimpleChannel>, wrapperSupplier: (link: INetworkLink<M>) -> ForgeMsgWrapper<M>): SimpleChannel {
+        val dummy = createDummyChannel(link.id)
+        val wrapper = wrapperSupplier(link)
+        regMap[link] = dummy
+        Kambrik.Logger.debug("Registered network link ${link.id}")
         dummy.registerMessage(1, link.kClass.java, wrapper::writer, wrapper::reader, wrapper::handler)
-        return dummy != null
+        return dummy
     }
 
-    override fun <M : ClientMsg> registerClientMessage(link: INetworkLink<M>, id: Identifier): Boolean {
-        val dummy = createDummyChannel(id)
-        val wrapper = ForgeClientMsgWrapper(link)
-        channelMap[link] = dummy
-        dummy?.registerMessage(1, link.kClass.java, wrapper::writer, wrapper::reader, wrapper::handler)
-        return dummy != null
+    override fun <M : ServerMsg> registerServerMessage(link: INetworkLink<M>): Boolean {
+        registerGenericMsg(link, serverMsgMap) { ForgeServerMsgWrapper(link) }
+        return true
+    }
+
+    override fun <M : ClientMsg> registerClientMessage(link: INetworkLink<M>): Boolean {
+        registerGenericMsg(link, clientMsgMap) { ForgeClientMsgWrapper(link) }
+        return true
     }
 
     override fun <M : ServerMsg> sendMsgToServer(link: INetworkLink<M>, msg: M, msgId: Identifier) {
-        val channel = channelMap[link]
-        channel!!.sendToServer(msg)
+        val channel = serverMsgMap[link] ?: throw Exception("Server Link not found in Channel Mapping for: ${link.id}, Msg ID: $msgId")
+        channel.sendToServer(msg)
     }
 
     override fun <M : ClientMsg> sendMsgToClient(link: INetworkLink<M>, msg: M, player: ServerPlayerEntity, msgId: Identifier) {
-        val channel = channelMap[link]
-        channel!!.sendTo(msg, player.networkHandler.connection, NetworkDirection.PLAY_TO_CLIENT)
+        val channel = clientMsgMap[link] ?: throw Exception("Client Link not found in Channel Mapping for: ${link.id}, Msg ID: $msgId")
+        channel.sendTo(msg, player.networkHandler.connection, NetworkDirection.PLAY_TO_CLIENT)
     }
 
     override fun <T> register(autoReg: KambrikAutoRegistrar, reg: Registry<T>, thingId: String, obj: T): T {
         reg.register(Kambrik.idOf(thingId), obj)
         return obj
-    }
-
-    // Keybinds
-
-    override fun hookKeybindUpdatesRealtime(keybind: KambrikKeybind, func: KambrikKeybind.() -> Unit) {
-        TODO("Not yet implemented")
-    }
-
-    override fun hookKeybindUpdates(keybind: KambrikKeybind, func: KambrikKeybind.() -> Unit) {
-        TODO("Not yet implemented")
     }
 
 }

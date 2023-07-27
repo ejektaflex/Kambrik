@@ -1,5 +1,6 @@
 package io.ejekta.kambrik.message
 
+import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.bridge.BridgeSide
 import io.ejekta.kambrik.bridge.Kambridge
 import kotlinx.serialization.KSerializer
@@ -8,6 +9,10 @@ import net.minecraft.util.Identifier
 import kotlin.reflect.KClass
 
 class KambrikMessageApi internal constructor() {
+
+    init {
+        Kambrik.Logger.debug("Kambrik Message API Initialized.")
+    }
 
     @PublishedApi
     internal val clientLinks = mutableMapOf<KClass<*>, ClientNetworkLink<*>>()
@@ -52,6 +57,7 @@ class KambrikMessageApi internal constructor() {
 
     internal fun <C : ClientMsg> sendClientMsg(msg: C, players: Collection<ServerPlayerEntity>) {
         val link = clientLinks[msg::class] as? ClientNetworkLink<C> ?: throw Exception("Unable to send message! Has it been registered?").also {
+            Kambrik.Logger.debug("Client Links: ${clientLinks.map { link -> link.value.id }}")
             it.printStackTrace()
         }
         link.send(msg, players)
@@ -59,6 +65,7 @@ class KambrikMessageApi internal constructor() {
 
     internal fun <S : ServerMsg> sendServerMsg(msg: S) {
         val link = serverLinks[msg::class] as? ServerNetworkLink<S> ?: throw Exception("Unable to send message! Has it been registered?").also {
+            Kambrik.Logger.debug("Server Links: ${serverLinks.map { link -> link.value.id }}")
             it.printStackTrace()
         }
         link.send(msg)

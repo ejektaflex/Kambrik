@@ -19,7 +19,7 @@ class ClientNetworkLink<M : ClientMsg>(
     ) : INetworkLink<M> {
 
     override fun register(): Boolean {
-        return Kambridge.registerClientMessage(this, id)
+        return Kambridge.registerClientMessage(this)
     }
 
     fun send(msg: M, players: Collection<ServerPlayerEntity>) {

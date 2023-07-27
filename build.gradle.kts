@@ -12,13 +12,13 @@ plugins {
     `maven-publish`
     signing
     id("architectury-plugin") version "3.4.146"
-    id("dev.architectury.loom") version "1.2.348" apply false
+    id("dev.architectury.loom") version "1.3.+" apply false
 
     id("com.github.johnrengelman.shadow") version "7.1.2" apply false
 }
 
 object Versions {
-    val Mod = "6.1.0"
+    val Mod = "6.1.2-alpha.2"
     val MC = "1.20.1"
     val Yarn = "1.20.1+build.8"
 }

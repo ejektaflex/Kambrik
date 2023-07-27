@@ -16,7 +16,7 @@ class ServerNetworkLink<M : ServerMsg>(
     ) : INetworkLink<M> {
 
     override fun register(): Boolean {
-        return Kambridge.registerServerMessage(this, id)
+        return Kambridge.registerServerMessage(this)
     }
 
     fun send(msg: M) {
