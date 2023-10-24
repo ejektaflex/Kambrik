@@ -1,4 +1,4 @@
-package io.ejekta.kambrik.internal.client
+package io.ejekta.kambrik.fabric.internal.client
 
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.internal.TestMsg

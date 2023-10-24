@@ -1,5 +1,6 @@
-package io.ejekta.kambrik.registration
+package io.ejekta.kambrik.fabric.registration
 
+import io.ejekta.kambrik.registration.KambrikAutoRegistrar
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType
 import net.minecraft.registry.Registries
 import net.minecraft.resource.featuretoggle.FeatureSet

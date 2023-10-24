@@ -1,5 +1,6 @@
-package io.ejekta.kambrik
+package io.ejekta.kambrik.fabric
 
+import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.internal.KambrikCommands
 import io.ejekta.kambrik.internal.TestMsg
 import io.ejekta.kambrikx.data.KambrikPersistence

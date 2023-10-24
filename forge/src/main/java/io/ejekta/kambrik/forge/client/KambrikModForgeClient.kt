@@ -1,4 +1,4 @@
-package io.ejekta.kambrik.client
+package io.ejekta.kambrik.forge.client
 
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent

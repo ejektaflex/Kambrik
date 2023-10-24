@@ -4,6 +4,7 @@ import net.fabricmc.loader.api.FabricLoader
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.Path
 
 /**
  * Accessed via [Kambrik.File][io.ejekta.kambrik.Kambrik.File]
@@ -15,15 +16,17 @@ class KambrikFileApi internal constructor() {
     }
 
     fun getConfigFolderAbsolutePath(modId: String): Path {
-        return FabricLoader.getInstance().configDir.resolve(modId)
+        return Path("test") // TODO change!
+        //return FabricLoader.getInstance().configDir.resolve(modId)
     }
 
     fun getBaseFile(modId: String): File {
-        return FabricLoader.getInstance().configDir.resolve("${modId}.json").toFile().apply {
-            if (!exists()) {
-                createNewFile()
-            }
-        }
+        return Path("test").toFile() // TODO change!
+//        return FabricLoader.getInstance().configDir.resolve("${modId}.json").toFile().apply {
+//            if (!exists()) {
+//                createNewFile()
+//            }
+//        }
     }
 
     fun getBaseFolder(modId: String): File {

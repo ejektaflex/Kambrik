@@ -18,12 +18,12 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-		"io.ejekta.kambrik.KambrikModFabric"
+		"io.ejekta.kambrik.fabric.KambrikModFabric"
     ],
     "client": [
       {
         "adapter": "kotlin",
-        "value": "io.ejekta.kambrik.internal.client.KambrikClientMod"
+        "value": "io.ejekta.kambrik.fabric.internal.client.KambrikClientMod"
       }
     ]
   },

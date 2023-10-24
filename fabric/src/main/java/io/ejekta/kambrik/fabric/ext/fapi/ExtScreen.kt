@@ -1,4 +1,4 @@
-package io.ejekta.kambrik.ext.fapi
+package io.ejekta.kambrik.fabric.ext.fapi
 
 import net.fabricmc.fabric.api.client.screen.v1.Screens
 import net.minecraft.client.MinecraftClient

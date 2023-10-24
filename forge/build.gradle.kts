@@ -59,11 +59,11 @@ tasks {
     processResources {
         // Mark that this task depends on the project version,
         // and should reset when the project version changes.
-        inputs.property("version", libs.bundles.mod.toString())
+        inputs.property("version", libs.versions.mod.get())
 
         // Replace the $version template in mods.toml with the project version.
         filesMatching("META-INF/mods.toml") {
-            expand("version" to libs.bundles.mod.toString())
+            expand("version" to libs.versions.mod.get())
         }
     }
 }
@@ -78,7 +78,7 @@ publishing {
         create<MavenPublication>("mavenForge") {
             groupId = "io.ejekta"
             artifactId = "kambrik-forge"
-            version = libs.bundles.mod.toString() + ".SNAPSHOT.${SimpleDateFormat("YYYY.MMdd.HHmmss").format(Date())}"
+            version = "${libs.versions.fullversion.get()}.SNAPSHOT.${SimpleDateFormat("YYYY.MMdd.HHmmss").format(Date())}"
             from(components.getByName("java"))
         }
     }

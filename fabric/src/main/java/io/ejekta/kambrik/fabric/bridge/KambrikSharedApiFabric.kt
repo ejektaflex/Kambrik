@@ -1,5 +1,7 @@
-package io.ejekta.kambrik.bridge
+package io.ejekta.kambrik.fabric.bridge
 
+import io.ejekta.kambrik.bridge.BridgeSide
+import io.ejekta.kambrik.bridge.KambrikSharedApi
 import io.ejekta.kambrik.input.KambrikKeybind
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import io.ejekta.kambrik.message.ClientMsg

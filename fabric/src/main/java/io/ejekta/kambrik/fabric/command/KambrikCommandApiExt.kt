@@ -1,7 +1,9 @@
-package io.ejekta.kambrik.command
+package io.ejekta.kambrik.fabric.command
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import io.ejekta.kambrik.command.ArgDsl
+import io.ejekta.kambrik.command.KambrikCommandApi
 import net.fabricmc.api.EnvType
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource

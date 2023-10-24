@@ -1,4 +1,4 @@
-package io.ejekta.kambrik.ext.fapi
+package io.ejekta.kambrik.fabric.ext.fapi
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking

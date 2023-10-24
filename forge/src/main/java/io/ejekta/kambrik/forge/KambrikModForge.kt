@@ -1,8 +1,9 @@
-package io.ejekta.kambrik
+package io.ejekta.kambrik.forge
 
+import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.bridge.Kambridge
 import io.ejekta.kambrik.bridge.KambrikSharedApi
-import io.ejekta.kambrik.client.KambrikModForgeClient
+import io.ejekta.kambrik.forge.client.KambrikModForgeClient
 import io.ejekta.kambrik.internal.KambrikCommands
 import io.ejekta.kambrik.internal.TestMsg
 import net.minecraftforge.event.RegisterCommandsEvent
