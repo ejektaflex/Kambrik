@@ -34,7 +34,7 @@ abstract class KambrikHandledScreen<SH : ScreenHandler>(
     }
 
     override fun render(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
-        renderBackground(context)
+        renderBackground(context, mouseX, mouseY, delta)
         super.render(context, mouseX, mouseY, delta)
         onDrawForeground(context, mouseX, mouseY, delta)
         drawMouseoverTooltip(context, mouseX, mouseY)
@@ -55,9 +55,9 @@ abstract class KambrikHandledScreen<SH : ScreenHandler>(
         super<HandledScreen>.mouseMoved(mouseX, mouseY)
     }
 
-    override fun mouseScrolled(mouseX: Double, mouseY: Double, amount: Double): Boolean {
-        super<KambrikScreenCommon>.mouseScrolled(mouseX, mouseY, amount)
-        return super<HandledScreen>.mouseScrolled(mouseX, mouseY, amount)
+    override fun mouseScrolled(mouseX: Double, mouseY: Double, hAmount: Double, vAmount: Double): Boolean {
+        super<KambrikScreenCommon>.mouseScrolled(mouseX, mouseY, hAmount, vAmount)
+        return super<HandledScreen>.mouseScrolled(mouseX, mouseY, hAmount, vAmount)
     }
 
     fun kambrikGui(clearOnDraw: Boolean = false, func: KGuiDsl.() -> Unit) = KGui(

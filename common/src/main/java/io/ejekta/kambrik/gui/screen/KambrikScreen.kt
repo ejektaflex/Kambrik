@@ -29,9 +29,9 @@ abstract class KambrikScreen(title: Text) : Screen(title), KambrikScreenCommon {
         super<Screen>.mouseMoved(mouseX, mouseY)
     }
 
-    override fun mouseScrolled(mouseX: Double, mouseY: Double, amount: Double): Boolean {
-        super<KambrikScreenCommon>.mouseScrolled(mouseX, mouseY, amount)
-        return super<Screen>.mouseScrolled(mouseX, mouseY, amount)
+    override fun mouseScrolled(mouseX: Double, mouseY: Double, hAmount: Double, vAmount: Double): Boolean {
+        super<KambrikScreenCommon>.mouseScrolled(mouseX, mouseY, hAmount, vAmount)
+        return super<Screen>.mouseScrolled(mouseX, mouseY, hAmount, vAmount)
     }
 
     override fun render(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {

@@ -79,7 +79,7 @@ open class MouseReactor(
         // No-op
     }
 
-    var onMouseScrolled: (relX: Int, relY: Int, amount: Double) -> Unit = { _, _, _ ->
+    var onMouseScrolled: (relX: Int, relY: Int, hAmount: Double, vAmount: Double) -> Unit = { _, _, _, _ ->
         // No-op
     }
 

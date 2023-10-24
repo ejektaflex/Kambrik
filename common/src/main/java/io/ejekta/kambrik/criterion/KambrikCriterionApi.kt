@@ -10,6 +10,7 @@ import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.JsonHelper
 import java.util.function.Predicate
+import kotlin.reflect.full.isSubclassOf
 
 
 /**
@@ -73,7 +74,7 @@ class KambrikCriterionApi internal constructor() {
 
     fun <T : AbstractCriterionConditions> testAgainst(criterion: AbstractCriterion<T>, conditions: AbstractCriterionConditions, predicate: Predicate<T>): Boolean {
         // If the criterion we hooked into has the same ID as our Json criterion, then test
-        if (criterion.id == conditions.id) {
+        if (conditions::class.isSubclassOf(criterion::class)) {
             @Suppress("UNCHECKED_CAST")
             return predicate.test(conditions as T)
         }

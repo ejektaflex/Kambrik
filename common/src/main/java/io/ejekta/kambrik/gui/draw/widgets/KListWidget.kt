@@ -68,8 +68,8 @@ open class KListWidget<T>(
             }
         }
 
-        onMouseScrolled = { _, _, amount ->
-            scrollBar?.scroll(-amount / max(1, items().size))
+        onMouseScrolled = { _, _, hAmount, vAmount ->
+            scrollBar?.scroll(-vAmount / max(1, items().size))
         }
     }
 

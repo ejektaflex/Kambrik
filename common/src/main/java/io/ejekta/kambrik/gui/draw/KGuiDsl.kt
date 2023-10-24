@@ -192,9 +192,12 @@ data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val
             context,
             ctx.absX(x),
             ctx.absY(y),
+            ctx.absX(x) + size.toInt(),
+            ctx.absY(y) + size.toInt(),
             maxDim,
             ctx.absX(x) - mouseX.toFloat(),
             ctx.absY(y) - mouseY.toFloat(),
+            0.25f,
             entity
         )
     }

@@ -75,9 +75,9 @@ interface KambrikScreenCommon : Element {
         }
     }
 
-    override fun mouseScrolled(mouseX: Double, mouseY: Double, amount: Double): Boolean {
+    override fun mouseScrolled(mouseX: Double, mouseY: Double, horizontalAmount: Double, verticalAmount: Double): Boolean {
         cycleDrawnWidgetsInBounds(mouseX, mouseY) { widget, rect, mX, mY ->
-            widget.onMouseScrolled(mX - rect.x, mY - rect.y, amount)
+            widget.onMouseScrolled(mX - rect.x, mY - rect.y, horizontalAmount, verticalAmount)
         }
         return true
     }

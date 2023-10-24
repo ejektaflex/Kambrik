@@ -23,6 +23,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    modImplementation(libs.bundles.mod.deps.common)
 }
 
 kotlin {
