@@ -1,39 +1,29 @@
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.fabricmc.loom.task.RemapJarTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-
 plugins {
-
-    kotlin("jvm") version "1.8.21"
-    kotlin("plugin.serialization") version "1.6.0"
+    kotlin("jvm") version libs.versions.kotlin
+    kotlin("plugin.serialization") version libs.versions.ksx
     base
     `maven-publish`
     signing
-    id("architectury-plugin") version "3.4.146"
-    id("dev.architectury.loom") version "1.3.+" apply false
-
-    id("com.github.johnrengelman.shadow") version "7.1.2" apply false
-}
-
-object Versions {
-    val Mod = "6.1.2-alpha.2"
-    val MC = "1.20.1"
-    val Yarn = "1.20.1+build.8"
+    // https://maven.architectury.dev/architectury-plugin/architectury-plugin.gradle.plugin/
+    id("architectury-plugin") version libs.versions.architectury
+    // https://maven.architectury.dev/dev/architectury/loom/dev.architectury.loom.gradle.plugin/
+    id("dev.architectury.loom") version libs.versions.archloom apply false
+    id("com.github.johnrengelman.shadow") version libs.versions.shadow apply false
 }
 
 // Set the Minecraft version for Architectury.
 architectury {
-    minecraft = Versions.MC
+    minecraft = libs.versions.mc.get()
 }
 
-// Set up basic Maven artifact metadata, including the project version
-// and archive names.
-group = "io.ejekta.kambrik"
-// Set the project version to be <mod version>+<Minecraft version> so the MC version is semver build metadata.
-// The "mod-version" and "minecraft-version" properties are read from gradle.properties.
-version = "${Versions.Mod}+${Versions.MC}"
+group = libs.versions.pkg.get()
+version = libs.versions.fullversion.get()
 base.archivesName.set("Kambrik")
 
 tasks {
@@ -73,9 +63,9 @@ subprojects {
     dependencies {
         // Note that the configuration name has to be in quotes (a string) since Loom isn't applied to the root project,
         // and so the Kotlin accessor method for it isn't generated for this file.
-        "minecraft"("net.minecraft:minecraft:${Versions.MC}")
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
-        "mappings"("net.fabricmc:yarn:${Versions.Yarn}:v2")
+        "minecraft"(rootProject.libs.minecraft)
+        implementation(rootProject.libs.ksx)
+        "mappings"("net.fabricmc:yarn:${rootProject.libs.versions.yarn.get()}:v2")
     }
 
     tasks {
@@ -90,6 +80,7 @@ subprojects {
     }
 }
 
+
 // Set up "platform" subprojects (non-common subprojects).
 subprojects {
     if (path != ":common") {
@@ -99,26 +90,14 @@ subprojects {
         // for bundling the common mod code in the platform jars.
         apply(plugin = "com.github.johnrengelman.shadow")
 
-        extensions.configure<LoomGradleExtensionAPI> {
-            runConfigs.getByName("server") {
-                runDir = "run/server"
-            }
-
-            // "main" matches the default Forge mod's name
-            with(mods.maybeCreate("main")) {
-                fun Project.sourceSets() = extensions.getByName<SourceSetContainer>("sourceSets")
-                sourceSet(sourceSets().getByName("main"))
-                sourceSet(project(":common").sourceSets().getByName("main"))
-            }
-        }
-
         // Define the "bundle" configuration which will be included in the shadow jar.
-        val bundle by configurations.creating {
+        val shadowCommon by configurations.creating {
             // This configuration is only meant to be resolved to its files but not published in
             // any way, so we set canBeConsumed = false and canBeResolved = true.
             // See https://docs.gradle.org/current/userguide/declaring_dependencies.html#sec:resolvable-consumable-configs.
-            isCanBeConsumed = false
-            isCanBeResolved = true
+//            isCanBeConsumed = false
+//            isCanBeResolved = true
+            configurations.implementation.get().extendsFrom(this)
         }
 
         tasks.withType<JavaCompile> {
@@ -131,7 +110,7 @@ subprojects {
                 archiveClassifier.set("dev-shadow")
                 if (path == ":forge") { exclude("fabric.mod.json") }
                 exclude("architectury.common.json")
-                configurations = listOf(bundle)
+                configurations = listOf(shadowCommon)
             }
             "remapJar"(RemapJarTask::class) {
                 injectAccessWidener.set(true)
@@ -141,16 +120,13 @@ subprojects {
             }
             "jar"(Jar::class) { archiveClassifier.set("dev") }
         }
-
-        dependencies {
-            implementation("com.google.auto.service:auto-service:1.0.1")
-        }
     }
 }
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 }
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 kotlin {

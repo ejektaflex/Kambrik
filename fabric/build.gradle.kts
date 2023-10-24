@@ -2,20 +2,15 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 plugins {
+    id("com.github.johnrengelman.shadow") version libs.versions.shadow
     `maven-publish`
     signing
 }
 
 architectury {
-    // Create the IDE launch configurations for this subproject.
     platformSetupLoomIde()
-    // Set up Architectury for Fabric.
     fabric()
 }
-
-// The files below are for using the access widener for the common project.
-// We need to copy the file from common resources to fabric resource
-// for Fabric Loader to find it and not crash.
 
 // The generated resources directory for the AW.
 val generatedResources = file("src/generated/resources")
@@ -24,39 +19,43 @@ val accessWidenerFile = project(":common").file("src/main/resources/kambrik.acce
 
 loom { accessWidenerPath.set(accessWidenerFile) }
 
+// Mark the AW generated resource directory as a source directory for the resources of the "main" source set.
 sourceSets {
     main {
         resources {
-            srcDir(generatedResources)
+            // TODO does this break AW?
+            //srcDir(generatedResources)
+            srcDir(project(":common").file("src/main/resources"))
         }
     }
 }
 
 // Set up various Maven repositories for mod compat.
 repositories {
-    maven("https://maven.terraformersmc.com/releases/") // Mod Menu
+    maven("https://maven.terraformersmc.com/releases") // Modmenu
+    maven("https://maven.terraformersmc.com/releases/") // Shedaniel
+    mavenLocal() // Kambrik
+}
+
+// Please just use current fab loader
+configurations.all {
+    resolutionStrategy {
+        force(libs.fabric.loader)
+    }
 }
 
 dependencies {
-    implementation(project(":common", configuration = "namedElements")) {
-        isTransitive = false
-    }
-
-    bundle(project(path = ":common", configuration = "transformProductionFabric")) {
-        isTransitive = false
-    }
+    implementation(project(":common", configuration = "namedElements")) { isTransitive = false }
+    shadowCommon(project(path = ":common", configuration = "transformProductionFabric")) { isTransitive = false }
 
     // Standard Fabric mod setup.
-    modImplementation("net.fabricmc:fabric-loader:0.14.21") {
+    modImplementation(libs.bundles.mod.deps.fabric) {
+        isTransitive = false
+    }
+    modImplementation(libs.fabric.api)  {
         exclude("net.fabricmc", "fabric-loader")
     }
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.84.0+1.20.1") {
-        exclude("net.fabricmc", "fabric-loader")
-    }
-    modApi("net.fabricmc:fabric-language-kotlin:1.9.4+kotlin.1.8.21") {
-        exclude("net.fabricmc", "fabric-loader")
-    }
-
+    modApi(libs.fabric.adapter)
 }
 
 tasks {
@@ -72,22 +71,22 @@ tasks {
         dependsOn(copyAccessWidener)
         // Mark that this task depends on the project version,
         // and should reset when the project version changes.
-        inputs.property("version", rootProject.version.toString())
+        inputs.property("version", libs.bundles.mod.toString())
 
         // Replace the $version template in fabric.mod.json with the project version.
         filesMatching("fabric.mod.json") {
-            expand("version" to rootProject.version.toString())
+            expand("version" to libs.bundles.mod.toString())
         }
     }
-}
 
+}
 
 publishing {
     publications {
         create<MavenPublication>("Kambrik") {
             groupId = "io.ejekta"
             artifactId = "kambrik-fabric"
-            version = rootProject.version.toString() + ".SNAPSHOT.${SimpleDateFormat("YYYY.MMdd.HHmmss").format(Date())}"
+            version = libs.bundles.mod.toString() + ".SNAPSHOT.${SimpleDateFormat("YYYY.MMdd.HHmmss").format(Date())}"
             from(components.getByName("java"))
         }
     }
