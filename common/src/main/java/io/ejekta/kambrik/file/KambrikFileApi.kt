@@ -16,17 +16,15 @@ class KambrikFileApi internal constructor() {
     }
 
     fun getConfigFolderAbsolutePath(modId: String): Path {
-        return Path("test") // TODO change!
-        //return FabricLoader.getInstance().configDir.resolve(modId)
+        return FabricLoader.getInstance().configDir.resolve(modId)
     }
 
     fun getBaseFile(modId: String): File {
-        return Path("test").toFile() // TODO change!
-//        return FabricLoader.getInstance().configDir.resolve("${modId}.json").toFile().apply {
-//            if (!exists()) {
-//                createNewFile()
-//            }
-//        }
+        return FabricLoader.getInstance().configDir.resolve("${modId}.json").toFile().apply {
+            if (!exists()) {
+                createNewFile()
+            }
+        }
     }
 
     fun getBaseFolder(modId: String): File {

@@ -4,10 +4,10 @@ import io.ejekta.kambrik.gui.draw.KGuiDsl
 import io.ejekta.kambrik.gui.draw.KSpriteGrid
 import io.ejekta.kambrik.gui.draw.KWidget
 import io.ejekta.kambrik.gui.draw.reactor.MouseReactor
+import net.minecraft.util.Identifier
 import kotlin.math.roundToInt
 
 abstract class KScrollbar(
-    protected val knobSprite: KSpriteGrid.Sprite,
     protected val bgColor: Int? = null
 ) : KWidget, KWidgetIndexSelector {
 

@@ -17,6 +17,7 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
+import net.minecraft.util.Identifier
 import kotlin.math.max
 
 data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val mouseY: Int, val delta: Float?) {
@@ -177,6 +178,11 @@ data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val
                 area(w, h, it)
             }
         }
+    }
+
+    fun img(id: Identifier, w: Int, h: Int, x: Int = 0, y: Int = 0, func: (AreaDsl.() -> Unit)? = null) {
+        context.drawGuiTexture(id, ctx.absX(x), ctx.absY(y), w, h)
+        func?.let { area(x, y, w, h, it) }
     }
 
     fun spriteCenteredInScreen(sprite: KSpriteGrid.Sprite, func: AreaDsl.() -> Unit) {
