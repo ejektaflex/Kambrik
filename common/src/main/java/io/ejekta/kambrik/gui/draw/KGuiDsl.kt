@@ -19,6 +19,7 @@ import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import kotlin.math.max
+import kotlin.math.min
 
 data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val mouseY: Int, val delta: Float?) {
 
@@ -191,30 +192,6 @@ data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val
         }
     }
 
-    fun livingEntity(entity: LivingEntity, x: Int = 0, y: Int = 0, size: Double = 20.0) {
-        val dims = entity.getDimensions(entity.pose)
-        val maxDim = (1 / max(dims.height, dims.width) * 1 * size).toInt().coerceAtLeast(1)
-        InventoryScreen.drawEntity(
-            context,
-            ctx.absX(x),
-            ctx.absY(y),
-            ctx.absX(x) + size.toInt(),
-            ctx.absY(y) + size.toInt(),
-            maxDim,
-            ctx.absX(x) - mouseX.toFloat(),
-            ctx.absY(y) - mouseY.toFloat(),
-            0.25f,
-            entity
-        )
-    }
-
-    fun livingEntity(entityType: EntityType<out LivingEntity>, x: Int = 0, y: Int = 0, size: Double = 20.0) {
-        val entity = ctx.entityRenderCache.getOrPut(entityType) {
-            entityType.create(MinecraftClient.getInstance().world) as LivingEntity
-        }
-        livingEntity(entity, x, y, size)
-    }
-
     fun widget(kWidget: KWidget, relX: Int = 0, relY: Int = 0) {
         offset(relX, relY) {
             kWidget.doDraw(this)
@@ -260,6 +237,30 @@ data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val
             apply(func)
             w = oldW
             h = oldH
+        }
+
+        fun livingEntity(entity: LivingEntity, size: Double = min(w, h).toDouble()) {
+            val dims = entity.getDimensions(entity.pose)
+            val maxDim = (1 / max(dims.height, dims.width) * size).toInt().coerceAtLeast(1)
+            InventoryScreen.drawEntity(
+                context,
+                ctx.absX(),
+                ctx.absY(),
+                ctx.absX(w),
+                ctx.absY(h),
+                maxDim,
+                0.25f,
+                mouseX.toFloat(),
+                mouseY.toFloat(),
+                entity
+            )
+        }
+
+        fun livingEntity(entityType: EntityType<out LivingEntity>, size: Double = 20.0) {
+            val entity = ctx.entityRenderCache.getOrPut(entityType) {
+                entityType.create(MinecraftClient.getInstance().world) as LivingEntity
+            }
+            livingEntity(entity, size)
         }
 
         fun reactWith(mouseReactor: MouseReactor) {
