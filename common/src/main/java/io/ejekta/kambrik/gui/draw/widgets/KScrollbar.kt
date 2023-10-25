@@ -60,6 +60,7 @@ abstract class KScrollbar(
     }
 
     override fun onDraw(area: KGuiDsl.AreaDsl) {
+        area.reactWith(reactor)
         area.dsl {
             bgColor?.let {
                 rect(width, height, color = it)
