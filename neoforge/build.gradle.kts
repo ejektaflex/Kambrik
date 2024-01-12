@@ -53,7 +53,7 @@ dependencies {
 
     //implementation("org.ow2.asm:asm-tree:9.4")
 
-    modImplementation(libs.mod.dep.cloth.config.forge)
+    modImplementation(libs.mod.dep.cloth.config.neoforge)
 }
 
 tasks {
@@ -65,7 +65,12 @@ tasks {
 
         // Replace the $version template in mods.toml with the project version.
         filesMatching("META-INF/mods.toml") {
-            expand("version" to libs.versions.mod.get())
+            expand(mapOf(
+                "version" to libs.versions.mod.get(),
+                "neoforge_version" to libs.neoforge.get(),
+                "minecraft_version" to libs.versions.mc.get()
+            ))
+
         }
     }
 }

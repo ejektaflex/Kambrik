@@ -41,7 +41,7 @@ dependencyResolutionManagement {
             }
 
             val Mods = object {
-                val Cloth = "11.0.99"
+                val Cloth = "13.0.121"
                 val ModMenu = "7.1.0"
             }
 
@@ -99,8 +99,8 @@ dependencyResolutionManagement {
             val modDepClothConfig = "mod-dep-cloth-config"
             library(modDepClothConfig, "me.shedaniel.cloth:cloth-config:${Mods.Cloth}")
 
-            val modDepClothConfigForge = "$modDepClothConfig-forge"
-            library(modDepClothConfigForge, "me.shedaniel.cloth:cloth-config-forge:${Mods.Cloth}")
+            val modDepClothConfigForge = "$modDepClothConfig-neoforge"
+            library(modDepClothConfigForge, "me.shedaniel.cloth:cloth-config-neoforge:${Mods.Cloth}")
 
             val modDepModMenu = "mod-dep-mod-menu"
             library(modDepModMenu, "com.terraformersmc:modmenu:${Mods.ModMenu}")
