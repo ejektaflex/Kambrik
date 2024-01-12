@@ -1,12 +1,13 @@
 package io.ejekta.kambrik.forge.client
 
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
 
 
 object KambrikModForgeClient {
 
-    @SubscribeEvent @JvmStatic
+    @SubscribeEvent
+    @JvmStatic
     fun initClient(evt: FMLClientSetupEvent) {
         // nothing to do right now
     }

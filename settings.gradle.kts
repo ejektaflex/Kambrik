@@ -14,7 +14,7 @@ dependencyResolutionManagement {
         create("libs") {
 
             val Plugins = object {
-                val Architectury = "3.4.146" //=> https://maven.architectury.dev/architectury-plugin/architectury-plugin.gradle.plugin/
+                val Architectury = "3.4.151" //=> https://maven.architectury.dev/architectury-plugin/architectury-plugin.gradle.plugin/
                 val ArchLoom = "1.4-SNAPSHOT" //=> https://maven.architectury.dev/dev/architectury/architectury-loom/
                 val Shadow = "7.1.2"
             }
@@ -25,7 +25,7 @@ dependencyResolutionManagement {
                 val Yarn = "build.4"
                 val FabricLoader = "0.14.23"
                 val FabricApi = "0.90.4"
-                val Forge = "48.0.31" //=> https://files.minecraftforge.net/net/minecraftforge/forge/
+                val NeoForge = "20.2.88" //=> https://projects.neoforged.net/neoforged/neoforge
             }
 
             val Ejekta = object {
@@ -37,7 +37,7 @@ dependencyResolutionManagement {
                 val Version = "1.9.10" // => https://kotlinlang.org/docs/releases.html
                 val Serialization = "1.6.0" // => https://github.com/Kotlin/kotlinx.serialization/releases
                 val FabricAdapter = "1.10.10" // => https://modrinth.com/mod/fabric-language-kotlin/versions
-                val ForgeAdapter = "4.3.0" //=> https://modrinth.com/mod/kotlin-for-forge/versions
+                val ForgeAdapter = "4.8.0" //=> https://modrinth.com/mod/kotlin-for-forge/versions
             }
 
             val Mods = object {
@@ -71,13 +71,13 @@ dependencyResolutionManagement {
             val fabricLoader = "fabric-loader"
             library(fabricLoader, "net.fabricmc:fabric-loader:${Platform.FabricLoader}")
 
-            val forgeLib = "forge"
-            library(forgeLib, "net.minecraftforge:forge:${Platform.MC}-${Platform.Forge}")
+            val neoForgeLib = "neoforge"
+            library(neoForgeLib, "net.neoforged:neoforge:${Platform.NeoForge}")
 
             // Adapters
 
             library("fabric-adapter", "net.fabricmc:fabric-language-kotlin:${Kotlin.FabricAdapter}+kotlin.${Kotlin.Version}")
-            library("forge-adapter", "thedarkcolour:kotlinforforge:${Kotlin.ForgeAdapter}")
+            library("forge-adapter", "thedarkcolour:kotlinforforge-neoforge:${Kotlin.ForgeAdapter}")
 
             library("fabric-api", "net.fabricmc.fabric-api:fabric-api:${Platform.FabricApi}+${Platform.MC}")
 
@@ -127,5 +127,5 @@ dependencyResolutionManagement {
     }
 }
 
-include("common", "fabric", "forge")
+include("common", "fabric", "neoforge")
 

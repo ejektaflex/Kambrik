@@ -1,11 +1,9 @@
 package io.ejekta.kambrik.bridge
 
-import io.ejekta.kambrik.input.KambrikKeybind
 import io.ejekta.kambrik.message.ClientMsg
 import io.ejekta.kambrik.message.INetworkLink
 import io.ejekta.kambrik.message.ServerMsg
 import io.ejekta.kambrik.registration.KambrikAutoRegistrar
-import net.minecraft.client.option.KeyBinding
 import net.minecraft.registry.Registry
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier

@@ -8,7 +8,7 @@ plugins {
     signing
 }
 
-architectury { common("fabric", "forge") }
+architectury { common("fabric", "neoforge") }
 
 loom { accessWidenerPath.set(file("src/main/resources/kambrik.accesswidener")) }
 

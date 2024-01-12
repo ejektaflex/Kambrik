@@ -6,12 +6,12 @@ import io.ejekta.kambrik.bridge.KambrikSharedApi
 import io.ejekta.kambrik.forge.client.KambrikModForgeClient
 import io.ejekta.kambrik.internal.KambrikCommands
 import io.ejekta.kambrik.internal.TestMsg
-import net.minecraftforge.event.RegisterCommandsEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
-import thedarkcolour.kotlinforforge.forge.FORGE_BUS
-import thedarkcolour.kotlinforforge.forge.MOD_CONTEXT
-import thedarkcolour.kotlinforforge.forge.runForDist
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.Mod
+import net.neoforged.neoforge.event.RegisterCommandsEvent
+import thedarkcolour.kotlinforforge.neoforge.forge.FORGE_BUS
+import thedarkcolour.kotlinforforge.neoforge.forge.MOD_CONTEXT
+import thedarkcolour.kotlinforforge.neoforge.forge.runForDist
 import java.util.ServiceLoader
 
 @Mod("kambrik")

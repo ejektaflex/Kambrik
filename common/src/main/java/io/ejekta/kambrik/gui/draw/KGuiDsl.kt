@@ -244,14 +244,10 @@ data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val
             val maxDim = (1 / max(dims.height, dims.width) * size).toInt().coerceAtLeast(1)
             InventoryScreen.drawEntity(
                 context,
-                ctx.absX(),
-                ctx.absY(),
-                ctx.absX(w),
-                ctx.absY(h),
-                maxDim,
-                0.25f,
-                mouseX.toFloat(),
-                mouseY.toFloat(),
+                ctx.absX(), ctx.absY(),
+                ctx.absX(w), ctx.absY(h),
+                maxDim, 0.25f,
+                mouseX.toFloat(), mouseY.toFloat(),
                 entity
             )
         }
