@@ -1,8 +1,6 @@
 package io.ejekta.kambrik.gui.draw
 
 import io.ejekta.kambrik.gui.draw.reactor.MouseReactor
-import io.ejekta.kambrik.text.KambrikTextBuilder
-import io.ejekta.kambrik.text.textLiteral
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gui.DrawContext
@@ -110,24 +108,20 @@ data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val
         }
     }
 
-    fun tooltip(func: KambrikTextBuilder<MutableText>.() -> Unit) {
-        tooltip(listOf(textLiteral("", func)))
-    }
-
     fun text(x: Int, y: Int, text: Text) {
         context.drawText(textRenderer, text, ctx.absX(x), ctx.absY(y), 0xFFFFFF, false)
     }
 
-    fun text(x: Int = 0, y: Int = 0, textDsl: KambrikTextBuilder<MutableText>.() -> Unit) {
-        text(x, y, textLiteral("", textDsl))
+    fun text(x: Int = 0, y: Int = 0, textDsl: MutableText.() -> Unit) {
+        text(x, y, Text.literal("").apply(textDsl))
     }
 
     fun textNoShadow(x: Int, y: Int, text: Text) {
         context.drawText(textRenderer, text, ctx.absX(x), ctx.absY(y), 0xFFFFFF, false)
     }
 
-    fun textNoShadow(x: Int = 0, y: Int = 0, textDsl: KambrikTextBuilder<MutableText>.() -> Unit) {
-        textNoShadow(x, y, textLiteral("", textDsl))
+    fun textNoShadow(x: Int = 0, y: Int = 0, textDsl: MutableText.() -> Unit) {
+        textNoShadow(x, y, Text.literal("").apply(textDsl))
     }
 
     fun textCentered(x: Int, y: Int, text: Text) {
@@ -141,8 +135,8 @@ data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val
         )
     }
 
-    fun textCentered(x: Int = 0, y: Int = 0, textDsl: KambrikTextBuilder<MutableText>.() -> Unit) {
-        textCentered(x, y, textLiteral("", textDsl))
+    fun textCentered(x: Int = 0, y: Int = 0, textDsl: MutableText.() -> Unit) {
+        textCentered(x, y, Text.literal("").apply(textDsl))
     }
 
     fun textImmediate(x: Int, y: Int, text: Text) {

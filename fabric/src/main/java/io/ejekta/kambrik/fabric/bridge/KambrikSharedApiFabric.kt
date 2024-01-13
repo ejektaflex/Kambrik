@@ -46,10 +46,10 @@ class KambrikSharedApiFabric : KambrikSharedApi {
         }
     }
 
-    override fun <M : ClientMsg> sendMsgToClient(link: INetworkLink<M>, msg: M, player: ServerPlayerEntity, msgId: Identifier) {
+    override fun <M : ClientMsg> sendMsgToClient(link: INetworkLink<M>, msg: M, player: ServerPlayerEntity) {
         ServerPlayNetworking.send(
             player,
-            msgId,
+            link.id,
             PacketByteBufs.create().apply {
                 writeString(link.serializePacket(msg))
             }
@@ -66,9 +66,9 @@ class KambrikSharedApiFabric : KambrikSharedApi {
         }
     }
 
-    override fun <M : ServerMsg> sendMsgToServer(link: INetworkLink<M>, msg: M, msgId: Identifier) {
+    override fun <M : ServerMsg> sendMsgToServer(link: INetworkLink<M>, msg: M) {
         ClientPlayNetworking.send(
-            msgId,
+            link.id,
             PacketByteBufs.create().apply {
                 writeString(link.serializePacket(msg))
             }

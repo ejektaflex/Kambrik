@@ -5,26 +5,22 @@ import io.ejekta.kambrik.bridge.BridgeSide
 import io.ejekta.kambrik.bridge.KambrikSharedApi
 import io.ejekta.kambrik.ext.register
 import io.ejekta.kambrik.message.ClientMsg
-import io.ejekta.kambrik.message.ClientNetworkLink
 import io.ejekta.kambrik.message.INetworkLink
 import io.ejekta.kambrik.message.ServerMsg
 import io.ejekta.kambrik.registration.KambrikAutoRegistrar
 import net.minecraft.client.MinecraftClient
 import net.minecraft.network.PacketByteBuf
+import net.minecraft.network.PacketByteBuf.PacketReader
+import net.minecraft.network.packet.CustomPayload
 import net.minecraft.registry.Registry
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.fml.loading.FMLEnvironment
-import net.neoforged.neoforge.network.INetworkDirection
-import net.neoforged.neoforge.network.LoginNetworkDirection
-import net.neoforged.neoforge.network.NetworkEvent
-import net.neoforged.neoforge.network.NetworkRegistry
 import net.neoforged.neoforge.network.PacketDistributor
-import net.neoforged.neoforge.network.PacketDistributor.PacketTarget
-import net.neoforged.neoforge.network.PlayNetworkDirection
-import net.neoforged.neoforge.network.simple.SimpleChannel
-import java.util.function.Supplier
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent
+import net.neoforged.neoforge.network.handling.IPlayPayloadHandler
+import kotlin.jvm.optionals.getOrNull
 
 
 class KambrikSharedApiForge : KambrikSharedApi {
@@ -48,73 +44,86 @@ class KambrikSharedApiForge : KambrikSharedApi {
 
     // Messaging
 
-    private val clientMsgMap = mutableMapOf<INetworkLink<*>, SimpleChannel>()
-    private val serverMsgMap = mutableMapOf<INetworkLink<*>, SimpleChannel>()
+    private val clientMsgMap = mutableMapOf<Identifier, ForgeMsgWrapper<ClientMsg>>()
+    private val serverMsgMap = mutableMapOf<Identifier, ForgeMsgWrapper<ServerMsg>>()
 
-    abstract class ForgeMsgWrapper<MSG : Any>(open val link: INetworkLink<MSG>, val workFunc: NetworkEvent.Context.(msg: MSG) -> Unit) {
-        fun writer(msg: MSG, buff: PacketByteBuf) {
-            buff.writeString(link.serializePacket(msg))
+    class KambrikMessagePayload<M : Any>(val link: INetworkLink<M>, val msg: M) : CustomPayload {
+        override fun write(buf: PacketByteBuf) {
+            buf.writeString(link.serializePacket(msg))
         }
-        fun reader(buff: PacketByteBuf): MSG {
-            return link.deserializePacket(buff.readString())
-        }
-        fun handler(msg: MSG, ctx: Supplier<NetworkEvent.Context>) {
-            ctx.get().run {
-                enqueueWork {
-                    workFunc(msg)
+        override fun id() = link.id
+    }
+
+    open class ForgeMsgWrapper<MSG : Any>(open val link: INetworkLink<MSG>) {
+
+        val packetReader: PacketReader<KambrikMessagePayload<MSG>>
+            get() {
+                return PacketReader {
+                    KambrikMessagePayload(link, link.deserializePacket(it.readString()))
                 }
-                packetHandled = true
             }
+
+        val payloadHandler: IPlayPayloadHandler<KambrikMessagePayload<MSG>>
+            get() {
+                return IPlayPayloadHandler { arg, playPayloadContext ->
+                    when (arg.msg) {
+                        is ServerMsg -> {
+                            println("Server msg!")
+                            playPayloadContext.workHandler.submitAsync {
+                                val player = playPayloadContext.player.getOrNull() as? ServerPlayerEntity
+                                println("Player?: $player")
+                                arg.msg.onServerReceived(ServerMsg.MsgContext(player!!))
+                            }
+                        }
+                        is ClientMsg -> {
+                            println("Client msg!")
+                            playPayloadContext.workHandler.submitAsync {
+                                val player = playPayloadContext.player.getOrNull()
+                                println("Player?: $player")
+                                arg.msg.onClientReceived(ClientMsg.MsgContext(MinecraftClient.getInstance()))
+                            }
+                        }
+                    }
+                }
+            }
+
+    }
+
+
+
+    // normally subscribeevent
+    private fun testRegisterServerPackets(event: RegisterPayloadHandlerEvent) {
+        val registrar = event.registrar(Kambrik.ID)
+
+        for ((msgId, serverMsg) in serverMsgMap) {
+            registrar.play(msgId, serverMsg.packetReader, serverMsg.payloadHandler)
         }
-    }
 
-    private fun createDummyChannel(id: Identifier): SimpleChannel {
-        val version = "1"
-        return NetworkRegistry.ChannelBuilder.named(id).simpleChannel() // .acceptedVersions(Channel.VersionTest { status, i -> true })
-    }
-
-    class ForgeServerMsgWrapper<MSG : ServerMsg>(override val link: INetworkLink<MSG>) : ForgeMsgWrapper<MSG>(link, { msg ->
-        msg.onServerReceived(ServerMsg.MsgContext(sender!!))
-    })
-
-    class ForgeClientMsgWrapper<MSG : ClientMsg>(override val link: INetworkLink<MSG>) : ForgeMsgWrapper<MSG>(link, { msg ->
-        msg.onClientReceived(ClientMsg.MsgContext(MinecraftClient.getInstance()))
-    })
-
-    private fun <M : Any> registerGenericMsg(link: INetworkLink<M>, regMap: MutableMap<INetworkLink<*>, SimpleChannel>, wrapperSupplier: (link: INetworkLink<M>) -> ForgeMsgWrapper<M>): SimpleChannel {
-        val dummy = createDummyChannel(link.id)
-        val wrapper = wrapperSupplier(link)
-        regMap[link] = dummy
-        Kambrik.Logger.debug("Registered network link ${link.id}")
-
-        val netDir = if (link is ClientNetworkLink) PlayNetworkDirection.PLAY_TO_CLIENT else PlayNetworkDirection.PLAY_TO_SERVER
-        return dummy.apply {
-            messageBuilder(link.kClass.java, 1, netDir)
-                .encoder(wrapper::writer)
-                .decoder(wrapper::reader)
-                .consumerMainThread { t, u -> wrapper.handler(t) { u } }
-                .add()
+        for ((msgId, clientMsg) in clientMsgMap) {
+            registrar.play(msgId, clientMsg.packetReader, clientMsg.payloadHandler)
         }
+
+
     }
+
+
 
     override fun <M : ServerMsg> registerServerMessage(link: INetworkLink<M>): Boolean {
-        registerGenericMsg(link, serverMsgMap) { ForgeServerMsgWrapper(link) }
+        serverMsgMap[link.id] = ForgeMsgWrapper(link as INetworkLink<ServerMsg>)
         return true
     }
 
     override fun <M : ClientMsg> registerClientMessage(link: INetworkLink<M>): Boolean {
-        registerGenericMsg(link, clientMsgMap) { ForgeClientMsgWrapper(link) }
+        clientMsgMap[link.id] = ForgeMsgWrapper(link as INetworkLink<ClientMsg>)
         return true
     }
 
-    override fun <M : ServerMsg> sendMsgToServer(link: INetworkLink<M>, msg: M, msgId: Identifier) {
-        val channel = serverMsgMap[link] ?: throw Exception("Server Link not found in Channel Mapping for: ${link.id}, Msg ID: $msgId")
-        channel.sendToServer(msg)
+    override fun <M : ServerMsg> sendMsgToServer(link: INetworkLink<M>, msg: M) {
+        PacketDistributor.SERVER.noArg().send(KambrikMessagePayload(link, msg))
     }
 
-    override fun <M : ClientMsg> sendMsgToClient(link: INetworkLink<M>, msg: M, player: ServerPlayerEntity, msgId: Identifier) {
-        val channel = clientMsgMap[link] ?: throw Exception("Client Link not found in Channel Mapping for: ${link.id}, Msg ID: $msgId")
-        channel.sendTo(msg, player.networkHandler.connection, PlayNetworkDirection.PLAY_TO_CLIENT)
+    override fun <M : ClientMsg> sendMsgToClient(link: INetworkLink<M>, msg: M, player: ServerPlayerEntity) {
+        PacketDistributor.PLAYER.with(player).send(KambrikMessagePayload(link, msg))
     }
 
     override fun <T> register(autoReg: KambrikAutoRegistrar, reg: Registry<T>, thingId: String, obj: T): T {

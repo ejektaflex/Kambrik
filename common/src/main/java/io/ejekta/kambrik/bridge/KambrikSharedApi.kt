@@ -24,13 +24,13 @@ interface KambrikSharedApi {
 
     fun <M : ClientMsg> registerClientMessage(link: INetworkLink<M>): Boolean
 
-    fun <M : ClientMsg> sendMsgToClient(link: INetworkLink<M>, msg: M, player: ServerPlayerEntity, msgId: Identifier)
+    fun <M : ClientMsg> sendMsgToClient(link: INetworkLink<M>, msg: M, player: ServerPlayerEntity)
 
     // * Server
 
     fun <M : ServerMsg> registerServerMessage(link: INetworkLink<M>): Boolean
 
-    fun <M : ServerMsg> sendMsgToServer(link: INetworkLink<M>, msg: M, msgId: Identifier)
+    fun <M : ServerMsg> sendMsgToServer(link: INetworkLink<M>, msg: M)
 
     // Registration
 

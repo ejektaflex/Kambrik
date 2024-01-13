@@ -20,7 +20,7 @@ class ServerNetworkLink<M : ServerMsg>(
     }
 
     fun send(msg: M) {
-        Kambridge.sendMsgToServer(this, msg, id)
+        Kambridge.sendMsgToServer(this, msg)
     }
 
 }

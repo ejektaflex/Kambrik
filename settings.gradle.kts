@@ -20,28 +20,28 @@ dependencyResolutionManagement {
             }
 
             val Platform = object {
-                val MC = "1.20.2"
+                val MC = "1.20.4"
                 // https://fabricmc.net/develop/
-                val Yarn = "build.4"
-                val FabricLoader = "0.14.23"
-                val FabricApi = "0.90.4"
-                val NeoForge = "20.2.88" //=> https://projects.neoforged.net/neoforged/neoforge
+                val Yarn = "build.3"
+                val FabricLoader = "0.15.3"
+                val FabricApi = "0.93.1"
+                val NeoForge = "20.4.91-beta" //=> https://projects.neoforged.net/neoforged/neoforge
             }
 
             val Ejekta = object {
-                val Kambrik = "6.2.0"
+                val Kambrik = "7.0.0"
                 val KambrikSnapshot = true
             }
 
             val Kotlin = object {
-                val Version = "1.9.10" // => https://kotlinlang.org/docs/releases.html
+                val Version = "1.9.22" // => https://kotlinlang.org/docs/releases.html
                 val Serialization = "1.6.0" // => https://github.com/Kotlin/kotlinx.serialization/releases
-                val FabricAdapter = "1.10.10" // => https://modrinth.com/mod/fabric-language-kotlin/versions
-                val ForgeAdapter = "4.8.0" //=> https://modrinth.com/mod/kotlin-for-forge/versions
+                val FabricAdapter = "1.10.17" // => https://modrinth.com/mod/fabric-language-kotlin/versions
+                val ForgeAdapter = "4.10.0" //=> https://modrinth.com/mod/kotlin-for-forge/versions
             }
 
             val Mods = object {
-                val Cloth = "13.0.121"
+                val Cloth = "13.0.121" //=> https://maven.shedaniel.me/me/shedaniel/cloth/
                 val ModMenu = "7.1.0"
             }
 
@@ -49,12 +49,11 @@ dependencyResolutionManagement {
 
             val ejektaGroup = "io.ejekta"
             val modPackage = "kambrik"
-            val modVersion = "6.2.0"
 
             version("org", ejektaGroup)
             version("pkg", "$ejektaGroup.$modPackage")
-            version("mod", modVersion)
-            version("fullversion", "$modVersion+${Platform.MC}")
+            version("mod", Ejekta.Kambrik)
+            version("fullversion", "${Ejekta.Kambrik}+${Platform.MC}")
             version("yarn", "${Platform.MC}+${Platform.Yarn}")
 
             version("mc", Platform.MC)

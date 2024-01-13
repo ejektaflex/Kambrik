@@ -2,17 +2,14 @@ package io.ejekta.kambrik.internal
 
 import com.mojang.brigadier.CommandDispatcher
 import io.ejekta.kambrik.Kambrik
-import io.ejekta.kambrik.bridge.BridgeSide
-import io.ejekta.kambrik.bridge.Kambridge
 import io.ejekta.kambrik.command.*
 import io.ejekta.kambrik.text.sendError
 import io.ejekta.kambrik.text.sendFeedback
-import io.ejekta.kambrik.text.textLiteral
-import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.registry.Registries
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 
@@ -69,12 +66,7 @@ object KambrikCommands {
     }
 
     private fun text() = kambrikServerCommand {
-        val test = textLiteral("Hello World!") {
-            onHoverShowText {
-                format(Formatting.ITALIC)
-                addLiteral("How are you?")
-            }
-        }
+        val test = Text.literal("Hello World!")
         source.sendFeedback({ test }, false)
     }
 

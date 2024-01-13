@@ -98,14 +98,14 @@ object BlockPosSerializerOptimized : KSerializer<BlockPos> {
 object TextSerializer : KSerializer<Text> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("yarn.Text")
     override fun serialize(encoder: Encoder, value: Text) {
-        val str = Text.Serializer.toJson(value)
+        val str = Text.Serialization.toJsonString(value)
         val json = Kambrik.Serial.Format.decodeFromString(JsonObject.serializer(), str)
         encoder.encodeSerializableValue(JsonObject.serializer(), json)
     }
 
     override fun deserialize(decoder: Decoder): Text {
         val str = decoder.decodeSerializableValue(JsonObject.serializer()).toString()
-        return Text.Serializer.fromJson(str) ?: throw Exception("Could not deserialize the given Text!")
+        return Text.Serialization.fromJson(str) ?: throw Exception("Could not deserialize the given Text!")
     }
 }
 
