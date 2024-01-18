@@ -68,18 +68,13 @@ class KambrikSharedApiForge : KambrikSharedApi {
                 return IPlayPayloadHandler { arg, playPayloadContext ->
                     when (arg.msg) {
                         is ServerMsg -> {
-                            println("Server msg!")
                             playPayloadContext.workHandler.submitAsync {
                                 val player = playPayloadContext.player.getOrNull() as? ServerPlayerEntity
-                                println("Player?: $player")
                                 arg.msg.onServerReceived(ServerMsg.MsgContext(player!!))
                             }
                         }
                         is ClientMsg -> {
-                            println("Client msg!")
                             playPayloadContext.workHandler.submitAsync {
-                                val player = playPayloadContext.player.getOrNull()
-                                println("Player?: $player")
                                 arg.msg.onClientReceived(ClientMsg.MsgContext(MinecraftClient.getInstance()))
                             }
                         }
@@ -92,28 +87,27 @@ class KambrikSharedApiForge : KambrikSharedApi {
 
 
     // normally subscribeevent
-    private fun testRegisterServerPackets(event: RegisterPayloadHandlerEvent) {
+    fun registerPayloads(event: RegisterPayloadHandlerEvent) {
+        Kambrik.Logger.debug("Kambrik registering payloads")
         val registrar = event.registrar(Kambrik.ID)
-
         for ((msgId, serverMsg) in serverMsgMap) {
             registrar.play(msgId, serverMsg.packetReader, serverMsg.payloadHandler)
         }
-
         for ((msgId, clientMsg) in clientMsgMap) {
             registrar.play(msgId, clientMsg.packetReader, clientMsg.payloadHandler)
         }
-
-
     }
 
 
 
     override fun <M : ServerMsg> registerServerMessage(link: INetworkLink<M>): Boolean {
+        Kambrik.Logger.debug("Kambrik registering server message: ${link.id}")
         serverMsgMap[link.id] = ForgeMsgWrapper(link as INetworkLink<ServerMsg>)
         return true
     }
 
     override fun <M : ClientMsg> registerClientMessage(link: INetworkLink<M>): Boolean {
+        Kambrik.Logger.debug("Kambrik registering client message: ${link.id}")
         clientMsgMap[link.id] = ForgeMsgWrapper(link as INetworkLink<ClientMsg>)
         return true
     }

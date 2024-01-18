@@ -1,6 +1,7 @@
 package io.ejekta.kambrik.fabric
 
 import io.ejekta.kambrik.Kambrik
+import io.ejekta.kambrik.bridge.Kambridge
 import io.ejekta.kambrik.internal.KambrikCommands
 import io.ejekta.kambrik.internal.TestMsg
 import io.ejekta.kambrikx.data.KambrikPersistence
@@ -20,11 +21,7 @@ class KambrikModFabric : ModInitializer {
 
         // Server data lifecycle management
 
-        Kambrik.Message.registerClientMessage(
-            TestMsg.serializer(),
-            TestMsg::class,
-            Kambrik.idOf("test_msg")
-        )
+        Kambridge.registerTestMessage()
 
         ServerLifecycleEvents.SERVER_STARTED.register {
             KambrikPersistence.loadServerResults()

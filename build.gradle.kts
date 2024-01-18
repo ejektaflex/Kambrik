@@ -92,11 +92,6 @@ subprojects {
 
         // Define the "bundle" configuration which will be included in the shadow jar.
         val shadowCommon by configurations.creating {
-            // This configuration is only meant to be resolved to its files but not published in
-            // any way, so we set canBeConsumed = false and canBeResolved = true.
-            // See https://docs.gradle.org/current/userguide/declaring_dependencies.html#sec:resolvable-consumable-configs.
-//            isCanBeConsumed = false
-//            isCanBeResolved = true
             configurations.implementation.get().extendsFrom(this)
         }
 

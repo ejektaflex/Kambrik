@@ -1,5 +1,7 @@
 package io.ejekta.kambrik.bridge
 
+import io.ejekta.kambrik.Kambrik
+import io.ejekta.kambrik.internal.TestMsg
 import io.ejekta.kambrik.message.ClientMsg
 import io.ejekta.kambrik.message.INetworkLink
 import io.ejekta.kambrik.message.ServerMsg
@@ -35,5 +37,15 @@ interface KambrikSharedApi {
     // Registration
 
     fun <T> register(autoReg: KambrikAutoRegistrar, reg: Registry<T>, thingId: String, obj: T): T
+
+    // Internal
+
+    fun registerTestMessage() {
+        Kambrik.Message.registerClientMessage(
+            TestMsg.serializer(),
+            TestMsg::class,
+            Kambrik.idOf("test_msg")
+        )
+    }
 
 }
