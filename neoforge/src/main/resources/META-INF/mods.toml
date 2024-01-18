@@ -14,15 +14,15 @@ A Light-weight Kotlin Library Mod!
 #logoFile = ""
 
 [[dependencies.kambrik]]
-modId = "forge"
-mandatory = true
+modId = "neoforge"
+type = "required"
 versionRange = "${neoforge_version}"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.kambrik]]
 modId = "minecraft"
-mandatory = true
+type = "required"
 versionRange = "${minecraft_version}"
 ordering = "NONE"
 side = "BOTH"

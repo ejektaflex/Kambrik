@@ -108,7 +108,7 @@ subprojects {
         tasks {
             "shadowJar"(ShadowJar::class) {
                 archiveClassifier.set("dev-shadow")
-                if (path == ":forge") { exclude("fabric.mod.json") }
+                if (path == ":neoforge") { exclude("fabric.mod.json") }
                 exclude("architectury.common.json")
                 configurations = listOf(shadowCommon)
             }

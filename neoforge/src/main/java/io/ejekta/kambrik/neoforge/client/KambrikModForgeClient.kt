@@ -1,4 +1,4 @@
-package io.ejekta.kambrik.forge.client
+package io.ejekta.kambrik.neoforge.client
 
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent

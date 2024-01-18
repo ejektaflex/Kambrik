@@ -43,8 +43,8 @@ dependencies {
     // Based on their own instructions: https://github.com/thedarkcolour/KotlinForForge/blob/70385f5/thedarkcolour/kotlinforforge/gradle/kff-3.0.0.gradle
     implementation(libs.forge.adapter)
 
-    implementation(project(":common", configuration = "namedElements")) {
-        isTransitive = false
+    "developmentNeoForge"(project(":common", configuration = "namedElements")) {
+        isTransitive = true
     }
 
     // Bundle the transformed version of the common project in the mod.

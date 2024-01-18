@@ -24,7 +24,7 @@ class ClientNetworkLink<M : ClientMsg>(
 
     fun send(msg: M, players: Collection<ServerPlayerEntity>) {
         for (player in players) {
-            Kambridge.sendMsgToClient(this, msg, player, id)
+            Kambridge.sendMsgToClient(this, msg, player)
         }
     }
 

@@ -1,9 +1,11 @@
-package io.ejekta.kambrik.forge
+package io.ejekta.kambrik.neoforge
 
 import io.ejekta.kambrik.Kambrik
+import io.ejekta.kambrik.TestJava
+import io.ejekta.kambrik.bridge.BridgeSide
 import io.ejekta.kambrik.bridge.Kambridge
 import io.ejekta.kambrik.bridge.KambrikSharedApi
-import io.ejekta.kambrik.forge.client.KambrikModForgeClient
+import io.ejekta.kambrik.neoforge.client.KambrikModForgeClient
 import io.ejekta.kambrik.internal.KambrikCommands
 import io.ejekta.kambrik.internal.TestMsg
 import net.neoforged.bus.api.SubscribeEvent
@@ -19,8 +21,6 @@ object KambrikModForge {
     init {
         FORGE_BUS.addListener(this::registerCommands)
 
-        ServiceLoader.load(KambrikSharedApi::class.java).reload()
-        println("Service loaders found: ${ServiceLoader.load(KambrikSharedApi::class.java).toList()}")
 
         try {
             Kambrik.Message.registerClientMessage(

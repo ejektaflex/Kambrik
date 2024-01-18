@@ -1,4 +1,4 @@
-package io.ejekta.kambrik.forge.bridge
+package io.ejekta.kambrik.neoforge.bridge
 
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.bridge.BridgeSide
