@@ -1,8 +1,9 @@
 package io.ejekta.kambrik.registration
 
-import io.ejekta.kambrik.bridge.Kambridge
+import io.ejekta.kambrik.ext.register
 import io.ejekta.kambrik.internal.KambrikMarker
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
+import net.minecraft.advancement.criterion.Criterion
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
@@ -22,6 +23,9 @@ import net.minecraft.resource.featuretoggle.FeatureFlags
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.sound.SoundEvent
+import net.minecraft.stat.Stat
+import net.minecraft.stat.StatFormatter
+import net.minecraft.stat.Stats
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.village.VillagerProfession
@@ -60,8 +64,6 @@ interface KambrikAutoRegistrar : KambrikMarker {
 
     infix fun <FC : FeatureConfig?> String.forFeature(feature: Feature<FC>): Feature<FC> = forRegistration(Registries.FEATURE, feature) as Feature<FC>
 
-    infix fun String.forStat(statIdentifier: Identifier): Identifier = forRegistration(Registries.CUSTOM_STAT, statIdentifier)
-
     infix fun String.forStatusEffect(status: StatusEffect): StatusEffect = forRegistration(Registries.STATUS_EFFECT, status)
 
     infix fun String.forAttribute(attribute: EntityAttribute): EntityAttribute = forRegistration(Registries.ATTRIBUTE, attribute)
@@ -70,7 +72,7 @@ interface KambrikAutoRegistrar : KambrikMarker {
 
     infix fun <PE : ParticleEffect> String.forParticle(particle: ParticleType<PE>) = forRegistration(Registries.PARTICLE_TYPE, particle)
 
-    infix fun <R : Registry<*>>String.forVillagerProfession(profession: VillagerProfession) = forRegistration(Registries.VILLAGER_PROFESSION, profession)
+    infix fun String.forVillagerProfession(profession: VillagerProfession) = forRegistration(Registries.VILLAGER_PROFESSION, profession)
 
     infix fun <T : Entity> String.forEntityType(type: EntityType<T>): EntityType<T> = forRegistration(Registries.ENTITY_TYPE, type) as EntityType<T>
 
@@ -86,6 +88,14 @@ interface KambrikAutoRegistrar : KambrikMarker {
 
     infix fun <T : ScreenHandler> String.forScreen(factory: ScreenHandlerType.Factory<T>): ScreenHandlerType<T> {
         return forRegistration(Registries.SCREEN_HANDLER, ScreenHandlerType(factory, FeatureFlags.VANILLA_FEATURES)) as ScreenHandlerType<T>
+    }
+
+    infix fun <T : Criterion<*>> String.forCriterion(criterion: T): T = forRegistration(Registries.CRITERION, criterion) as T
+
+    infix fun String.forStat(formatter: StatFormatter): Stat<*> {
+        val statId = Identifier(getId(), this)
+        val resultId = forRegistration(Registries.CUSTOM_STAT, statId)
+        return Stats.CUSTOM.getOrCreateStat(resultId, formatter)
     }
 
 }

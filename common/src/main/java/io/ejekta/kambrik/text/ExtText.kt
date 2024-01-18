@@ -4,24 +4,26 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.MutableText
-import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 
-fun ServerCommandSource.sendError(literal: String, textDsl: MutableText.() -> Unit = {}) {
-    sendError(Text.literal(literal).apply(textDsl))
+fun ServerCommandSource.sendError(literal: String, text: KambrikTextBuilder<MutableText>.() -> Unit = {}) {
+    sendError(textLiteral(literal, text))
 }
 
-fun ServerCommandSource.sendFeedback(literal: String, broadcastToOps: Boolean = false, dsl: MutableText.() -> Unit = {}) {
-    sendFeedback({ Text.literal(literal).apply(dsl) }, broadcastToOps)
+fun ServerCommandSource.sendFeedback(literal: String, broadcastToOps: Boolean = false, dsl: KambrikTextBuilder<MutableText>.() -> Unit = {}) {
+    sendFeedback({ textLiteral(literal, dsl) }, broadcastToOps)
 }
 
-fun MinecraftServer.broadcast(literal: String = "", overlay: Boolean = false, text: MutableText.() -> Unit) {
-    playerManager.broadcast(Text.literal(literal).apply(text), overlay)
+fun MinecraftServer.broadcast(literal: String = "", overlay: Boolean = false, text: KambrikTextBuilder<MutableText>.() -> Unit) {
+    playerManager.broadcast(textLiteral(literal, text), overlay)
 }
 
-fun PlayerEntity.sendMessage(literal: String = "", vararg formats: Formatting, actionBar: Boolean = false, text: MutableText.() -> Unit = {}) {
+fun PlayerEntity.sendMessage(literal: String = "", vararg formats: Formatting, actionBar: Boolean = false, text: KambrikTextBuilder<MutableText>.() -> Unit = {}) {
     sendMessage(
-        Text.literal(literal).formatted(*formats).apply(text),
+        textLiteral(literal) {
+            format(*formats)
+            apply(text)
+        },
         actionBar
     )
 }
