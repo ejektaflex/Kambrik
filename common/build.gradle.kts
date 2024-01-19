@@ -10,7 +10,9 @@ plugins {
 
 architectury { common("fabric", "neoforge") }
 
-loom { accessWidenerPath.set(file("src/main/resources/kambrik.accesswidener")) }
+loom {
+    accessWidenerPath.set(file("src/main/resources/kambrik.accesswidener"))
+}
 
 repositories {
     mavenCentral()

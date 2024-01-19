@@ -9,9 +9,12 @@ version = "${version}"
 displayName = "Kambrik"
 authors = "Ejektaflex"
 description = '''
-A Light-weight Kotlin Library Mod!
+A Lightweight Kotlin Library Mod!
 '''
 #logoFile = ""
+
+[[mixins]]
+config = "kambrik.mixins.json"
 
 [[dependencies.kambrik]]
 modId = "neoforge"

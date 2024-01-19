@@ -17,9 +17,12 @@ architectury {
 loom {
 //    forge {
 //        //mixinConfig("bountiful.mixins.json")
-//        accessWidenerPath.set(project(":common").file("src/main/resources/kambrik.accesswidener"))
+
 //        convertAccessWideners.set(true)
 //    }
+    neoForge {
+        accessWidenerPath.set(project(":common").file("src/main/resources/kambrik.accesswidener"))
+    }
 }
 
 repositories {
@@ -57,6 +60,10 @@ dependencies {
 }
 
 tasks {
+
+    remapJar {
+        atAccessWideners.add("kambrik.accesswidener")
+    }
 
     processResources {
         // Mark that this task depends on the project version,
