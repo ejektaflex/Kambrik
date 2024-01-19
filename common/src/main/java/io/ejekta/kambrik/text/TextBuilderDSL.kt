@@ -8,7 +8,7 @@ import java.util.*
 
 
 fun textLiteral(str: String = "", func: KambrikTextBuilder<MutableText>.() -> Unit = {}): MutableText {
-    return textBuilder(MutableText.of(PlainTextContent { str }), func)
+    return textBuilder(MutableText.of(PlainTextContent.of(str)), func)
 }
 
 fun textTranslate(key: String, fallback: String, args: Array<Any> = emptyArray(), func: KambrikTextBuilder<MutableText>.() -> Unit = {}): MutableText {
