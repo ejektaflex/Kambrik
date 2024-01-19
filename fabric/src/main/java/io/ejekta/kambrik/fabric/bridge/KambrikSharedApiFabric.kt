@@ -78,7 +78,7 @@ class KambrikSharedApiFabric : KambrikSharedApi {
     // Registration
 
     override fun <T> register(autoReg: KambrikAutoRegistrar, reg: Registry<T>, thingId: String, obj: T): T {
-        return KambrikRegistrar.register(autoReg, reg, thingId, obj)
+        return KambrikRegistrar.register(autoReg, reg, thingId, lazyOf(obj)).value
     }
 
 }

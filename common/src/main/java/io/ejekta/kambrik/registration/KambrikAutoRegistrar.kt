@@ -50,52 +50,57 @@ interface KambrikAutoRegistrar : KambrikMarker {
     fun afterRegistration() {}
 
 
-    fun <T> String.forRegistration(reg: Registry<T>, obj: T): T {
-        return KambrikRegistrar.register(this@KambrikAutoRegistrar, reg, this, obj)
+    fun <T> String.forRegistration(reg: Registry<T>, obj: () -> T): Lazy<T> {
+        return KambrikRegistrar.register(this@KambrikAutoRegistrar, reg, this, lazy(obj))
     }
 
-    infix fun String.forItem(item: Item): Item = forRegistration(Registries.ITEM, item)
+    infix fun String.forItem(item: () -> Item) = forRegistration(Registries.ITEM, item)
 
-    infix fun String.forBlock(block: Block): Block = forRegistration(Registries.BLOCK, block)
+    infix fun String.forBlock(block: () -> Block) = forRegistration(Registries.BLOCK, block)
 
-    infix fun String.forEnchant(enchant: Enchantment): Enchantment = forRegistration(Registries.ENCHANTMENT, enchant)
+    infix fun String.forEnchant(enchant: () -> Enchantment) = forRegistration(Registries.ENCHANTMENT, enchant)
 
-    infix fun <C : CarverConfig?> String.forCarver(carver: Carver<C>): Carver<C> = forRegistration(Registries.CARVER, carver) as Carver<C>
+    infix fun <C : CarverConfig?> String.forCarver(carver: () -> Carver<C>): Carver<C> = forRegistration(Registries.CARVER, carver) as Carver<C>
 
-    infix fun <FC : FeatureConfig?> String.forFeature(feature: Feature<FC>): Feature<FC> = forRegistration(Registries.FEATURE, feature) as Feature<FC>
+    infix fun <FC : FeatureConfig?> String.forFeature(feature: () -> Feature<FC>): () -> Feature<FC> = forRegistration(Registries.FEATURE, feature) as () -> Feature<FC>
 
-    infix fun String.forStatusEffect(status: StatusEffect): StatusEffect = forRegistration(Registries.STATUS_EFFECT, status)
+    infix fun String.forStatusEffect(status: () -> StatusEffect) = forRegistration(Registries.STATUS_EFFECT, status)
 
-    infix fun String.forAttribute(attribute: EntityAttribute): EntityAttribute = forRegistration(Registries.ATTRIBUTE, attribute)
+    infix fun String.forAttribute(attribute: () -> EntityAttribute) = forRegistration(Registries.ATTRIBUTE, attribute)
 
-    infix fun String.forPotion(potion: Potion): Potion = forRegistration(Registries.POTION, potion)
+    infix fun String.forPotion(potion: () -> Potion) = forRegistration(Registries.POTION, potion)
 
-    infix fun <PE : ParticleEffect> String.forParticle(particle: ParticleType<PE>) = forRegistration(Registries.PARTICLE_TYPE, particle)
+    infix fun <PE : ParticleEffect> String.forParticle(particle: () -> ParticleType<PE>) = forRegistration(Registries.PARTICLE_TYPE, particle)
 
-    infix fun String.forVillagerProfession(profession: VillagerProfession) = forRegistration(Registries.VILLAGER_PROFESSION, profession)
+    infix fun String.forVillagerProfession(profession: () -> VillagerProfession) = forRegistration(Registries.VILLAGER_PROFESSION, profession)
 
-    infix fun <T : Entity> String.forEntityType(type: EntityType<T>): EntityType<T> = forRegistration(Registries.ENTITY_TYPE, type) as EntityType<T>
+    infix fun <T : Entity> String.forEntityType(type: () -> EntityType<T>): Lazy<EntityType<T>> = forRegistration(Registries.ENTITY_TYPE, type) as Lazy<EntityType<T>>
 
-    infix fun String.forVillagerType(type: VillagerType): VillagerType = forRegistration(Registries.VILLAGER_TYPE, type)
+    infix fun String.forVillagerType(type: () -> VillagerType) = forRegistration(Registries.VILLAGER_TYPE, type)
 
-    infix fun String.forSoundEvent(event: SoundEvent): SoundEvent = forRegistration(Registries.SOUND_EVENT, event)
+    infix fun String.forSoundEvent(event: () -> SoundEvent) = forRegistration(Registries.SOUND_EVENT, event)
 
-    fun <T : BlockEntity>String.forBlockEntity(block: Block, factory: (pos: BlockPos, state: BlockState) -> T): BlockEntityType<T>? {
-        return BlockEntityType.Builder.create(factory, block).build(null).also {
-            forRegistration(Registries.BLOCK_ENTITY_TYPE, it)
-        }
+    fun <T : BlockEntity> String.forBlockEntity(block: Lazy<Block>, factory: (pos: BlockPos, state: BlockState) -> T): Lazy<BlockEntityType<T>> {
+        return forRegistration(Registries.BLOCK_ENTITY_TYPE) {
+            BlockEntityType.Builder.create(factory, block.value).build(null)
+        } as Lazy<BlockEntityType<T>>
     }
 
-    infix fun <T : ScreenHandler> String.forScreen(factory: ScreenHandlerType.Factory<T>): ScreenHandlerType<T> {
-        return forRegistration(Registries.SCREEN_HANDLER, ScreenHandlerType(factory, FeatureFlags.VANILLA_FEATURES)) as ScreenHandlerType<T>
+    infix fun <T : ScreenHandler> String.forScreen(factory: ScreenHandlerType.Factory<T>): Lazy<ScreenHandlerType<T>> {
+        return forRegistration(Registries.SCREEN_HANDLER) {
+            ScreenHandlerType(
+                factory,
+                FeatureFlags.VANILLA_FEATURES
+            )
+        } as Lazy<ScreenHandlerType<T>>
     }
 
-    infix fun <T : Criterion<*>> String.forCriterion(criterion: T): T = forRegistration(Registries.CRITERION, criterion) as T
+    infix fun <T : Criterion<*>> String.forCriterion(criterion: () -> T): Lazy<T> = forRegistration(Registries.CRITERION, criterion) as Lazy<T>
 
-    infix fun String.forStat(formatter: StatFormatter): Stat<*> {
+    infix fun String.forStat(formatter: StatFormatter): Lazy<Stat<*>> {
         val statId = Identifier(getId(), this)
-        val resultId = forRegistration(Registries.CUSTOM_STAT, statId)
-        return Stats.CUSTOM.getOrCreateStat(resultId, formatter)
+        val resultId = forRegistration(Registries.CUSTOM_STAT) { statId }
+        return lazy { Stats.CUSTOM.getOrCreateStat(resultId.value, formatter) }
     }
 
 }
