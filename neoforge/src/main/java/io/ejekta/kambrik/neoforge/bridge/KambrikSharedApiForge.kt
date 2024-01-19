@@ -88,12 +88,12 @@ class KambrikSharedApiForge : KambrikSharedApi {
 
     // normally subscribeevent
     fun registerPayloads(event: RegisterPayloadHandlerEvent) {
-        Kambrik.Logger.debug("Kambrik registering payloads")
-        val registrar = event.registrar(Kambrik.ID)
         for ((msgId, serverMsg) in serverMsgMap) {
+            val registrar = event.registrar(msgId.namespace)
             registrar.play(msgId, serverMsg.packetReader, serverMsg.payloadHandler)
         }
         for ((msgId, clientMsg) in clientMsgMap) {
+            val registrar = event.registrar(msgId.namespace)
             registrar.play(msgId, clientMsg.packetReader, clientMsg.payloadHandler)
         }
     }
@@ -121,7 +121,7 @@ class KambrikSharedApiForge : KambrikSharedApi {
     }
 
     override fun <T> register(autoReg: KambrikAutoRegistrar, reg: Registry<T>, thingId: String, obj: T): T {
-        reg.register(Kambrik.idOf(thingId), obj)
+        reg.register(Identifier(autoReg.getId(), thingId), obj)
         return obj
     }
 
