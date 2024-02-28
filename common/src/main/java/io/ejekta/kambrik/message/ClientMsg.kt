@@ -5,8 +5,6 @@ import kotlinx.serialization.Serializable
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.network.ClientPlayNetworkHandler
-import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 
 /**
@@ -15,13 +13,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 @Serializable
 abstract class ClientMsg {
 
-    @Environment(EnvType.CLIENT)
-    data class MsgContext(
-        val client: MinecraftClient
-    )
-
-    @Environment(EnvType.CLIENT)
-    open fun onClientReceived(ctx: MsgContext) {
+    open fun onClientReceived() {
         // Executes on client thread
     }
 

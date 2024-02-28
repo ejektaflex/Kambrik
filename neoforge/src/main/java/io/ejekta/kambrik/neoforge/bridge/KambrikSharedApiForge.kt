@@ -75,7 +75,7 @@ class KambrikSharedApiForge : KambrikSharedApi {
                         }
                         is ClientMsg -> {
                             playPayloadContext.workHandler.submitAsync {
-                                arg.msg.onClientReceived(ClientMsg.MsgContext(MinecraftClient.getInstance()))
+                                arg.msg.onClientReceived()
                             }
                         }
                     }

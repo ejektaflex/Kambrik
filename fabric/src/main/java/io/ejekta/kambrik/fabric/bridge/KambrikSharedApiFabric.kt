@@ -2,24 +2,18 @@ package io.ejekta.kambrik.fabric.bridge
 
 import io.ejekta.kambrik.bridge.BridgeSide
 import io.ejekta.kambrik.bridge.KambrikSharedApi
-import io.ejekta.kambrik.input.KambrikKeybind
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import io.ejekta.kambrik.message.ClientMsg
 import io.ejekta.kambrik.message.INetworkLink
 import io.ejekta.kambrik.message.ServerMsg
 import io.ejekta.kambrik.registration.KambrikAutoRegistrar
 import net.fabricmc.api.EnvType
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.client.option.KeyBinding
 import net.minecraft.registry.Registry
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.util.Identifier
 
 class KambrikSharedApiFabric : KambrikSharedApi {
 
@@ -41,7 +35,7 @@ class KambrikSharedApiFabric : KambrikSharedApi {
             val contents = buf.readString()
             val data = link.deserializePacket(contents)
             client.execute {
-                data.onClientReceived(ClientMsg.MsgContext(client))
+                data.onClientReceived()
             }
         }
     }

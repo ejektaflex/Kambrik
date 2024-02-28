@@ -1,5 +1,6 @@
 package io.ejekta.kambrik.neoforge
 
+import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.bridge.Kambridge
 import io.ejekta.kambrik.internal.KambrikCommands
 import io.ejekta.kambrik.neoforge.bridge.KambrikSharedApiForge
@@ -15,7 +16,6 @@ import thedarkcolour.kotlinforforge.neoforge.forge.runForDist
 @Mod("kambrik")
 object KambrikModForge {
     init {
-        FORGE_BUS.addListener(KambrikForgeEvents::registerCommands)
 
         try {
             Kambridge.registerTestMessage()
@@ -23,15 +23,16 @@ object KambrikModForge {
             e.printStackTrace()
         }
 
+        FORGE_BUS.addListener(KambrikForgeEvents::registerCommands)
+
+        MOD_CONTEXT.getKEventBus().register(KambrikModCommonEvents::class.java)
+
         runForDist(
             clientTarget = {
                 // Register mod event bus
                 MOD_CONTEXT.getKEventBus().register(KambrikModForgeClient::class.java)
-                MOD_CONTEXT.getKEventBus().register(KambrikModCommonEvents::class.java)
             },
-            serverTarget = {
-                MOD_CONTEXT.getKEventBus().register(Kambridge)
-            }
+            serverTarget = { }
         )
     }
 
@@ -47,6 +48,7 @@ object KambrikModForge {
         @JvmStatic
         @SubscribeEvent
         fun registerPayloads(event: RegisterPayloadHandlerEvent) {
+            Kambrik.Logger.info("Registering network payloads..")
             (Kambridge as KambrikSharedApiForge).registerPayloads(event)
         }
     }
