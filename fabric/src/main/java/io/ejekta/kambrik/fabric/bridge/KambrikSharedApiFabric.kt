@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.network.packet.CustomPayload
 import net.minecraft.registry.Registry
 import net.minecraft.server.network.ServerPlayerEntity
 
@@ -31,6 +32,9 @@ class KambrikSharedApiFabric : KambrikSharedApi {
     }
 
     override fun <M : ClientMsg> registerClientMessage(link: INetworkLink<M>): Boolean {
+        return ClientPlayNetworking.registerGlobalReceiver(CustomPayload.id(link.id.toString())) {
+
+        }
         return ClientPlayNetworking.registerGlobalReceiver(link.id) { client, handler, buf, responseSender ->
             val contents = buf.readString()
             val data = link.deserializePacket(contents)

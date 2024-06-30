@@ -24,7 +24,7 @@ val Enchantment.identifier: Identifier?
 val StatusEffect.identifier: Identifier?
     get() = Registries.STATUS_EFFECT.getId(this)
 
-val Potion.identifier: Identifier
+val Potion.identifier: Identifier?
     get() = Registries.POTION.getId(this)
 
 val EntityAttribute.identifier: Identifier?

@@ -1,6 +1,5 @@
 package io.ejekta.kambrik.registration
 
-import io.ejekta.kambrik.ext.register
 import io.ejekta.kambrik.internal.KambrikMarker
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import net.minecraft.advancement.criterion.Criterion
@@ -8,6 +7,7 @@ import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
+import net.minecraft.component.DataComponentType
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
@@ -34,6 +34,7 @@ import net.minecraft.world.gen.carver.Carver
 import net.minecraft.world.gen.carver.CarverConfig
 import net.minecraft.world.gen.feature.Feature
 import net.minecraft.world.gen.feature.FeatureConfig
+import java.util.function.UnaryOperator
 
 
 @Suppress("UNCHECKED_CAST")
@@ -101,6 +102,12 @@ interface KambrikAutoRegistrar : KambrikMarker {
         val statId = Identifier(getId(), this)
         val resultId = forRegistration(Registries.CUSTOM_STAT) { statId }
         return lazy { Stats.CUSTOM.getOrCreateStat(resultId.value, formatter) }
+    }
+
+    infix fun <T> String.forComponent(builderOperator: UnaryOperator<DataComponentType.Builder<T>> ): Lazy<DataComponentType<T>> {
+        return forRegistration(Registries.DATA_COMPONENT_TYPE) {
+            builderOperator.apply(DataComponentType.builder()).build()
+        } as Lazy<DataComponentType<T>>
     }
 
 }
