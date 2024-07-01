@@ -10,7 +10,6 @@ import kotlinx.serialization.json.*
 import net.minecraft.nbt.NbtOps
 import net.minecraft.nbt.NbtString
 import kotlin.jvm.optionals.getOrNull
-import kotlin.reflect.KClass
 
 fun <T> Json.encodeToStringTag(serializer: KSerializer<T>, value: T): NbtString {
     return NbtString.of(encodeToString(serializer, value))
@@ -21,9 +20,67 @@ fun <T> Json.decodeFromStringTag(serializer: KSerializer<T>, nbtString: NbtStrin
 }
 
 @OptIn(InternalSerializationApi::class)
-fun <T : Any> KClass<T>.codec(): Codec<T> {
-    return createCodecFromKSerializer(this.serializer())
+fun <T> KSerializer<T>.codec(): Codec<T> {
+    return createCodecFromKSerializer(this)
 }
+
+class KotlinJsonObjectCodec<U>(val serializer: KSerializer<U>, val json: Json) : Codec<JsonObject> {
+    val descriptor = serializer.descriptor
+
+    @OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)
+    override fun <T : Any> encode(input: JsonObject, ops: DynamicOps<T>, prefix: T): DataResult<T> {
+        val dataMap = mutableMapOf<T, T>()
+
+        for (elementIndex in 0..<descriptor.elementsCount) {
+            val elDesc = descriptor.getElementDescriptor(elementIndex)
+            val key = descriptor.getElementName(elementIndex)
+            val result = when (elDesc.serialName) {
+                "kotlin.String" -> {
+                    val value = input[key]!!.jsonPrimitive.contentOrNull
+                    value?.let { ops.createString(it) }
+                }
+                "kotlin.Int" -> {
+                    val value = input[key]!!.jsonPrimitive.intOrNull
+                    value?.let { ops.createInt(it) }
+                }
+                "kotlin.Double" -> {
+                    val value = input[key]!!.jsonPrimitive.doubleOrNull
+                    value?.let { ops.createDouble(it) }
+                }
+                else -> {
+                    println("Error!!!")
+
+                    // Now we resort to Contextual, and then Polymorphic, lookups. We finally fall back to a class load and check for it's serializer
+                    // TODO add Contextual and Polymorphic lookup before resorting to class loading for serializer fetch
+                    // TODO fetch class loadable serialnames into a map to avoid perf hits?
+                    val clazz = Class.forName(elDesc.serialName, false, ClassLoader.getSystemClassLoader()).kotlin
+
+                    println(clazz)
+                    println(clazz.serializerOrNull())
+
+                    val subObjectCodec = KotlinJsonObjectCodec(clazz.serializer(), json)
+
+                    println(subObjectCodec)
+
+                    // We naively assume that a class will instantly map to an object and not, say, an array or anything else
+                    val thingy = subObjectCodec.encodeStart(ops, input[key]!!.jsonObject)
+
+                    thingy.result().get()
+                }
+            }
+            result?.let { dataMap[ops.createString(key)] = it }
+        }
+
+        val doot = ops.createMap(dataMap)
+        return ops.mergeToPrimitive(prefix, doot)
+    }
+
+    override fun <T : Any> decode(ops: DynamicOps<T>, input: T): DataResult<Pair<JsonObject, T>> {
+        TODO("Not yet implemented")
+    }
+
+}
+
 
 @OptIn(ExperimentalSerializationApi::class)
 fun <U> createCodecFromKSerializer(serializer: KSerializer<U>): Codec<U> {
@@ -39,6 +96,7 @@ fun <U> createCodecFromKSerializer(serializer: KSerializer<U>): Codec<U> {
             // for better NBT interop
 
             jsonObject.forEach { (key, value) ->
+
                 val dynamicValue = when (val jsonPrimitive = value.jsonPrimitive) {
                     is JsonPrimitive -> when {
                         jsonPrimitive.isString -> ops.createString(jsonPrimitive.content)
@@ -66,16 +124,15 @@ fun <U> createCodecFromKSerializer(serializer: KSerializer<U>): Codec<U> {
 
                     val key = ops.getStringValue(entry.first).result().get()
                     val kind = descriptor.getElementDescriptor(descriptor.getElementIndex(key))
+                    println(kind.capturedKClass)
+                    println("CLASS CHK:")
+                    println(Class.forName(kind.serialName))
                     when (val kindName: String = kind.serialName) {
                         "kotlin.String" -> put(key, ops.getStringValue(entry.second).result().get())
                         "kotlin.Int" -> put(key, ops.getNumberValue(entry.second).result().get().toInt())
+                        "kotlin.Double" -> put(key, ops.getNumberValue(entry.second).result().get().toDouble())
+                        else -> throw Exception("Could not decode key '$key' with serialKind '$kindName'!")
                     }
-//                    println(key)
-//                    println(kind.kind) // STRING
-//                    println(kind.serialName) // kotlin.String
-//                    println(kind.isNullable)
-//                    println(kind.capturedKClass)
-
                 }
             }
 
@@ -85,34 +142,41 @@ fun <U> createCodecFromKSerializer(serializer: KSerializer<U>): Codec<U> {
             return DataResult.success(Pair.of(result, ops.empty()))
         }
 
-//            nbtMap.
-//
-//            val jsonObject = JsonObject(nbtMap.mapValues { (_, dynamic) ->
-//                val dynamicValue = dynamic.value()
-//                when (ops.getStringValue(dynamicValue).result()) {
-//                    is DataResult.Success -> JsonPrimitive(ops.getStringValue(dynamicValue).result().get())
-//                    else -> when (val primitiveValue = dynamicValue.toString()) {
-//                        is String -> JsonPrimitive(primitiveValue)
-//                        else -> JsonPrimitive(primitiveValue)
-//                    }
-//                }
-//            })
-//            val result = json.decodeFromJsonElement(serializer, jsonObject)
-//            return DataResult.success(result to input)
-
     }
 }
 
 @Serializable
-data class Person(val name: String, val age: Int = 30)
+data class JobWork(val title: String)
+
+@Serializable
+data class Person(val name: String, val age: Int = 30, val cash: Double, val jobWork: JobWork = JobWork("No Job"))
 
 fun main() {
+    testObject()
+}
 
+fun testObject() {
     println("INITIAL:")
 
-    val PERSON_CODEC = Person::class.codec() // Auto-generate codec from Serializable object
+    val MY_CODEC = KotlinJsonObjectCodec(Person.serializer(), Json)
 
-    val riebeck = Person("Riebeck", 36)
+    val riebeck = Person("Riebeck", 36, 20.0, JobWork("Salesman"))
+
+    val riebeckJson = Json.encodeToJsonElement(riebeck) as JsonObject
+
+    println("\nENCODED:")
+
+    val riebeckNbt = MY_CODEC.encodeStart(NbtOps.INSTANCE, riebeckJson)
+
+    println(riebeckNbt)
+}
+
+fun testNormal() {
+    println("INITIAL:")
+
+    val PERSON_CODEC = Person.serializer().codec() // Auto-generate codec from Serializable object
+
+    val riebeck = Person("Riebeck", 36, 20.0, JobWork("Salesman"))
 
     println(riebeck)
 
@@ -129,11 +193,10 @@ fun main() {
 
     println(decodedElement)
     println(decodedElement.result().getOrNull())
-
 }
 
 
-class KotlinJsonCodec : Codec<JsonElement> {
+class KotlinJsonCodecLegacySimpleProof : Codec<JsonElement> {
     override fun <T : Any> decode(ops: DynamicOps<T>, input: T): DataResult<Pair<JsonElement, T>> {
         return when (input::class) {
             String::class -> DataResult.success(Pair(JsonPrimitive(input as String), input))
@@ -157,121 +220,5 @@ class KotlinJsonCodec : Codec<JsonElement> {
         }
     }
 }
-
-//
-//
-//class KotlinSerializerCodec<C>(val serializer: KSerializer<C>) : MapCodec<JsonObject>() {
-//    override fun <T : Any?> keys(ops: DynamicOps<T>): Stream<T> {
-//        return ops.
-//    }
-//
-//
-//    override fun <T : Any?> decode(ops: DynamicOps<T>, input: MapLike<T>): DataResult<JsonObject> {
-//        input.
-//    }
-//
-//
-//    @OptIn(ExperimentalSerializationApi::class)
-//    override fun <T : Any> encode(
-//        input: JsonObject,
-//        ops: DynamicOps<T>,
-//        prefix: RecordBuilder<T>
-//    ): RecordBuilder<T> {
-//        var proto = prefix
-//        val descriptor = serializer.descriptor
-//        for (i in 0..<descriptor.elementsCount) {
-//            val name = descriptor.getElementName(i)
-//            val desc = descriptor.getElementDescriptor(i)
-//            proto = when (desc.kind.toString()) {
-//                "STRING" -> proto.add(name, Codec.STRING.encodeStart(ops, input[name]!!.jsonPrimitive.content))
-//                "FLOAT" -> proto.add(name, Codec.FLOAT.encodeStart(ops, input[name]!!.jsonPrimitive.float))
-//                "INT" -> proto.add(name, Codec.INT.encodeStart(ops, input[name]!!.jsonPrimitive.int))
-//                else -> throw Exception("Unsupported json primitive type ${desc.kind}")
-//            }
-//        }
-//        return proto
-//    }
-//}
-//
-//class KotlinSerializerCodecNonMap<C>(val serializer: KSerializer<C>) : Decoder<JsonObject> {
-//
-//    @OptIn(ExperimentalSerializationApi::class)
-//    override fun <T : Any?> decode(ops: DynamicOps<T>, input: T): DataResult<Pair<JsonObject, T>> {
-//        var proto = ops.mapBuilder()
-//        val descriptor = serializer.descriptor
-//        for (i in 0..<descriptor.elementsCount) {
-//            val name = descriptor.getElementName(i)
-//            val desc = descriptor.getElementDescriptor(i)
-//            proto = when (desc.kind.toString()) {
-//                "STRING" -> Codec.STRING.decode(ops., input)
-//                "FLOAT" -> proto.add(name, Codec.FLOAT.encodeStart(ops, input[name]!!.jsonPrimitive.float))
-//                "INT" -> proto.add(name, Codec.INT.encodeStart(ops, input[name]!!.jsonPrimitive.int))
-//                else -> throw Exception("Unsupported json primitive type ${desc.kind}")
-//            }
-//        }
-//        return proto.build(input)
-//    }
-//
-//    @OptIn(ExperimentalSerializationApi::class)
-//    override fun <T : Any> encode(input: JsonObject, ops: DynamicOps<T>, prefix: T): DataResult<T> {
-//        var proto = ops.mapBuilder()
-//        val descriptor = serializer.descriptor
-//        for (i in 0..<descriptor.elementsCount) {
-//            val name = descriptor.getElementName(i)
-//            val desc = descriptor.getElementDescriptor(i)
-//            proto = when (desc.kind.toString()) {
-//                "STRING" -> proto.add(name, Codec.STRING.encodeStart(ops, input[name]!!.jsonPrimitive.content))
-//                "FLOAT" -> proto.add(name, Codec.FLOAT.encodeStart(ops, input[name]!!.jsonPrimitive.float))
-//                "INT" -> proto.add(name, Codec.INT.encodeStart(ops, input[name]!!.jsonPrimitive.int))
-//                else -> throw Exception("Unsupported json primitive type ${desc.kind}")
-//            }
-//        }
-//        return proto.build(prefix)
-//    }
-//
-//
-//}
-//
-//@OptIn(ExperimentalSerializationApi::class)
-//fun <T> codecFromSerializer(serializer: KSerializer<T>): Codec<T> {
-//    val descriptor = serializer.descriptor
-//    val subCodecs = mutableListOf<RecordCodecBuilder<JsonObject, String>>()
-//    for (i in 0..<descriptor.elementsCount) {
-//        val name = descriptor.getElementName(i)
-//        val desc = descriptor.getElementDescriptor(i)
-//        when (desc.kind.toString()) {
-//            "STRING" -> subCodecs.add(Codec.STRING.fieldOf(name).forGetter { jo: JsonObject ->
-//                jo[name]!!.jsonPrimitive.content
-//            })
-////            "FLOAT" -> subCodecs.add(Codec.FLOAT.fieldOf(name))
-////            "INT" -> subCodecs.add(Codec.INT.fieldOf(name))
-//        }
-//    }
-//
-//    // Codec.of(SinglePoolElement::encodeLocation, Identifier.CODEC.map(Either::left));
-//
-//    RecordCodecBuilder.create { instance: RecordCodecBuilder.Instance<JsonObject> ->
-//
-//        var product = subCodecs.first()
-//
-//
-//
-//        instance.group(Codec.STRING.fieldOf("test").forGetter { je: JsonElement ->
-//            je.jsonPrimitive.content
-//        }).and(
-//            Codec.STRING.fieldOf("test").forGetter { je: JsonElement ->
-//                je.jsonPrimitive.content
-//            }
-//        )
-//
-//        instance.group(Codec.STRING.fieldOf("test").forGetter { je: JsonElement ->
-//            je.jsonPrimitive.content
-//        }).apply(instance) { jo ->
-//            buildJsonObject {  }
-//        }
-//    }
-//
-//    return Codec.of(descriptor, subCodecs)
-//}
 
 
