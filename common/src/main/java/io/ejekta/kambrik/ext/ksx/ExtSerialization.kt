@@ -4,13 +4,13 @@ import com.mojang.datafixers.util.Pair
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
 import com.mojang.serialization.DynamicOps
-import com.mojang.serialization.JsonOps
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.capturedKClass
 import kotlinx.serialization.json.*
 import net.minecraft.nbt.NbtOps
 import net.minecraft.nbt.NbtString
 import kotlin.jvm.optionals.getOrNull
+import kotlin.reflect.KClass
 
 fun <T> Json.encodeToStringTag(serializer: KSerializer<T>, value: T): NbtString {
     return NbtString.of(encodeToString(serializer, value))
@@ -20,8 +20,12 @@ fun <T> Json.decodeFromStringTag(serializer: KSerializer<T>, nbtString: NbtStrin
     return decodeFromString(serializer, nbtString.asString())
 }
 
+@OptIn(InternalSerializationApi::class)
+fun <T : Any> KClass<T>.codec(): Codec<T> {
+    return createCodecFromKSerializer(this.serializer())
+}
 
-
+@OptIn(ExperimentalSerializationApi::class)
 fun <U> createCodecFromKSerializer(serializer: KSerializer<U>): Codec<U> {
     val json = Json { encodeDefaults = true }
 
@@ -29,7 +33,7 @@ fun <U> createCodecFromKSerializer(serializer: KSerializer<U>): Codec<U> {
 
         override fun <T : Any> encode(input: U, ops: DynamicOps<T>, prefix: T): DataResult<T> {
             val jsonObject = json.encodeToJsonElement(serializer, input) as JsonObject
-            val nbtMap = mutableMapOf<T, T>()
+            val dataMap = mutableMapOf<T, T>()
 
             // TODO iterating the serializer kinds could provide us with better typing than relying on the primitives,
             // for better NBT interop
@@ -45,17 +49,40 @@ fun <U> createCodecFromKSerializer(serializer: KSerializer<U>): Codec<U> {
                     }
                     else -> ops.createString(value.toString())
                 }
-                nbtMap[ops.createString(key)] = dynamicValue
+                dataMap[ops.createString(key)] = dynamicValue
             }
 
-            val doot = ops.createMap(nbtMap)
+            val doot = ops.createMap(dataMap)
             return ops.mergeToPrimitive(prefix, doot)
         }
 
-        override fun <T : Any?> decode(ops: DynamicOps<T>, input: T): DataResult<Pair<U, T>> {
-            val nbtMap = ops.getMap(input).result().getOrNull()
+        override fun <T : Any> decode(ops: DynamicOps<T>, input: T): DataResult<Pair<U, T>> {
+            val nbtMap = ops.getMap(input).result().getOrNull() ?: return DataResult.error { "Not a maplike!" }
+            val descriptor = serializer.descriptor
 
-            TODO("Not yet implemented")
+            val jsonObject = buildJsonObject {
+                for (entry in nbtMap.entries()) {
+                    println(entry)
+
+                    val key = ops.getStringValue(entry.first).result().get()
+                    val kind = descriptor.getElementDescriptor(descriptor.getElementIndex(key))
+                    when (val kindName: String = kind.serialName) {
+                        "kotlin.String" -> put(key, ops.getStringValue(entry.second).result().get())
+                        "kotlin.Int" -> put(key, ops.getNumberValue(entry.second).result().get().toInt())
+                    }
+//                    println(key)
+//                    println(kind.kind) // STRING
+//                    println(kind.serialName) // kotlin.String
+//                    println(kind.isNullable)
+//                    println(kind.capturedKClass)
+
+                }
+            }
+
+
+            val result = json.decodeFromJsonElement(serializer, jsonObject)
+
+            return DataResult.success(Pair.of(result, ops.empty()))
         }
 
 //            nbtMap.
@@ -77,18 +104,31 @@ fun <U> createCodecFromKSerializer(serializer: KSerializer<U>): Codec<U> {
 }
 
 @Serializable
-class Doot(val name: String, val age: Int = 30)
+data class Person(val name: String, val age: Int = 30)
 
 fun main() {
 
-    val DOOT_CODEC = createCodecFromKSerializer(Doot.serializer())
+    println("INITIAL:")
 
-    val doot = Doot("Riebeck")
+    val PERSON_CODEC = Person::class.codec() // Auto-generate codec from Serializable object
 
-    val encodedElement = DOOT_CODEC.encodeStart(NbtOps.INSTANCE, doot)
+    val riebeck = Person("Riebeck", 36)
 
+    println(riebeck)
+
+    println("\nENCODING:")
+
+    val encodedElement = PERSON_CODEC.encodeStart(NbtOps.INSTANCE, riebeck)
     println(encodedElement)
-    println(encodedElement.result().getOrNull())
+    val result = encodedElement.result().getOrNull()
+    println(result)
+
+    println("\nDECODING:")
+
+    val decodedElement = PERSON_CODEC.parse(NbtOps.INSTANCE, result)
+
+    println(decodedElement)
+    println(decodedElement.result().getOrNull())
 
 }
 
