@@ -17,7 +17,7 @@ import kotlin.jvm.optionals.getOrNull
  */
 class KambrikStructureApi internal constructor() {
 
-    private val EMPTY_PROCESSOR_LIST_KEY = RegistryKey.of(RegistryKeys.PROCESSOR_LIST, Identifier("minecraft", "empty"))
+    private val EMPTY_PROCESSOR_LIST_KEY = RegistryKey.of(RegistryKeys.PROCESSOR_LIST, Identifier.of("minecraft", "empty"))
 
     // Meant to be called from inside a ServerLifecycleEvents.SERVER_STARTING event
     fun addToStructurePool(server: MinecraftServer, nbtLocation: Identifier, poolLocation: Identifier, processorLocation: Identifier, weight: Int = 10_000) {

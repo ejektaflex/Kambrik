@@ -5,7 +5,6 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.modules.SerializersModule
 import net.minecraft.component.Component
-import net.minecraft.component.DataComponentType
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtElement

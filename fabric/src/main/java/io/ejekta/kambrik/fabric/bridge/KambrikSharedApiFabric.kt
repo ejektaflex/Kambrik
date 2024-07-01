@@ -32,45 +32,49 @@ class KambrikSharedApiFabric : KambrikSharedApi {
     }
 
     override fun <M : ClientMsg> registerClientMessage(link: INetworkLink<M>): Boolean {
-        return ClientPlayNetworking.registerGlobalReceiver(CustomPayload.id(link.id.toString())) {
-
-        }
-        return ClientPlayNetworking.registerGlobalReceiver(link.id) { client, handler, buf, responseSender ->
-            val contents = buf.readString()
-            val data = link.deserializePacket(contents)
-            client.execute {
-                data.onClientReceived()
-            }
-        }
+        return TODO("Networking")
+//        return ClientPlayNetworking.registerGlobalReceiver(CustomPayload.id(link.id.toString())) {
+//
+//        }
+//        return ClientPlayNetworking.registerGlobalReceiver(link.id) { client, handler, buf, responseSender ->
+//            val contents = buf.readString()
+//            val data = link.deserializePacket(contents)
+//            client.execute {
+//                data.onClientReceived()
+//            }
+//        }
     }
 
     override fun <M : ClientMsg> sendMsgToClient(link: INetworkLink<M>, msg: M, player: ServerPlayerEntity) {
-        ServerPlayNetworking.send(
-            player,
-            link.id,
-            PacketByteBufs.create().apply {
-                writeString(link.serializePacket(msg))
-            }
-        )
+        // TODO networking
+//        ServerPlayNetworking.send(
+//            player,
+//            link.id,
+//            PacketByteBufs.create().apply {
+//                writeString(link.serializePacket(msg))
+//            }
+//        )
     }
 
     override fun <M : ServerMsg> registerServerMessage(link: INetworkLink<M>): Boolean {
-        return ServerPlayNetworking.registerGlobalReceiver(link.id) { server, player, handler, buf, responseSender ->
-            val contents = buf.readString()
-            val data = link.deserializePacket(contents)
-            server.execute {
-                data.onServerReceived(ServerMsg.MsgContext(player))
-            }
-        }
+        return TODO("Networking")
+//        return ServerPlayNetworking.registerGlobalReceiver(link.id) { server, player, handler, buf, responseSender ->
+//            val contents = buf.readString()
+//            val data = link.deserializePacket(contents)
+//            server.execute {
+//                data.onServerReceived(ServerMsg.MsgContext(player))
+//            }
+//        }
     }
 
     override fun <M : ServerMsg> sendMsgToServer(link: INetworkLink<M>, msg: M) {
-        ClientPlayNetworking.send(
-            link.id,
-            PacketByteBufs.create().apply {
-                writeString(link.serializePacket(msg))
-            }
-        )
+        // TODO("Networking")
+//        ClientPlayNetworking.send(
+//            link.id,
+//            PacketByteBufs.create().apply {
+//                writeString(link.serializePacket(msg))
+//            }
+//        )
     }
 
     // Registration

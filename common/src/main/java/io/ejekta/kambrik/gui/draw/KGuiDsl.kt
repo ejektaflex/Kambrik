@@ -11,6 +11,7 @@ import net.minecraft.client.render.LightmapTextureManager
 import net.minecraft.client.render.Tessellator
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.item.ItemRenderer
+import net.minecraft.client.util.BufferAllocator
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
@@ -148,21 +149,22 @@ data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val
     fun textImmediate(x: Int, y: Int, text: Text) {
         val matrixStack = MatrixStack()
         matrixStack.translate(0.0, 0.0, 201.0)
-        val immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().buffer)
+        // TODO allocator visibility? How is this done now, anyways?
+        //val immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().allocator)
 
-        textRenderer.draw(
-            text,
-            (ctx.absX(x) + textRenderer.getWidth(text)).toFloat(),
-            ctx.absY(y).toFloat(),
-            0xFFFFFF,
-            true,
-            matrixStack.peek().positionMatrix,
-            immediate,
-            TextRenderer.TextLayerType.NORMAL,
-            0,
-            LightmapTextureManager.MAX_LIGHT_COORDINATE
-        )
-        immediate.draw()
+//        textRenderer.draw(
+//            text,
+//            (ctx.absX(x) + textRenderer.getWidth(text)).toFloat(),
+//            ctx.absY(y).toFloat(),
+//            0xFFFFFF,
+//            true,
+//            matrixStack.peek().positionMatrix,
+//            immediate,
+//            TextRenderer.TextLayerType.NORMAL,
+//            0,
+//            LightmapTextureManager.MAX_LIGHT_COORDINATE
+//        )
+//        immediate.draw()
     }
 
     fun sprite(sprite: KSpriteGrid.Sprite, x: Int = 0, y: Int = 0, w: Int = sprite.width, h: Int = sprite.height, func: (AreaDsl.() -> Unit)? = null) {

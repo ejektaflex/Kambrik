@@ -23,7 +23,7 @@ open class RegistryObjectSerializer<T>(private val reg: () -> Registry<T>, seria
 
     override fun deserialize(decoder: Decoder): T {
         val id = decoder.decodeString()
-        return reg()[Identifier(id)] ?: throw SerializationException("Could not find saved identifier!: $id")
+        return reg()[Identifier.of(id)] ?: throw SerializationException("Could not find saved identifier!: $id")
     }
 
 }

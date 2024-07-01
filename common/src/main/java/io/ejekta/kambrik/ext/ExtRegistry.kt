@@ -11,7 +11,7 @@ fun <T> Registry<T>.register(id: Identifier, obj: T) {
 
 fun <T> Registry<T>.registerForMod(modId: String, items: () -> Map<String, T>) {
     for ((itemId, item) in items()) {
-        register(Identifier(modId, itemId), item)
+        register(Identifier.of(modId, itemId), item)
     }
 }
 

@@ -1,5 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.fabricmc.loom.task.RemapJarTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -74,6 +75,7 @@ subprojects {
             options.encoding = "UTF-8"
             options.release.set(21)
         }
+
         withType<KotlinCompile> {
             kotlinOptions.jvmTarget = "21"
             kotlinOptions.freeCompilerArgs = listOf("-Xlambdas=indy", "-Xjvm-default=all",)
@@ -126,5 +128,8 @@ repositories {
     mavenCentral()
 }
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(21)
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_21)
+    }
 }

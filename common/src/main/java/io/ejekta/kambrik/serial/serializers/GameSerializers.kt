@@ -36,7 +36,7 @@ object IdentitySer : KSerializer<Identifier> {
         encoder.encodeString(value.toString())
     }
     override fun deserialize(decoder: Decoder): Identifier {
-        return Identifier(decoder.decodeString())
+        return Identifier.of(decoder.decodeString())
     }
 }
 

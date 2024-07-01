@@ -14,7 +14,7 @@ object Kambrik {
 
     const val ID = "kambrik"
 
-    fun idOf(unique: String) = Identifier(ID, unique)
+    fun idOf(unique: String) = Identifier.of(ID, unique)
 
     val Logger = LogManager.getLogger("Kambrik")
 

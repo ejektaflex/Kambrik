@@ -13,7 +13,7 @@ object KambrikRegistrar {
     data class RegistrationEntry<T>(val registry: Registry<T>, val itemId: String, val item: Lazy<T>) {
         fun register(modId: String) {
             Kambrik.Logger.debug("Registering item: ${modId}:${itemId}")
-            registry.register(Identifier(modId, itemId), item.value)
+            registry.register(Identifier.of(modId, itemId), item.value)
         }
     }
 

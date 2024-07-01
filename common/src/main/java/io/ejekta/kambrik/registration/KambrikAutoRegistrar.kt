@@ -7,7 +7,6 @@ import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
-import net.minecraft.component.DataComponentType
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
@@ -59,7 +58,8 @@ interface KambrikAutoRegistrar : KambrikMarker {
 
     infix fun String.forBlock(block: () -> Block) = forRegistration(Registries.BLOCK, block)
 
-    infix fun String.forEnchant(enchant: () -> Enchantment) = forRegistration(Registries.ENCHANTMENT, enchant)
+    // TODO enchant registration
+//    infix fun String.forEnchant(enchant: () -> Enchantment) = forRegistration(Registries.ENCHANTMENT, enchant)
 
     infix fun <C : CarverConfig?> String.forCarver(carver: () -> Carver<C>): Carver<C> = forRegistration(Registries.CARVER, carver) as Carver<C>
 
@@ -99,15 +99,16 @@ interface KambrikAutoRegistrar : KambrikMarker {
     infix fun <T : Criterion<*>> String.forCriterion(criterion: () -> T): Lazy<T> = forRegistration(Registries.CRITERION, criterion) as Lazy<T>
 
     infix fun String.forStat(formatter: StatFormatter): Lazy<Stat<*>> {
-        val statId = Identifier(getId(), this)
+        val statId = Identifier.of(getId(), this)
         val resultId = forRegistration(Registries.CUSTOM_STAT) { statId }
         return lazy { Stats.CUSTOM.getOrCreateStat(resultId.value, formatter) }
     }
 
-    infix fun <T> String.forComponent(builderOperator: UnaryOperator<DataComponentType.Builder<T>> ): Lazy<DataComponentType<T>> {
-        return forRegistration(Registries.DATA_COMPONENT_TYPE) {
-            builderOperator.apply(DataComponentType.builder()).build()
-        } as Lazy<DataComponentType<T>>
-    }
+    // TODO component registration
+//    infix fun <T> String.forComponent(builderOperator: UnaryOperator<DataComponentType.Builder<T>> ): Lazy<DataComponentType<T>> {
+//        return forRegistration(Registries.DATA_COMPONENT_TYPE) {
+//            builderOperator.apply(DataComponentType.builder()).build()
+//        } as Lazy<DataComponentType<T>>
+//    }
 
 }
