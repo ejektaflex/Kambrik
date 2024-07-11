@@ -2,17 +2,21 @@ package io.ejekta.kambrik.registration
 
 import io.ejekta.kambrik.internal.KambrikMarker
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
+import io.ejekta.kambrikx.percale.toCodec
+import kotlinx.serialization.Serializable
 import net.minecraft.advancement.criterion.Criterion
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
-import net.minecraft.enchantment.Enchantment
+import net.minecraft.component.ComponentType
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.attribute.EntityAttribute
 import net.minecraft.entity.effect.StatusEffect
 import net.minecraft.item.Item
+import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
 import net.minecraft.particle.ParticleEffect
 import net.minecraft.particle.ParticleType
 import net.minecraft.potion.Potion
@@ -104,11 +108,10 @@ interface KambrikAutoRegistrar : KambrikMarker {
         return lazy { Stats.CUSTOM.getOrCreateStat(resultId.value, formatter) }
     }
 
-    // TODO component registration
-//    infix fun <T> String.forComponent(builderOperator: UnaryOperator<DataComponentType.Builder<T>> ): Lazy<DataComponentType<T>> {
-//        return forRegistration(Registries.DATA_COMPONENT_TYPE) {
-//            builderOperator.apply(DataComponentType.builder()).build()
-//        } as Lazy<DataComponentType<T>>
-//    }
+    fun String.forComponent(component: ComponentType<*>): Lazy<ComponentType<*>> {
+        return forRegistration(Registries.DATA_COMPONENT_TYPE) {
+            component
+        }
+    }
 
 }
