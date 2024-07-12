@@ -1,17 +1,31 @@
 package io.ejekta.kambrik.internal
 
+import codec
 import com.mojang.brigadier.CommandDispatcher
+import com.mojang.brigadier.context.CommandContext
+import com.mojang.serialization.Codec
+import com.mojang.serialization.DynamicOps
+import com.mojang.serialization.JsonOps
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.command.*
 import io.ejekta.kambrik.text.sendError
 import io.ejekta.kambrik.text.sendFeedback
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.modules.SerializersModule
 import net.minecraft.command.CommandRegistryAccess
+import net.minecraft.component.EnchantmentEffectComponentTypes
+import net.minecraft.component.type.ItemEnchantmentsComponent
+import net.minecraft.item.ItemStack
+import net.minecraft.predicate.item.EnchantmentsPredicate
 import net.minecraft.registry.Registries
+import net.minecraft.registry.RegistryOps
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.Text
-import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
+import toKotlinJsonSerializer
 
 object KambrikCommands {
     fun register(
@@ -47,12 +61,100 @@ object KambrikCommands {
                         e.printStackTrace()
                     }
                 }
+
+                "hand" runs {
+                    handTests(this)
+                }
+
+                "item" runs {
+                    itemTests(this, registryAccess)
+                }
             }
         }
 
 
     }
 
+    fun itemTests(commandContext: CommandContext<ServerCommandSource>, registryAccess: CommandRegistryAccess) {
+        commandContext.run {
+
+            val player = source.playerOrThrow
+            val held = player.mainHandStack
+
+            val json = Json {
+                serializersModule = SerializersModule {
+                    codec(Identifier.CODEC)
+                }
+                prettyPrint = true
+            }
+
+            val itemCodec = ItemStack.CODEC
+
+            try {
+
+                val encoded = itemCodec.encodeStart(RegistryOps.of(JsonOps.INSTANCE, source.server.registryManager), held)
+                println(encoded)
+
+                for (comp in held.componentChanges.entrySet()) {
+                    println("COMP:")
+                    println(comp.key)
+                    comp.key.codec
+                    println(comp.value)
+                    val codec = comp.key.codec as Codec<Any>
+
+                    val compId = comp.key.toString() // ick but whatever
+
+                    val opsToUse = when (compId) {
+                        "minecraft:enchantments", "minecraft:tool" -> RegistryOps.of(JsonOps.INSTANCE, source.server.registryManager)
+                        else -> JsonOps.INSTANCE
+                    }
+
+                    val enc = codec.encodeStart(opsToUse, comp.value.get())
+                    println(enc)
+                }
+
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+        }
+    }
+
+    fun handTests(commandContext: CommandContext<ServerCommandSource>) {
+        commandContext.run {
+            val player = source.playerOrThrow
+            val held = player.mainHandStack
+
+            val json = Json {
+                serializersModule = SerializersModule {
+                    codec(Identifier.CODEC)
+                }
+                prettyPrint = true
+            }
+
+
+            for (heldEntry in held.components) {
+                if (heldEntry.type.codec != null) {
+                    try {
+                        println("CODEC -> JSON")
+                        println(heldEntry)
+                        val ks = heldEntry.type.codec?.toKotlinJsonSerializer() as KSerializer<Any>
+                        println(ks)
+
+                        println("Trying JSON encode..")
+                        val doots = json.encodeToString(ks, heldEntry.value)
+                        println("JSON encode success!")
+                        println(doots)
+
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+
+                }
+            }
+        }
+    }
 
     private fun dumpRegistry(what: Identifier) = kambrikServerCommand {
         if (Registries.REGISTRIES.containsId(what)) {

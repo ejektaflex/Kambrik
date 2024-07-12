@@ -19,10 +19,7 @@ plugins {
 // Set the Minecraft version for Architectury.
 architectury {
     minecraft = libs.versions.mc.get()
-
 }
-
-
 
 group = libs.versions.pkg.get()
 version = libs.versions.fullversion.get()
@@ -77,8 +74,10 @@ subprojects {
         }
 
         withType<KotlinCompile> {
-            kotlinOptions.jvmTarget = "21"
-            kotlinOptions.freeCompilerArgs = listOf("-Xlambdas=indy", "-Xjvm-default=all",)
+            compilerOptions {
+                jvmTarget.set(JvmTarget.JVM_21)
+                freeCompilerArgs.set(listOf("-Xlambdas=indy", "-Xjvm-default=all"))
+            }
         }
     }
 }

@@ -149,6 +149,7 @@ data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val
     fun textImmediate(x: Int, y: Int, text: Text) {
         val matrixStack = MatrixStack()
         matrixStack.translate(0.0, 0.0, 201.0)
+//        textRenderer.draw
         // TODO allocator visibility? How is this done now, anyways?
         //val immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().allocator)
 

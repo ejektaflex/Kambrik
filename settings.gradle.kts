@@ -23,10 +23,10 @@ dependencyResolutionManagement {
             val Platform = object {
                 val MC = "1.21"
                 // https://fabricmc.net/develop/
-                val Yarn = "1.21+build.7"
-                val FabricLoader = "0.15.11"
+                val Yarn = "1.21+build.9"
+                val FabricLoader = "0.16.0"
                 val FabricApi = "0.100.4+1.21"
-                val NeoForge = "21.0.42-beta" //=> https://projects.neoforged.net/neoforged/neoforge
+                val NeoForge = "21.0.86-beta" //=> https://projects.neoforged.net/neoforged/neoforge
             }
 
             val Ejekta = object {
