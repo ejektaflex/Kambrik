@@ -6,6 +6,7 @@ import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import io.ejekta.kambrik.message.KambrikMsg
 import io.ejekta.kambrik.message.INetworkLink
 import io.ejekta.kambrik.registration.KambrikAutoRegistrar
+import io.ejekta.kambrikx.serial.toSimplePacketCodec
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import net.fabricmc.api.EnvType
@@ -34,23 +35,15 @@ class KambrikSharedApiFabric : KambrikSharedApi {
         return FabricLoader.getInstance().environmentType == EnvType.SERVER
     }
 
-    private fun <M :  KambrikMsg> createPacketCodec(id: CustomPayload.Id<M>, serializer: KSerializer<M>): PacketCodec<RegistryByteBuf, M> {
-        val json = INetworkLink.defaultJson
-        return PacketCodec.of(
-            { value, buf -> buf.writeString(json.encodeToString(serializer, value)) },
-            { json.decodeFromString(serializer, it.readString()) }
-        )
-    }
-
     override fun <M : KambrikMsg> registerClientMessage(serializer: KSerializer<M>, id: CustomPayload.Id<M>): Boolean {
-        PayloadTypeRegistry.playS2C().register(id,createPacketCodec(id, serializer))
+        PayloadTypeRegistry.playS2C().register(id, serializer.toSimplePacketCodec())
         return ClientPlayNetworking.registerGlobalReceiver(id) { payload, context ->
             (payload as KambrikMsg).onClientReceived()
         }
     }
 
     override fun <M : KambrikMsg> registerServerMessage(serializer: KSerializer<M>, id: CustomPayload.Id<M>): Boolean {
-        PayloadTypeRegistry.playS2C().register(id, createPacketCodec(id, serializer))
+        PayloadTypeRegistry.playS2C().register(id, serializer.toSimplePacketCodec())
         return ClientPlayNetworking.registerGlobalReceiver(id) { payload, context ->
             (payload as KambrikMsg).onClientReceived()
         }

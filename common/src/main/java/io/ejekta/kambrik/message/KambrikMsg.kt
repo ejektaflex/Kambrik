@@ -1,6 +1,7 @@
 package io.ejekta.kambrik.message
 
 import io.ejekta.kambrik.Kambrik
+import io.ejekta.kambrik.bridge.Kambridge
 import kotlinx.serialization.Serializable
 import net.minecraft.network.packet.CustomPayload
 import net.minecraft.server.network.ServerPlayerEntity
@@ -20,19 +21,21 @@ abstract class KambrikMsg : CustomPayload {
     }
 
     open fun onServerReceived(ctx: MsgContext) {
-        // Executes on client thread
+        // Executes on server thread
     }
 
     fun sendToClient(player: ServerPlayerEntity) {
-        Kambrik.Message.sendClientMsg(this, listOf(player))
+        Kambridge.sendMsgToClient(this, player)
     }
 
     fun sendToClients(players: Collection<ServerPlayerEntity>) {
-        Kambrik.Message.sendClientMsg(this, players)
+        for (player in players) {
+            Kambridge.sendMsgToClient(this, player)
+        }
     }
 
     fun sendToServer() {
-        Kambrik.Message.sendServerMsg(this)
+        Kambridge.sendMsgToServer(this)
     }
 
 }

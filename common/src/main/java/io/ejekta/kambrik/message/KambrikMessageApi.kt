@@ -22,14 +22,4 @@ class KambrikMessageApi internal constructor() {
         Kambridge.registerServerMessage(ser, id)
     }
 
-    internal fun <C : KambrikMsg> sendClientMsg(msg: C, players: Collection<ServerPlayerEntity>) {
-        for (player in players) {
-            Kambridge.sendMsgToClient(msg, player)
-        }
-    }
-
-    internal fun <S : KambrikMsg> sendServerMsg(msg: S) {
-        Kambridge.sendMsgToServer(msg)
-    }
-
 }

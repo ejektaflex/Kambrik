@@ -7,6 +7,8 @@ import net.minecraft.component.DataComponentTypes
 import net.minecraft.nbt.NbtElement
 import net.minecraft.nbt.NbtOps
 
+
+
 @Serializable
 data class JobStatus(val isWorking: Boolean)
 
