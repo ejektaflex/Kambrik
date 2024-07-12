@@ -6,11 +6,16 @@ import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import io.ejekta.kambrik.message.KambrikMsg
 import io.ejekta.kambrik.message.INetworkLink
 import io.ejekta.kambrik.registration.KambrikAutoRegistrar
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.json.Json
 import net.fabricmc.api.EnvType
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.network.RegistryByteBuf
+import net.minecraft.network.codec.PacketCodec
+import net.minecraft.network.packet.CustomPayload
 import net.minecraft.registry.Registry
 import net.minecraft.server.network.ServerPlayerEntity
 
@@ -29,30 +34,30 @@ class KambrikSharedApiFabric : KambrikSharedApi {
         return FabricLoader.getInstance().environmentType == EnvType.SERVER
     }
 
-    override fun <M : KambrikMsg> registerClientMessage(link: INetworkLink<M>): Boolean {
+    private fun <M :  KambrikMsg> createPacketCodec(id: CustomPayload.Id<M>, serializer: KSerializer<M>): PacketCodec<RegistryByteBuf, M> {
+        val json = INetworkLink.defaultJson
+        return PacketCodec.of(
+            { value, buf -> buf.writeString(json.encodeToString(serializer, value)) },
+            { json.decodeFromString(serializer, it.readString()) }
+        )
+    }
 
-        PayloadTypeRegistry.playS2C().register(link.id, link.packetCodec)
+    override fun <M : KambrikMsg> registerClientMessage(serializer: KSerializer<M>, id: CustomPayload.Id<M>): Boolean {
+        PayloadTypeRegistry.playS2C().register(id,createPacketCodec(id, serializer))
+        return ClientPlayNetworking.registerGlobalReceiver(id) { payload, context ->
+            (payload as KambrikMsg).onClientReceived()
+        }
+    }
 
-        return ClientPlayNetworking.registerGlobalReceiver(link.id) { payload, context ->
+    override fun <M : KambrikMsg> registerServerMessage(serializer: KSerializer<M>, id: CustomPayload.Id<M>): Boolean {
+        PayloadTypeRegistry.playS2C().register(id, createPacketCodec(id, serializer))
+        return ClientPlayNetworking.registerGlobalReceiver(id) { payload, context ->
             (payload as KambrikMsg).onClientReceived()
         }
     }
 
     override fun <M : KambrikMsg> sendMsgToClient(link: INetworkLink<M>, msg: M, player: ServerPlayerEntity) {
         ServerPlayNetworking.send(player, msg)
-    }
-
-    override fun <M : KambrikMsg> registerServerMessage(link: INetworkLink<M>): Boolean {
-
-        PayloadTypeRegistry.playC2S().register(link.id, link.packetCodec)
-
-        return ServerPlayNetworking.registerGlobalReceiver(
-            link.id
-        ) { payload, context ->
-            payload.onServerReceived(
-                KambrikMsg.MsgContext(context.player())
-            )
-        }
     }
 
     override fun <M : KambrikMsg> sendMsgToServer(link: INetworkLink<M>, msg: M) {
