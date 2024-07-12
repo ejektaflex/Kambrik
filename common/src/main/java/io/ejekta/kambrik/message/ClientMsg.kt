@@ -5,13 +5,14 @@ import kotlinx.serialization.Serializable
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
+import net.minecraft.network.packet.CustomPayload
 import net.minecraft.server.network.ServerPlayerEntity
 
 /**
  * This represents a serializable message that can be sent to a client.
  */
 @Serializable
-abstract class ClientMsg {
+abstract class ClientMsg : CustomPayload {
 
     open fun onClientReceived() {
         // Executes on client thread

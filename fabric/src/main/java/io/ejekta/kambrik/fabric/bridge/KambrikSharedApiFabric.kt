@@ -10,6 +10,7 @@ import io.ejekta.kambrik.registration.KambrikAutoRegistrar
 import net.fabricmc.api.EnvType
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.network.packet.CustomPayload
@@ -32,43 +33,34 @@ class KambrikSharedApiFabric : KambrikSharedApi {
     }
 
     override fun <M : ClientMsg> registerClientMessage(link: INetworkLink<M>): Boolean {
-        return TODO("Networking")
-//        return ClientPlayNetworking.registerGlobalReceiver(CustomPayload.id(link.id.toString())) {
-//
-//        }
-//        return ClientPlayNetworking.registerGlobalReceiver(link.id) { client, handler, buf, responseSender ->
-//            val contents = buf.readString()
-//            val data = link.deserializePacket(contents)
-//            client.execute {
-//                data.onClientReceived()
-//            }
-//        }
+
+        PayloadTypeRegistry.playS2C().register(link.id, link.packetCodec)
+
+        return ClientPlayNetworking.registerGlobalReceiver(link.id) { payload, context ->
+            (payload as ClientMsg).onClientReceived()
+        }
     }
 
     override fun <M : ClientMsg> sendMsgToClient(link: INetworkLink<M>, msg: M, player: ServerPlayerEntity) {
-        // TODO networking
-//        ServerPlayNetworking.send(
-//            player,
-//            link.id,
-//            PacketByteBufs.create().apply {
-//                writeString(link.serializePacket(msg))
-//            }
-//        )
+        ServerPlayNetworking.send(player, msg)
     }
 
     override fun <M : ServerMsg> registerServerMessage(link: INetworkLink<M>): Boolean {
-        return TODO("Networking")
-//        return ServerPlayNetworking.registerGlobalReceiver(link.id) { server, player, handler, buf, responseSender ->
-//            val contents = buf.readString()
-//            val data = link.deserializePacket(contents)
-//            server.execute {
-//                data.onServerReceived(ServerMsg.MsgContext(player))
-//            }
-//        }
+
+        PayloadTypeRegistry.playC2S().register(link.id, link.packetCodec)
+
+        return ServerPlayNetworking.registerGlobalReceiver(
+            link.id
+        ) { payload, context ->
+            payload.onServerReceived(
+                ServerMsg.MsgContext(context.player())
+            )
+        }
     }
 
     override fun <M : ServerMsg> sendMsgToServer(link: INetworkLink<M>, msg: M) {
         // TODO("Networking")
+        ClientPlayNetworking.send(msg)
 //        ClientPlayNetworking.send(
 //            link.id,
 //            PacketByteBufs.create().apply {

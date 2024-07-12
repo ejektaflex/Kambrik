@@ -44,7 +44,7 @@ interface KambrikSharedApi {
         Kambrik.Message.registerClientMessage(
             TestMsg.serializer(),
             TestMsg::class,
-            Kambrik.idOf("test_msg")
+            TestMsg.ID
         )
     }
 

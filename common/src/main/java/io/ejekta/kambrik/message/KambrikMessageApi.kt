@@ -4,6 +4,7 @@ import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.bridge.BridgeSide
 import io.ejekta.kambrik.bridge.Kambridge
 import kotlinx.serialization.KSerializer
+import net.minecraft.network.packet.CustomPayload
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 import kotlin.reflect.KClass
@@ -21,7 +22,7 @@ class KambrikMessageApi internal constructor() {
     internal val serverLinks = mutableMapOf<KClass<*>, ServerNetworkLink<*>>()
 
     @PublishedApi
-    internal fun <M : Any> registerMessage(
+    internal fun <M : CustomPayload> registerMessage(
         linkMaker: () -> INetworkLink<M>,
         reg: MutableMap<KClass<*>, INetworkLink<M>>,
         shouldRegLink: Boolean
@@ -42,7 +43,7 @@ class KambrikMessageApi internal constructor() {
         return linkage
     }
 
-    fun <C : ClientMsg> registerClientMessage(ser: KSerializer<C>, klass: KClass<C>, id: Identifier): INetworkLink<C> {
+    fun <C : ClientMsg> registerClientMessage(ser: KSerializer<C>, klass: KClass<C>, id: CustomPayload.Id<C>): INetworkLink<C> {
         val shouldClientLinkRegister = if (Kambridge.side == BridgeSide.FORGE) {
             true
         } else {
@@ -51,7 +52,7 @@ class KambrikMessageApi internal constructor() {
         return registerMessage({ ClientNetworkLink(id, klass, ser) }, clientLinks as MutableMap<KClass<*>, INetworkLink<C>>, shouldClientLinkRegister)
     }
 
-    fun <S : ServerMsg> registerServerMessage(ser: KSerializer<S>, klass: KClass<S>, id: Identifier): INetworkLink<S> {
+    fun <S : ServerMsg> registerServerMessage(ser: KSerializer<S>, klass: KClass<S>, id: CustomPayload.Id<S>): INetworkLink<S> {
         return registerMessage({ ServerNetworkLink(id, klass, ser) }, serverLinks as MutableMap<KClass<*>, INetworkLink<S>>, true)
     }
 

@@ -3,17 +3,22 @@ package io.ejekta.kambrik.message
 import io.ejekta.kambrik.bridge.Kambridge
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
+import net.minecraft.network.RegistryByteBuf
+import net.minecraft.network.codec.PacketCodec
+import net.minecraft.network.packet.CustomPayload
 import net.minecraft.util.Identifier
 import kotlin.reflect.KClass
 
 class ServerNetworkLink<M : ServerMsg>(
 
-    override val id: Identifier,
+    override val id: CustomPayload.Id<M>,
     override val kClass: KClass<M>,
     override val ser: KSerializer<M>,
     override val json: Json = INetworkLink.defaultJson
 
-    ) : INetworkLink<M> {
+) : INetworkLink<M> {
+
+
 
     override fun register(): Boolean {
         return Kambridge.registerServerMessage(this)
