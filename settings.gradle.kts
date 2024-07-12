@@ -15,7 +15,7 @@ dependencyResolutionManagement {
 
             val Plugins = object {
                 val Architectury = "3.4.155" //=> https://maven.architectury.dev/architectury-plugin/architectury-plugin.gradle.plugin/
-                val ArchLoom = "1.6-SNAPSHOT" //=> https://maven.architectury.dev/dev/architectury/architectury-loom/
+                val ArchLoom = "1.7-SNAPSHOT" //=> https://maven.architectury.dev/dev/architectury/architectury-loom/
                 val Shadow = "7.1.2"
             }
 

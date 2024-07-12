@@ -18,10 +18,6 @@ val Item.identifier: Identifier
 val ItemStack.identifier: Identifier
     get() = item.identifier
 
-// TODO enchant ident?
-//val Enchantment.identifier: Identifier?
-//    get() = Registries.ENCHANTMENT.getId(this)
-
 val StatusEffect.identifier: Identifier?
     get() = Registries.STATUS_EFFECT.getId(this)
 

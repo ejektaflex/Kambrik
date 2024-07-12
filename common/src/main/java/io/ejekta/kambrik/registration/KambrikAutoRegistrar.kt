@@ -62,9 +62,6 @@ interface KambrikAutoRegistrar : KambrikMarker {
 
     infix fun String.forBlock(block: () -> Block) = forRegistration(Registries.BLOCK, block)
 
-    // TODO enchant registration
-//    infix fun String.forEnchant(enchant: () -> Enchantment) = forRegistration(Registries.ENCHANTMENT, enchant)
-
     infix fun <C : CarverConfig?> String.forCarver(carver: () -> Carver<C>): Carver<C> = forRegistration(Registries.CARVER, carver) as Carver<C>
 
     infix fun <FC : FeatureConfig?> String.forFeature(feature: () -> Feature<FC>): () -> Feature<FC> = forRegistration(Registries.FEATURE, feature) as () -> Feature<FC>
