@@ -12,7 +12,6 @@ import kotlin.reflect.KClass
 interface INetworkLink<M : CustomPayload> {
 
     val id: CustomPayload.Id<M>
-    val kClass: KClass<M>
     val ser: KSerializer<M>
     val json: Json
 

@@ -2,13 +2,11 @@ package io.ejekta.kambrik.bridge
 
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.internal.TestMsg
-import io.ejekta.kambrik.message.ClientMsg
+import io.ejekta.kambrik.message.KambrikMsg
 import io.ejekta.kambrik.message.INetworkLink
-import io.ejekta.kambrik.message.ServerMsg
 import io.ejekta.kambrik.registration.KambrikAutoRegistrar
 import net.minecraft.registry.Registry
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.util.Identifier
 
 interface KambrikSharedApi {
 
@@ -24,15 +22,15 @@ interface KambrikSharedApi {
 
     fun isOnServer(): Boolean
 
-    fun <M : ClientMsg> registerClientMessage(link: INetworkLink<M>): Boolean
+    fun <M : KambrikMsg> registerClientMessage(link: INetworkLink<M>): Boolean
 
-    fun <M : ClientMsg> sendMsgToClient(link: INetworkLink<M>, msg: M, player: ServerPlayerEntity)
+    fun <M : KambrikMsg> sendMsgToClient(link: INetworkLink<M>, msg: M, player: ServerPlayerEntity)
 
     // * Server
 
-    fun <M : ServerMsg> registerServerMessage(link: INetworkLink<M>): Boolean
+    fun <M : KambrikMsg> registerServerMessage(link: INetworkLink<M>): Boolean
 
-    fun <M : ServerMsg> sendMsgToServer(link: INetworkLink<M>, msg: M)
+    fun <M : KambrikMsg> sendMsgToServer(link: INetworkLink<M>, msg: M)
 
     // Registration
 
@@ -43,7 +41,6 @@ interface KambrikSharedApi {
     fun registerTestMessage() {
         Kambrik.Message.registerClientMessage(
             TestMsg.serializer(),
-            TestMsg::class,
             TestMsg.ID
         )
     }

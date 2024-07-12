@@ -9,16 +9,13 @@ import net.minecraft.network.packet.CustomPayload
 import net.minecraft.util.Identifier
 import kotlin.reflect.KClass
 
-class ServerNetworkLink<M : ServerMsg>(
+class ServerNetworkLink<M : KambrikMsg>(
 
     override val id: CustomPayload.Id<M>,
-    override val kClass: KClass<M>,
     override val ser: KSerializer<M>,
     override val json: Json = INetworkLink.defaultJson
 
 ) : INetworkLink<M> {
-
-
 
     override fun register(): Boolean {
         return Kambridge.registerServerMessage(this)

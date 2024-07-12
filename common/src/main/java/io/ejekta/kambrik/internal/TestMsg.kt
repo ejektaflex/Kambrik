@@ -1,11 +1,11 @@
 package io.ejekta.kambrik.internal
 
-import io.ejekta.kambrik.message.ClientMsg
+import io.ejekta.kambrik.message.KambrikMsg
 import kotlinx.serialization.Serializable
 import net.minecraft.network.packet.CustomPayload
 
 @Serializable
-data class TestMsg(val msg: String) : ClientMsg() {
+data class TestMsg(val msg: String) : KambrikMsg() {
     override fun onClientReceived() {
         println("Got Test Msg! It says: $msg")
     }
