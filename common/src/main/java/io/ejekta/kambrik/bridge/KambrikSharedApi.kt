@@ -26,13 +26,13 @@ interface KambrikSharedApi {
 
     fun <M : KambrikMsg> registerClientMessage(serializer: KSerializer<M>, id: CustomPayload.Id<M>): Boolean
 
-    fun <M : KambrikMsg> sendMsgToClient(link: INetworkLink<M>, msg: M, player: ServerPlayerEntity)
+    fun <M : KambrikMsg> sendMsgToClient(msg: M, player: ServerPlayerEntity)
 
     // * Server
 
     fun <M : KambrikMsg> registerServerMessage(serializer: KSerializer<M>, id: CustomPayload.Id<M>): Boolean
 
-    fun <M : KambrikMsg> sendMsgToServer(link: INetworkLink<M>, msg: M)
+    fun <M : KambrikMsg> sendMsgToServer(msg: M)
 
     // Registration
 

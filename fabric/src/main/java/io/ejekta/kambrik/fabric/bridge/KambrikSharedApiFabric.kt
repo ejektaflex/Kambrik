@@ -56,11 +56,11 @@ class KambrikSharedApiFabric : KambrikSharedApi {
         }
     }
 
-    override fun <M : KambrikMsg> sendMsgToClient(link: INetworkLink<M>, msg: M, player: ServerPlayerEntity) {
+    override fun <M : KambrikMsg> sendMsgToClient(msg: M, player: ServerPlayerEntity) {
         ServerPlayNetworking.send(player, msg)
     }
 
-    override fun <M : KambrikMsg> sendMsgToServer(link: INetworkLink<M>, msg: M) {
+    override fun <M : KambrikMsg> sendMsgToServer(msg: M) {
         ClientPlayNetworking.send(msg)
     }
 
