@@ -19,16 +19,7 @@ import net.minecraft.util.math.Box
 class KambrikSerialApi {
 
     val DefaultSerializers = SerializersModule {
-        // Built in data classes
-        contextual(BlockPos::class, BlockPosSerializer)
         contextual(Box::class, BoxSerializer)
-        contextual(Identifier::class, IdentitySer)
-        // Referential serializers
-        contextual(Item::class, ItemRefSerializer)
-        contextual(Block::class, BlockRefSerializer)
-        contextual(SoundEvent::class, SoundEventRefSerializer)
-        // Simple NBT Compound serializer
-        contextual(NbtCompound::class, SimpleNbtSerializer)
     }
 
     val Format = formatFor(DefaultSerializers) {

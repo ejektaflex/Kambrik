@@ -3,7 +3,9 @@ package io.ejekta.kambrik.registration
 import io.ejekta.kambrik.internal.KambrikMarker
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import io.ejekta.kambrikx.percale.toCodec
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 import net.minecraft.advancement.criterion.Criterion
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
@@ -88,6 +90,7 @@ interface KambrikAutoRegistrar : KambrikMarker {
         } as Lazy<BlockEntityType<T>>
     }
 
+    //TODO screen handler registration
     infix fun <T : ScreenHandler> String.forScreen(factory: ScreenHandlerType.Factory<T>): Lazy<ScreenHandlerType<T>> {
         return forRegistration(Registries.SCREEN_HANDLER) {
             ScreenHandlerType(
@@ -105,10 +108,15 @@ interface KambrikAutoRegistrar : KambrikMarker {
         return lazy { Stats.CUSTOM.getOrCreateStat(resultId.value, formatter) }
     }
 
-    fun String.forComponent(component: ComponentType<*>): Lazy<ComponentType<*>> {
-        return forRegistration(Registries.DATA_COMPONENT_TYPE) {
-            component
-        }
+    fun <C : Any> String.forComponent(component: ComponentType<C>): Lazy<ComponentType<C>> {
+        return forRegistration(Registries.DATA_COMPONENT_TYPE) { component } as Lazy<ComponentType<C>>
     }
+
+    fun <C : Any> String.forComponent(serializer: KSerializer<C>): Lazy<ComponentType<C>> {
+        return forComponent(
+            ComponentType.builder<C>().codec(serializer.toCodec()).build()
+        )
+    }
+
 
 }

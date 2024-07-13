@@ -43,7 +43,7 @@ dependencyResolutionManagement {
 
             val Mods = object {
                 val Cloth = "15.0.127" //=> https://maven.shedaniel.me/me/shedaniel/cloth/
-                val ModMenu = "11.0.1"
+                val ModMenu = "11.0.1" // => https://modrinth.com/mod/modmenu/versions
             }
 
             // Versions
