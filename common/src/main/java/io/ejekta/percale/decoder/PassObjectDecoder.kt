@@ -52,36 +52,4 @@ class PassObjectDecoder<T>(override val ops: DynamicOps<T>, override val input: 
         val dataResult = func()
         return dataResult.orThrow
     }
-
-    override fun <T> decodeSerializableElement(
-        descriptor: SerialDescriptor,
-        index: Int,
-        deserializer: DeserializationStrategy<T>,
-        previousValue: T?
-    ): T {
-        println("El deser: $descriptor, $deserializer, $index, $previousValue")
-        return super.decodeSerializableElement(descriptor, index, deserializer, previousValue)
-    }
-
-    override fun <A> decodeSerializableValue(deserializer: DeserializationStrategy<A>): A {
-        println("Obj deser: $deserializer")
-        val serial = deserializer.descriptor
-        val abc = deserializer.descriptor.kind
-        println(deserializer)
-
-        val pickedSer = when (input) {
-            is NbtString -> NbtStringSerializer
-            is NbtInt -> NbtIntSerializer
-            else -> null
-        }
-
-        pickedSer?.let {
-            println("Doing nbt decode deser..")
-            val decoder = pickDecoder(it.descriptor, ops, input, level + 1, serializersModule)
-            println("Time to start! Using: ${decoder::class.simpleName}")
-            return decoder.decodeSerializableValue(it) as A
-        }
-        println("No NBT picking, defaulting..")
-        return super.decodeSerializableValue(deserializer)
-    }
 }

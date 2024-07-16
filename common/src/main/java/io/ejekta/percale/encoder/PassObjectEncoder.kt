@@ -84,22 +84,4 @@ class PassObjectEncoder<T>(override val ops: DynamicOps<T>, serialMod: Serialize
         currentTag = descriptor.getElementName(index)
         return true
     }
-
-    override fun <A> encodeSerializableValue(serializer: SerializationStrategy<A>, value: A) {
-        println("Encoding $serializer with $value")
-        if (serializer.descriptor.kind is PolymorphicKind) {
-            println("Lets find a better one than polymorphic.")
-            val pickedSer = when (value) {
-                is NbtString -> NbtStringSerializer
-                is NbtInt -> NbtIntSerializer
-                else -> null
-            }
-            println("Better is: $pickedSer")
-            pickedSer?.let {
-                val item = value as NbtElement
-                return super.encodeSerializableValue(it as KSerializer<Any>, item)
-            }
-        }
-        super.encodeSerializableValue(serializer, value)
-    }
 }

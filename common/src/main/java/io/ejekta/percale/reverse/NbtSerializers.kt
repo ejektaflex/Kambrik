@@ -1,6 +1,8 @@
 package io.ejekta.percale.reverse
 
 import io.ejekta.kambrik.ext.toMap
+import io.ejekta.percale.decoder.PassDecoder
+import io.ejekta.percale.encoder.PassEncoder
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -62,28 +64,38 @@ fun doot() {
 }
 
 object NbtElementSerializer : KSerializer<NbtElement> {
-    /*
-    buildSerialDescriptor("kotlinx.serialization.json.JsonElement", PolymorphicKind.SEALED) {
-            // Resolve cyclic dependency in descriptors by late binding
-            element("JsonPrimitive", defer { JsonPrimitiveSerializer.descriptor })
-            element("JsonNull", defer { JsonNullSerializer.descriptor })
-            element("JsonLiteral", defer { JsonLiteralSerializer.descriptor })
-            element("JsonObject", defer { JsonObjectSerializer.descriptor })
-            element("JsonArray", defer { JsonArraySerializer.descriptor })
-        }
-     */
     @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
+    // Even if NBT won't use this, it's useful for JsonOps and such
     override val descriptor: SerialDescriptor = buildSerialDescriptor("percale.NbtElement", PolymorphicKind.OPEN) {
         element("percale.NbtInt", NbtIntSerializer.descriptor)
         element("percale.NbtString", NbtStringSerializer.descriptor)
+        //...etc
     }
 
     override fun serialize(encoder: Encoder, value: NbtElement) {
-        encoder.encodeSerializableValue(PolymorphicSerializer(NbtElement::class), value)
+        if (encoder is PassEncoder<*> && encoder.ops is NbtOps) {
+            val ser = fromInput(value)
+            return encoder.encodeSerializableValue(ser, value)
+        }
+        return encoder.encodeSerializableValue(PolymorphicSerializer(NbtElement::class), value)
     }
 
     override fun deserialize(decoder: Decoder): NbtElement {
-        return decoder.decodeSerializableValue(PolymorphicSerializer(NbtElement::class))
+        // If not an NBT pass decoder, then this could be an NbtElement being serialized by JsonOps! handle normally in that instance
+        val pass = decoder as? PassDecoder<*> ?: return decoder.decodeSerializableValue(PolymorphicSerializer(NbtElement::class))
+        val inp = pass.input as NbtElement
+        val deser = fromInput(inp)
+        return pass.decodeSerializableValue(deser, inp)
+    }
+
+    fun fromInput(input: NbtElement): KSerializer<NbtElement> {
+        val ser =  when (input) {
+            is NbtString -> NbtStringSerializer
+            is NbtInt -> NbtIntSerializer
+            else -> throw Exception("NbtElementSerializer does not know what serializer to use for this type: ${input.nbtType}")
+            //...etc
+        }
+        return ser as KSerializer<NbtElement>
     }
 }
 
