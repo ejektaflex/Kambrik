@@ -1,11 +1,12 @@
-package percale.encoder
+package io.ejekta.percale.encoder
 
 import com.mojang.serialization.DynamicOps
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.modules.EmptySerializersModule
+import kotlinx.serialization.modules.SerializersModule
 
-class PassListEncoder<T>(override val ops: DynamicOps<T>) : PassEncoder<T>(ops) {
+class PassListEncoder<T>(override val ops: DynamicOps<T>, serialMod: SerializersModule) : PassEncoder<T>(ops, serialMod) {
 
     override fun encodeFunc(func: () -> T) {
         push(func())
@@ -27,7 +28,7 @@ class PassListEncoder<T>(override val ops: DynamicOps<T>) : PassEncoder<T>(ops) 
         if (lastIndex == currentIndex) {
             return this
         }
-        val nestedEncoder = pickEncoder(descriptor, ops)
+        val nestedEncoder = pickEncoder(descriptor, ops, serializersModule)
         nestedEncoders.add(nestedEncoder)
         return nestedEncoder
     }

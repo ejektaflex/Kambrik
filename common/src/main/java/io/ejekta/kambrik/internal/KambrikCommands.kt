@@ -1,31 +1,28 @@
 package io.ejekta.kambrik.internal
 
-import codec
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.serialization.Codec
-import com.mojang.serialization.DynamicOps
 import com.mojang.serialization.JsonOps
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.command.*
 import io.ejekta.kambrik.text.sendError
 import io.ejekta.kambrik.text.sendFeedback
+import io.ejekta.percale.reverse.toKotlinJsonSerializer
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.modules.SerializersModule
 import net.minecraft.command.CommandRegistryAccess
-import net.minecraft.component.EnchantmentEffectComponentTypes
-import net.minecraft.component.type.ItemEnchantmentsComponent
 import net.minecraft.item.ItemStack
-import net.minecraft.predicate.item.EnchantmentsPredicate
+import net.minecraft.network.codec.PacketCodecs.codec
 import net.minecraft.registry.Registries
 import net.minecraft.registry.RegistryOps
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
-import toKotlinJsonSerializer
 
 object KambrikCommands {
     fun register(
@@ -69,8 +66,18 @@ object KambrikCommands {
                 "item" runs {
                     itemTests(this, registryAccess)
                 }
+
+                "comp" runs {
+                    compTests(this)
+                }
             }
         }
+
+
+    }
+
+    fun compTests(commandContext: CommandContext<ServerCommandSource>) {
+
 
 
     }

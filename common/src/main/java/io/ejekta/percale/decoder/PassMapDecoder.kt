@@ -1,14 +1,13 @@
-package percale.decoder
+package io.ejekta.percale.decoder
 
 import com.mojang.serialization.DataResult
 import com.mojang.serialization.DynamicOps
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.modules.EmptySerializersModule
+import kotlinx.serialization.modules.SerializersModule
 
-class PassMapDecoder<T>(override val ops: DynamicOps<T>, private val input: T, level: Int) : PassDecoder<T>(ops, level) {
-
-    override val serializersModule = EmptySerializersModule()
+class PassMapDecoder<T>(override val ops: DynamicOps<T>, override val input: T, level: Int, serialMod: SerializersModule) : PassDecoder<T>(ops, level, serialMod) {
 
     private val inputMap =
         ops.getMap(input).result().get()
@@ -26,7 +25,7 @@ class PassMapDecoder<T>(override val ops: DynamicOps<T>, private val input: T, l
         if (currentIndex < 0) {
             return this
         }
-        val pickedDecoder = pickDecoder(descriptor, ops, currentValue!!, level)
+        val pickedDecoder = pickDecoder(descriptor, ops, currentValue!!, level, serializersModule)
         return pickedDecoder
     }
 

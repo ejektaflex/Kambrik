@@ -2,9 +2,11 @@ package io.ejekta.kambrik.registration
 
 import io.ejekta.kambrik.internal.KambrikMarker
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar
-import io.ejekta.kambrikx.percale.toCodec
+import io.ejekta.percale.toCodec
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.modules.EmptySerializersModule
+import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
 import net.minecraft.advancement.criterion.Criterion
 import net.minecraft.block.Block
@@ -39,7 +41,6 @@ import net.minecraft.world.gen.carver.Carver
 import net.minecraft.world.gen.carver.CarverConfig
 import net.minecraft.world.gen.feature.Feature
 import net.minecraft.world.gen.feature.FeatureConfig
-import java.util.function.UnaryOperator
 
 
 @Suppress("UNCHECKED_CAST")
@@ -112,9 +113,12 @@ interface KambrikAutoRegistrar : KambrikMarker {
         return forRegistration(Registries.DATA_COMPONENT_TYPE) { component } as Lazy<ComponentType<C>>
     }
 
-    fun <C : Any> String.forComponent(serializer: KSerializer<C>): Lazy<ComponentType<C>> {
+    fun <C : Any> String.forComponent(
+        serializer: KSerializer<C>,
+        serializersModule: SerializersModule = EmptySerializersModule()
+    ): Lazy<ComponentType<C>> {
         return forComponent(
-            ComponentType.builder<C>().codec(serializer.toCodec()).build()
+            ComponentType.builder<C>().codec(serializer.toCodec(serializersModule)).build()
         )
     }
 
