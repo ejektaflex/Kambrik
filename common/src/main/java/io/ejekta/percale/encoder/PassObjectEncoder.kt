@@ -1,13 +1,21 @@
 package io.ejekta.percale.encoder
 
 import com.mojang.serialization.DynamicOps
+import io.ejekta.percale.reverse.NbtIntSerializer
+import io.ejekta.percale.reverse.NbtStringSerializer
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.SerializationStrategy
+import kotlinx.serialization.descriptors.PolymorphicKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
+import net.minecraft.nbt.NbtElement
+import net.minecraft.nbt.NbtInt
+import net.minecraft.nbt.NbtString
 
 @OptIn(ExperimentalSerializationApi::class)
 class PassObjectEncoder<T>(override val ops: DynamicOps<T>, serialMod: SerializersModule) : PassEncoder<T>(ops, serialMod) {
@@ -75,5 +83,23 @@ class PassObjectEncoder<T>(override val ops: DynamicOps<T>, serialMod: Serialize
         }
         currentTag = descriptor.getElementName(index)
         return true
+    }
+
+    override fun <A> encodeSerializableValue(serializer: SerializationStrategy<A>, value: A) {
+        println("Encoding $serializer with $value")
+        if (serializer.descriptor.kind is PolymorphicKind) {
+            println("Lets find a better one than polymorphic.")
+            val pickedSer = when (value) {
+                is NbtString -> NbtStringSerializer
+                is NbtInt -> NbtIntSerializer
+                else -> null
+            }
+            println("Better is: $pickedSer")
+            pickedSer?.let {
+                val item = value as NbtElement
+                return super.encodeSerializableValue(it as KSerializer<Any>, item)
+            }
+        }
+        super.encodeSerializableValue(serializer, value)
     }
 }
