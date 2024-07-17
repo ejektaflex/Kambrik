@@ -8,7 +8,7 @@ import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.command.*
 import io.ejekta.kambrik.text.sendError
 import io.ejekta.kambrik.text.sendFeedback
-import io.ejekta.percale.reverse.toKotlinJsonSerializer
+import io.ejekta.percale.reverse.toSerializer
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -146,7 +146,7 @@ object KambrikCommands {
                     try {
                         println("CODEC -> JSON")
                         println(heldEntry)
-                        val ks = heldEntry.type.codec?.toKotlinJsonSerializer() as KSerializer<Any>
+                        val ks = heldEntry.type.codec?.toSerializer() as KSerializer<Any>
                         println(ks)
 
                         println("Trying JSON encode..")

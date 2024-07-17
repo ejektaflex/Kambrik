@@ -1,5 +1,6 @@
 package io.ejekta.percale.reverse
 
+import com.mojang.serialization.JsonOps
 import io.ejekta.kambrik.ext.toMap
 import io.ejekta.percale.decoder.PassDecoder
 import io.ejekta.percale.encoder.PassEncoder
@@ -7,14 +8,12 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.PolymorphicSerializer
-import kotlinx.serialization.builtins.ByteArraySerializer
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.builtins.MapSerializer
-import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.builtins.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.JsonElement
+import com.google.gson.JsonPrimitive as GsonPrimitive
+import com.google.gson.JsonElement as GsonElement
 import net.minecraft.nbt.*
 
 object NbtStringSerializer : KSerializer<NbtString> {
@@ -38,14 +37,30 @@ object NbtIntSerializer : KSerializer<NbtInt> {
     }
 }
 
+object NbtListSerializer : KSerializer<NbtList> {
+    private val ser: KSerializer<List<NbtElement>>
+        get() = ListSerializer(NbtElementSerializer)
+    override val descriptor: SerialDescriptor = deferred { ser.descriptor }
+    override fun serialize(encoder: Encoder, value: NbtList) {
+        encoder.encodeSerializableValue(ser, value)
+    }
+    override fun deserialize(decoder: Decoder): NbtList {
+        val nbtList = decoder.decodeSerializableValue(ser)
+        val baseList = NbtList()
+        for (item in nbtList) {
+            baseList.add(item)
+        }
+        return baseList
+    }
+}
 
 object NbtCompoundSerializer : KSerializer<NbtCompound> {
-    private val ser = MapSerializer(String.serializer(), NbtElementSerializer)
-    override val descriptor: SerialDescriptor = ser.descriptor
+    private val ser: KSerializer<Map<String, NbtElement>>
+        get() = MapSerializer(String.serializer(), NbtElementSerializer)
+    override val descriptor: SerialDescriptor = deferred { ser.descriptor }
     override fun serialize(encoder: Encoder, value: NbtCompound) {
         encoder.encodeSerializableValue(ser, value.toMap())
     }
-
     override fun deserialize(decoder: Decoder): NbtCompound {
         val nbtMap = decoder.decodeSerializableValue(ser)
         val baseCompound = NbtCompound()
@@ -56,11 +71,16 @@ object NbtCompoundSerializer : KSerializer<NbtCompound> {
     }
 }
 
-//class NewNbtElementSerializer : KSerializer<NbtElement>
-
-fun doot() {
-    JsonElement
-    Int.serializer()
+object NbtIntArraySerializer : KSerializer<NbtIntArray> {
+    private val ser: KSerializer<IntArray>
+        get() = IntArraySerializer()
+    override val descriptor: SerialDescriptor = deferred { ser.descriptor }
+    override fun serialize(encoder: Encoder, value: NbtIntArray) {
+        encoder.encodeSerializableValue(ser, value.intArray)
+    }
+    override fun deserialize(decoder: Decoder): NbtIntArray {
+        return NbtIntArray(decoder.decodeSerializableValue(ser))
+    }
 }
 
 object NbtElementSerializer : KSerializer<NbtElement> {
@@ -69,6 +89,10 @@ object NbtElementSerializer : KSerializer<NbtElement> {
     override val descriptor: SerialDescriptor = buildSerialDescriptor("percale.NbtElement", PolymorphicKind.OPEN) {
         element("percale.NbtInt", NbtIntSerializer.descriptor)
         element("percale.NbtString", NbtStringSerializer.descriptor)
+        element("percale.NbtCompound", NbtCompoundSerializer.descriptor)
+        element("percale.NbtList", NbtListSerializer.descriptor)
+        element("percale.NbtIntArray", NbtIntArraySerializer.descriptor)
+        //element("percale.NbtCompound", NbtCompoundSerializer.descriptor)
         //...etc
     }
 
@@ -92,6 +116,9 @@ object NbtElementSerializer : KSerializer<NbtElement> {
         val ser =  when (input) {
             is NbtString -> NbtStringSerializer
             is NbtInt -> NbtIntSerializer
+            is NbtCompound -> NbtCompoundSerializer
+            is NbtList -> NbtListSerializer
+            is NbtIntArray -> NbtIntArraySerializer
             else -> throw Exception("NbtElementSerializer does not know what serializer to use for this type: ${input.nbtType}")
             //...etc
         }
@@ -99,31 +126,6 @@ object NbtElementSerializer : KSerializer<NbtElement> {
     }
 }
 
-//object NbtElementSerializer : KSerializer<NbtElement> {
-//    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("blah", PrimitiveKind.STRING)
-//    override fun serialize(encoder: Encoder, value: NbtElement) {
-//        when (value) {
-//            is NbtCompound -> NbtCompoundSerializer.serialize(encoder, value)
-//            is NbtInt -> NbtIntSerializer.serialize(encoder, value)
-//            is NbtString -> NbtStringSerializer.serialize(encoder, value)
-//            /*
-//            is NbtList -> {
-//                val listSerializer = ListSerializer(this)
-//                encoder.encodeSerializableValue(listSerializer, value.toList())
-//            }
-//             */
-//            else -> throw Exception("Bad NBT Element value type!")
-//        }
-//    }
-//
-//    override fun deserialize(decoder: Decoder): NbtElement {
-//        println("Deser..")
-//        println(decoder.serializersModule)
-//        println(descriptor)
-//
-//        return TODO("please implement this")
-//    }
-//}
 
 
 

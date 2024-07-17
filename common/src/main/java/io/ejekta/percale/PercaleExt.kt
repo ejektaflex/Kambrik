@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Pair
 import com.mojang.serialization.*
 import io.ejekta.percale.encoder.PassEncoder
 import io.ejekta.percale.decoder.PassDecoder
-import io.ejekta.percale.reverse.toKotlinJsonSerializer
+import io.ejekta.percale.reverse.toSerializer
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.EmptySerializersModule
@@ -14,8 +14,8 @@ import kotlinx.serialization.modules.contextual
 
 // ### Encoding ###
 
-@OptIn(ExperimentalSerializationApi::class)
-fun <T, U : Any> encodeWithDynamicOps(serializer: SerializationStrategy<U>, obj: U, ops: DynamicOps<T>, serialMod: SerializersModule = EmptySerializersModule()): T? {
+@PublishedApi
+internal fun <T, U : Any> encodeWithDynamicOps(serializer: SerializationStrategy<U>, obj: U, ops: DynamicOps<T>, serialMod: SerializersModule = EmptySerializersModule()): T? {
     val encoder = PassEncoder.pickEncoder(serializer.descriptor, ops, serialMod)
     encoder.encodeSerializableValue(serializer, obj)
     return encoder.getResult()
@@ -63,6 +63,6 @@ fun <U : Any> KSerializer<U>.toCodec(serialMod: SerializersModule = EmptySeriali
     }
 }
 
-inline fun <reified A : Any> SerializersModuleBuilder.codec(codec: Codec<A>, json: Json = Json.Default) {
-    contextual(codec.toKotlinJsonSerializer(json))
+inline fun <reified A : Any> SerializersModuleBuilder.contextualCodec(codec: Codec<A>) {
+    contextual(codec.toSerializer())
 }
