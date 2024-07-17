@@ -15,6 +15,7 @@ import kotlinx.serialization.encoding.Encoder
 import com.google.gson.JsonPrimitive as GsonPrimitive
 import com.google.gson.JsonElement as GsonElement
 import net.minecraft.nbt.*
+import oshi.jna.platform.mac.SystemB.Pri
 
 object NbtStringSerializer : KSerializer<NbtString> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("percale.NbtString", PrimitiveKind.STRING)
@@ -31,9 +32,18 @@ object NbtIntSerializer : KSerializer<NbtInt> {
     override fun serialize(encoder: Encoder, value: NbtInt) {
         encoder.encodeInt(value.intValue())
     }
-
     override fun deserialize(decoder: Decoder): NbtInt {
         return NbtInt.of(decoder.decodeInt())
+    }
+}
+
+object NbtLongSerializer : KSerializer<NbtLong> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("percale.NbtLong", PrimitiveKind.LONG)
+    override fun serialize(encoder: Encoder, value: NbtLong) {
+        encoder.encodeLong(value.longValue())
+    }
+    override fun deserialize(decoder: Decoder): NbtLong {
+        return NbtLong.of(decoder.decodeLong())
     }
 }
 
@@ -92,12 +102,12 @@ object NbtElementSerializer : KSerializer<NbtElement> {
         element("percale.NbtCompound", NbtCompoundSerializer.descriptor)
         element("percale.NbtList", NbtListSerializer.descriptor)
         element("percale.NbtIntArray", NbtIntArraySerializer.descriptor)
-        //element("percale.NbtCompound", NbtCompoundSerializer.descriptor)
+        element("percale.NbtLong", NbtLongSerializer.descriptor)
         //...etc
     }
 
     override fun serialize(encoder: Encoder, value: NbtElement) {
-        if (encoder is PassEncoder<*> && encoder.ops is NbtOps) {
+        if (encoder is PassEncoder<*>) {
             val ser = fromInput(value)
             return encoder.encodeSerializableValue(ser, value)
         }
@@ -119,6 +129,7 @@ object NbtElementSerializer : KSerializer<NbtElement> {
             is NbtCompound -> NbtCompoundSerializer
             is NbtList -> NbtListSerializer
             is NbtIntArray -> NbtIntArraySerializer
+            is NbtLong -> NbtLongSerializer
             else -> throw Exception("NbtElementSerializer does not know what serializer to use for this type: ${input.nbtType}")
             //...etc
         }

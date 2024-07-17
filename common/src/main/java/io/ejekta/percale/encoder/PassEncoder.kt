@@ -51,7 +51,7 @@ abstract class PassEncoder<T>(open val ops: DynamicOps<T>, serialMod: Serializer
                 StructureKind.CLASS, StructureKind.MAP, is PrimitiveKind, SerialKind.ENUM, PolymorphicKind.OPEN -> PassObjectEncoder(ops, serialMod)
                 StructureKind.LIST -> PassListEncoder(ops, serialMod)
                 else -> throw SerializationException("Unsupported descriptor type for our DynamicOps encoder: ${descriptor.kind}, ${descriptor.kind::class}")
-            }
+            }.also { println("${descriptor.kind} -> ${it::class.qualifiedName}") }
         }
     }
 

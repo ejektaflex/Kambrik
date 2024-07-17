@@ -22,8 +22,6 @@ class PassListEncoder<T>(override val ops: DynamicOps<T>, serialMod: Serializers
     private val listBuilder = mutableListOf<T>()
     private val nestedEncoders = mutableListOf<PassEncoder<T>>()
 
-    override val serializersModule = EmptySerializersModule()
-
     override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
         if (lastIndex == currentIndex) {
             return this
