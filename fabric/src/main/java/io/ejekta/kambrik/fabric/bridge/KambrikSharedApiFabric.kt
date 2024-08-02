@@ -1,5 +1,6 @@
 package io.ejekta.kambrik.fabric.bridge
 
+import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.bridge.BridgeSide
 import io.ejekta.kambrik.bridge.KambrikSharedApi
 import io.ejekta.kambrik.internal.registration.KambrikRegistrar

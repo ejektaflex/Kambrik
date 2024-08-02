@@ -37,7 +37,7 @@ configure<PublishingExtension> {
         create<MavenPublication>("Kambrik") {
             groupId = "io.ejekta"
             artifactId = "kambrik-common"
-            version = "${libs.versions.fullversion.get()}.SNAPSHOT.${SimpleDateFormat("YYYY.MMdd.HHmmss").format(Date())}"
+            version = "${libs.versions.fullversion.get()}"
             from(components.getByName("java"))
         }
     }

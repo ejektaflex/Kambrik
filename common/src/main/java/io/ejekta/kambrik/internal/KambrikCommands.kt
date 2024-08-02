@@ -1,5 +1,6 @@
 package io.ejekta.kambrik.internal
 
+import com.google.gson.JsonElement
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.serialization.Codec
@@ -8,12 +9,19 @@ import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.command.*
 import io.ejekta.kambrik.text.sendError
 import io.ejekta.kambrik.text.sendFeedback
+import io.ejekta.percale.contextualCodec
+import io.ejekta.percale.reverse.GsonElementSerializer
+import io.ejekta.percale.reverse.GsonObjectSerializer
+import io.ejekta.percale.reverse.PercaleJson
 import io.ejekta.percale.reverse.toSerializer
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.contextual
 import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.item.ItemStack
 import net.minecraft.network.codec.PacketCodecs.codec
@@ -23,6 +31,7 @@ import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
+import net.minecraft.util.dynamic.CodecCache
 
 object KambrikCommands {
     fun register(
@@ -91,33 +100,40 @@ object KambrikCommands {
             val json = Json {
                 serializersModule = SerializersModule {
                     codec(Identifier.CODEC)
+                    contextual(GsonElementSerializer)
+                    contextual(GsonObjectSerializer)
                 }
                 prettyPrint = true
             }
 
             val itemCodec = ItemStack.CODEC
 
+            val percaleFormat = PercaleJson(RegistryOps.of(JsonOps.INSTANCE, source.server.registryManager), json)
+
+            val itemString = percaleFormat.dynamicEncodeToString(held, itemCodec.toSerializer())
+
+            println(itemString)
+
             try {
 
-                val encoded = itemCodec.encodeStart(RegistryOps.of(JsonOps.INSTANCE, source.server.registryManager), held)
-                println(encoded)
+
+//                val encoded = itemCodec.encodeStart(RegistryOps.of(JsonOps.INSTANCE, source.server.registryManager), held)
+//                println(encoded)
 
                 for (comp in held.componentChanges.entrySet()) {
-                    println("COMP:")
-                    println(comp.key)
+                    //println("COMP:")
+                    //println(comp.key)
                     comp.key.codec
-                    println(comp.value)
+                    //println(comp.value)
                     val codec = comp.key.codec as Codec<Any>
 
-                    val compId = comp.key.toString() // ick but whatever
 
-                    val opsToUse = when (compId) {
-                        "minecraft:enchantments", "minecraft:tool" -> RegistryOps.of(JsonOps.INSTANCE, source.server.registryManager)
-                        else -> JsonOps.INSTANCE
-                    }
+                    //println("CODEC: ${codec::class}")
 
-                    val enc = codec.encodeStart(opsToUse, comp.value.get())
-                    println(enc)
+
+//                    val result = percaleFormat.dynamicEncodeToString(comp.value.get(), codec.toSerializer())
+//
+//                    println(result)
                 }
 
 
@@ -136,30 +152,33 @@ object KambrikCommands {
             val json = Json {
                 serializersModule = SerializersModule {
                     codec(Identifier.CODEC)
+                    contextual(GsonElementSerializer)
+                    contextual(GsonObjectSerializer)
                 }
                 prettyPrint = true
             }
 
+            val itemCodec = ItemStack.CODEC
 
-            for (heldEntry in held.components) {
-                if (heldEntry.type.codec != null) {
-                    try {
-                        println("CODEC -> JSON")
-                        println(heldEntry)
-                        val ks = heldEntry.type.codec?.toSerializer() as KSerializer<Any>
-                        println(ks)
+            val percaleFormat = PercaleJson(RegistryOps.of(JsonOps.INSTANCE, source.server.registryManager), json)
 
-                        println("Trying JSON encode..")
-                        val doots = json.encodeToString(ks, heldEntry.value)
-                        println("JSON encode success!")
-                        println(doots)
-
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-
-                }
+            val jsony = """
+    {
+        "minecraft:damage": 2,
+        "minecraft:custom_name": "\"Sword of Love\"",
+        "minecraft:repair_cost": 1,
+        "minecraft:enchantments": {
+            "levels": {
+                "minecraft:sharpness": 5
             }
+        }
+    }
+            """.trimIndent()
+
+            val compMapSer = MapSerializer(String.serializer(), GsonElementSerializer)
+
+
+
         }
     }
 

@@ -86,7 +86,7 @@ publishing {
         create<MavenPublication>("Kambrik") {
             groupId = "io.ejekta"
             artifactId = "kambrik-fabric"
-            version = "${libs.versions.fullversion.get()}.SNAPSHOT.${SimpleDateFormat("YYYY.MMdd.HHmmss").format(Date())}"
+            version = "${libs.versions.fullversion.get()}"
             from(components.getByName("java"))
         }
     }

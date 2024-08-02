@@ -107,7 +107,7 @@ object GsonElementSerializer : KSerializer<JsonElement> {
     }
 
     override fun serialize(encoder: Encoder, value: JsonElement) {
-        if (encoder is PassEncoder<*> && (encoder.ops is NbtOps || encoder.ops is JsonOps)) {
+        if (encoder is PassEncoder<*>) {
             val ser = fromInput(value)
             return encoder.encodeSerializableValue(ser, value)
         }

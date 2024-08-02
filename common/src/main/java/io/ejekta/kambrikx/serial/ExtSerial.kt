@@ -1,6 +1,7 @@
 package io.ejekta.kambrikx.serial
 
 import com.google.gson.JsonElement
+import com.google.gson.JsonParser
 import com.mojang.serialization.Codec
 import com.mojang.serialization.JsonOps
 import com.mojang.serialization.Lifecycle
@@ -18,6 +19,9 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
 import kotlinx.serialization.modules.polymorphic
@@ -54,7 +58,7 @@ fun main() {
     data class Hobby(val name: String)
 
     @Serializable
-    data class Doot(val amount: Int, val where: @Contextual NbtCompound)
+    data class Doot(val amount: Int, val where: @Contextual Identifier)
 
     val ops = JsonOps.INSTANCE
 
@@ -74,26 +78,21 @@ fun main() {
         serializersModule = serMod
     })
 
-    val ser = Doot.serializer()
 
-    val item = Doot(100, NbtCompound().apply {
-        putLong("ey", 3L)
-    })
+    val jsonElement = buildJsonObject {
+        put("amount", 55)
+        put("where", "c:d")
+    }
 
-    val doot = ops.serialize(
-        item,
-        ser,
-        serialMod = serMod
+    val result = jsonFormat.dynamicDecodeFromJsonElement(
+        JsonParser.parseString(
+            jsonElement.toString()
+        ),
+        Doot.serializer()
     )
 
-    println(doot)
 
-    val dootTwo = jsonFormat.dynamicEncodeToString(
-        item,
-        ser
-    )
-
-    println(dootTwo)
+    println(result)
 
 
 //    println("### A ###")

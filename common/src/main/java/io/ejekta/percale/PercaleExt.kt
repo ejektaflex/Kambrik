@@ -17,16 +17,14 @@ import kotlinx.serialization.modules.contextual
 // ### Encoding ###
 
 @PublishedApi
-internal fun <T, U : Any> encodeWithDynamicOps(serializer: SerializationStrategy<U>, obj: U, ops: DynamicOps<T>, serialMod: SerializersModule = EmptySerializersModule()): T? {
-    println("Picking based on: $serializer, ${serializer.descriptor}")
+internal fun <T, U : Any> encodeWithDynamicOps(serializer: SerializationStrategy<U>, obj: U, ops: DynamicOps<T>, serialMod: SerializersModule): T? {
     val encoder = PassEncoder.pickEncoder(serializer.descriptor, ops, serialMod)
-    println("Picked: ${encoder::class.qualifiedName}")
     encoder.encodeSerializableValue(serializer, obj)
     return encoder.getResult()
 }
 
 inline fun <T, reified U : Any> DynamicOps<T>.serialize(obj: U): T? {
-    return encodeWithDynamicOps(serializer<U>(), obj, this)
+    return encodeWithDynamicOps(serializer<U>(), obj, this, EmptySerializersModule())
 }
 
 fun <T, U : Any> DynamicOps<T>.serialize(
@@ -40,19 +38,23 @@ fun <T, U : Any> DynamicOps<T>.serialize(
 
 // ### Decoding ###
 
-@OptIn(ExperimentalSerializationApi::class)
-fun <T, U : Any> decodeWithDynamicOps(serializer: DeserializationStrategy<U>, obj: T, ops: DynamicOps<T>, serialMod: SerializersModule = EmptySerializersModule()): U {
+@PublishedApi
+internal fun <T, U : Any> decodeWithDynamicOps(serializer: DeserializationStrategy<U>, obj: T, ops: DynamicOps<T>, serialMod: SerializersModule): U {
     val decoder = PassDecoder.pickDecoder(serializer.descriptor, ops, obj, 0, serialMod)
     println("Picked: ${decoder::class.simpleName}")
     return serializer.deserialize(decoder)
 }
 
 inline fun <T, reified U : Any> DynamicOps<in T>.deserialize(obj: T): U {
-    return decodeWithDynamicOps(serializer<U>(), obj, this)
+    return decodeWithDynamicOps(serializer<U>(), obj, this, EmptySerializersModule())
 }
 
-fun <T, U : Any> DynamicOps<T>.deserialize(obj: T, serializer: DeserializationStrategy<U>): U {
-    return decodeWithDynamicOps(serializer, obj, this)
+fun <T, U : Any> DynamicOps<T>.deserialize(
+    obj: T,
+    serializer: DeserializationStrategy<U>,
+    serialMod: SerializersModule = EmptySerializersModule()
+): U {
+    return decodeWithDynamicOps(serializer, obj, this, serialMod)
 }
 
 // ### Codec
