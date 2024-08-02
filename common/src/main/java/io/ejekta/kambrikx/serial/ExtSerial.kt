@@ -5,6 +5,7 @@ import com.google.gson.JsonParser
 import com.mojang.serialization.Codec
 import com.mojang.serialization.JsonOps
 import com.mojang.serialization.Lifecycle
+import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.message.INetworkLink
 import io.ejekta.kambrik.message.KambrikMsg
 import io.ejekta.percale.*
@@ -44,7 +45,7 @@ import java.time.Instant
 import java.util.*
 
 fun <M : KambrikMsg> KSerializer<M>.toSimplePacketCodec(): PacketCodec<RegistryByteBuf, M> {
-    val json = INetworkLink.defaultJson
+    val json = Kambrik.Serial.networkingFormat()
     return PacketCodec.of(
         { value, buf -> buf.writeString(json.encodeToString(this, value)) },
         { json.decodeFromString(this, it.readString()) }

@@ -61,7 +61,7 @@ object KambrikCommands {
                 "net" runs {
                     try {
                         Kambrik.Logger.debug("Sending Net Test Message..")
-                        TestMsg("net send here").sendToClient(source.playerOrThrow)
+                        TestMsg("net send here", Identifier.of("a", "b")).sendToClient(source.playerOrThrow)
                     } catch (e: Exception) {
                         Kambrik.Logger.debug("Kambrik Net Test Message Failed.")
                         e.printStackTrace()

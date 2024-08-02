@@ -44,9 +44,9 @@ class KambrikSharedApiFabric : KambrikSharedApi {
     }
 
     override fun <M : KambrikMsg> registerServerMessage(serializer: KSerializer<M>, id: CustomPayload.Id<M>): Boolean {
-        PayloadTypeRegistry.playS2C().register(id, serializer.toSimplePacketCodec())
-        return ClientPlayNetworking.registerGlobalReceiver(id) { payload, context ->
-            (payload as KambrikMsg).onClientReceived()
+        PayloadTypeRegistry.playC2S().register(id, serializer.toSimplePacketCodec())
+        return ServerPlayNetworking.registerGlobalReceiver(id) { payload, context ->
+            (payload as KambrikMsg).onServerReceived(KambrikMsg.MsgContext(context.player()))
         }
     }
 
