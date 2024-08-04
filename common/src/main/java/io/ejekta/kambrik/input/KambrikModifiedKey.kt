@@ -10,7 +10,7 @@ sealed class KambrikModifiedBind(val keyMod: KambrikKeyModifier = KambrikKeyModi
 
     class Key(val keyCode: InputUtil.Key, mod: KambrikKeyModifier = KambrikKeyModifier.EMPTY) : KambrikModifiedBind(mod) {
         override fun getIsPressed(): Boolean {
-            return InputUtil.isKeyPressed(MinecraftClient.getInstance().window.handle, keyCode.code)
+            return InputUtil.isKeyPressed(MinecraftClient.getInstance().window.handle, keyCode.code) && keyMod.getIsPressed()
         }
     }
 
@@ -19,7 +19,7 @@ sealed class KambrikModifiedBind(val keyMod: KambrikKeyModifier = KambrikKeyModi
             return GLFW.glfwGetMouseButton(
                 MinecraftClient.getInstance().window.handle,
                 key
-            ) == 1
+            ) == 1 && keyMod.getIsPressed()
         }
     }
 }

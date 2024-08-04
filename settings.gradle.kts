@@ -30,7 +30,7 @@ dependencyResolutionManagement {
             }
 
             val Ejekta = object {
-                val Kambrik = "8.0.0.0005"
+                val Kambrik = "8.0.0.0007"
                 val KambrikSnapshot = false
             }
 
