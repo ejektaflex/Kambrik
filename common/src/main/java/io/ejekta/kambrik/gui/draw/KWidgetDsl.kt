@@ -1,22 +1,22 @@
 package io.ejekta.kambrik.gui.draw
 
 import io.ejekta.kambrik.gui.draw.KGuiDsl
-import net.minecraft.client.gui.Element
-import net.minecraft.client.gui.ParentElement
+import net.minecraft.client.gui.components.events.ContainerEventHandler
+import net.minecraft.client.gui.components.events.GuiEventListener
 
 open class KWidgetDsl(
     var drawFunc: KGuiDsl.() -> Unit = {},
     open val width: Int,
     open val height: Int,
-) : ParentElement {
+) : ContainerEventHandler {
 
     fun onDraw(func: KGuiDsl.() -> Unit) {
         drawFunc = func
     }
 
-    val children = mutableListOf<Element>()
+    val children = mutableListOf<GuiEventListener>()
 
-    override fun children(): MutableList<out Element> {
+    override fun children(): MutableList<out GuiEventListener> {
         return children
     }
 
@@ -28,11 +28,11 @@ open class KWidgetDsl(
         //
     }
 
-    override fun getFocused(): Element? {
+    override fun getFocused(): GuiEventListener? {
         return null
     }
 
-    override fun setFocused(focused: Element?) {
+    override fun setFocused(focused: GuiEventListener?) {
         //
     }
 

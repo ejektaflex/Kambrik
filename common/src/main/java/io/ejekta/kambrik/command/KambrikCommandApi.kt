@@ -2,7 +2,7 @@ package io.ejekta.kambrik.command
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
-import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.commands.CommandSourceStack
 
 /**
  * Accessed via [Kambrik.Command][io.ejekta.kambrik.Kambrik.Command]
@@ -18,8 +18,8 @@ class KambrikCommandApi internal constructor() {
      */
     fun addCommand(
         baseCommandName: String,
-        toDispatcher: CommandDispatcher<ServerCommandSource>,
-        func: ArgDsl<ServerCommandSource, LiteralArgumentBuilder<ServerCommandSource>>
+        toDispatcher: CommandDispatcher<CommandSourceStack>,
+        func: ArgDsl<CommandSourceStack, LiteralArgumentBuilder<CommandSourceStack>>
     ) {
         addSourcedCommand(baseCommandName, toDispatcher, func)
     }
@@ -32,7 +32,7 @@ class KambrikCommandApi internal constructor() {
         toDispatcher.register(
             KambrikArgBuilder(
                 LiteralArgumentBuilder.literal<SRC>(baseCommandName)
-            ).apply(func).finalize()
+            ).apply(func).doFinalization()
         )
     }
 }

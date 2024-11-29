@@ -1,21 +1,21 @@
 package io.ejekta.kambrik.fabric.ext.fapi
 
 import net.fabricmc.fabric.api.client.screen.v1.Screens
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.font.TextRenderer
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.ClickableWidget
-import net.minecraft.client.render.item.ItemRenderer
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.Font
+import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.renderer.entity.ItemRenderer
 
-val Screen.buttons: List<ClickableWidget>
+val Screen.buttons: List<AbstractWidget>
     get() = Screens.getButtons(this)
 
-val Screen.client: MinecraftClient
+val Screen.client: Minecraft
     get() = Screens.getClient(this)
 
 val Screen.itemRenderer: ItemRenderer
-    get() = MinecraftClient.getInstance().itemRenderer
+    get() = Minecraft.getInstance().itemRenderer
 
-val Screen.textRenderer: TextRenderer
+val Screen.textRenderer: Font
     get() = Screens.getTextRenderer(this)
 

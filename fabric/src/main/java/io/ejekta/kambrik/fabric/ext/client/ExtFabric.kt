@@ -1,9 +1,9 @@
 package io.ejekta.kambrik.fabric.ext.client
 
+import com.mojang.blaze3d.platform.InputConstants
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
-import net.minecraft.client.option.KeyBinding
-import net.minecraft.client.util.InputUtil
+import net.minecraft.client.KeyMapping
 
-fun KeyBinding.getBoundKey(): InputUtil.Key {
+fun KeyMapping.getBoundKey(): InputConstants.Key {
     return KeyBindingHelper.getBoundKeyOf(this)
 }

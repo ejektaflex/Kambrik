@@ -5,8 +5,7 @@ import io.ejekta.kambrik.ext.ksx.decodeFromStringTag
 import io.ejekta.kambrik.ext.ksx.encodeToStringTag
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
-import net.minecraft.nbt.NbtElement
-import net.minecraft.nbt.NbtString
+import net.minecraft.nbt.Tag
 
 //abstract class ItemDataJson<T> : ItemData<T>() {
 //
@@ -17,14 +16,14 @@ import net.minecraft.nbt.NbtString
 //        this.serializersModule = this@ItemDataJson.serializersModule
 //    }
 //
-//    override val defaultTag: NbtElement
+//    override val defaultTag: Tag
 //        get() = format.encodeToStringTag(ser, default())
 //
-//    override fun encode(value: T): NbtElement {
+//    override fun encode(value: T): Tag {
 //        return format.encodeToStringTag(ser, value)
 //    }
 //
-//    override fun decode(nbt: NbtElement): T {
+//    override fun decode(nbt: Tag): T {
 //        return format.decodeFromStringTag(ser, nbt as NbtString)
 //    }
 //

@@ -2,22 +2,23 @@ package io.ejekta.kambrik
 
 import io.ejekta.kambrik.command.KambrikCommandApi
 import io.ejekta.kambrik.criterion.KambrikCriterionApi
+import io.ejekta.kambrik.ext.Identifier
 import io.ejekta.kambrik.file.KambrikFileApi
 import io.ejekta.kambrik.input.KambrikInputApi
 import io.ejekta.kambrik.logging.KambrikLoggingApi
 import io.ejekta.kambrik.message.KambrikMessageApi
 import io.ejekta.kambrik.serial.KambrikSerialApi
 import io.ejekta.kambrik.structure.KambrikStructureApi
-import net.minecraft.util.Identifier
+import net.minecraft.resources.ResourceLocation
 import org.apache.logging.log4j.LogManager
 
 object Kambrik {
 
     const val ID = "kambrik"
 
-    fun idOf(unique: String) = Identifier.of(ID, unique)
+    fun idOf(unique: String) = Identifier(ID, unique)
 
-    val Logger = LogManager.getLogger("Kambrik")
+    internal val Logger = LogManager.getLogger("Kambrik")
 
     val Criterion: KambrikCriterionApi by lazy {
         KambrikCriterionApi()

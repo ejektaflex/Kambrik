@@ -2,7 +2,6 @@ package io.ejekta.kambrik
 
 
 import io.ejekta.kambrik.input.KambrikModifiedBind
-import net.minecraft.client.util.InputUtil
 
 class KambrikKeybind(
     val keyMod: KambrikModifiedBind,

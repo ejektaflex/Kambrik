@@ -5,11 +5,11 @@ import io.ejekta.kambrik.gui.draw.KGui
 import io.ejekta.kambrik.gui.draw.KGuiDsl
 import io.ejekta.kambrik.gui.draw.KRect
 import io.ejekta.kambrik.gui.draw.reactor.MouseReactor
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.text.Text
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.network.chat.Component
 
-abstract class KambrikScreen(title: Text) : Screen(title), KambrikScreenCommon {
+abstract class KambrikScreen(title: Component) : Screen(title), KambrikScreenCommon {
     override val boundsStack = mutableListOf<Pair<MouseReactor, KRect>>()
     override val areaClickStack = mutableListOf<Pair<() -> Unit, KRect>>()
     override val modalStack = mutableListOf<KGuiDsl.() -> Unit>()
@@ -34,7 +34,7 @@ abstract class KambrikScreen(title: Text) : Screen(title), KambrikScreenCommon {
         return super<Screen>.mouseScrolled(mouseX, mouseY, hAmount, vAmount)
     }
 
-    override fun render(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
+    override fun render(context: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
         onDrawBackground(context, mouseX, mouseY, delta)
         super.render(context, mouseX, mouseY, delta)
         onDrawForeground(context, mouseX, mouseY, delta)

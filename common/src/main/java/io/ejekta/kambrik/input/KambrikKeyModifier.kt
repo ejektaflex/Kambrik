@@ -1,6 +1,6 @@
 package io.ejekta.kambrik.input
 
-import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.gui.screens.Screen
 import org.lwjgl.glfw.GLFW
 
 class KambrikKeyModifier(

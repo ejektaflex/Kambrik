@@ -2,12 +2,13 @@
 	"required": true,
 	"minVersion": "0.8",
 	"package": "io.ejekta.kambrik.internal.mixins",
-	"compatibilityLevel": "JAVA_8",
+	"compatibilityLevel": "JAVA_21",
 	"mixins": [
 		"StructurePoolAccessor",
 		"AbstractCriterionTriggerer"
 	],
 	"injectors": {
 		"defaultRequire": 1
-	}
+	},
+	"refmap": "Kambrik-common-refmap.json"
 }

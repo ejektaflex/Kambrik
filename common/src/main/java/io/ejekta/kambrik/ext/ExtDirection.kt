@@ -1,17 +1,17 @@
 package io.ejekta.kambrik.ext
 
-import net.minecraft.util.math.Direction
-import net.minecraft.util.math.Vec3d
+import net.minecraft.core.Direction
+import net.minecraft.world.phys.Vec3
 
 fun Direction.Axis.othersAxes(): List<Direction.Axis> {
     return enumValues<Direction.Axis>().filter { it != this }
 }
 
 fun Direction.rotatedClockwise(times: Int): Direction {
-    return Direction.fromHorizontal((this.horizontal + times))
+    return Direction.from2DDataValue((this.get2DDataValue() + times))
 }
 
-fun Direction.toVec3d(): Vec3d {
-    return Vec3d(vector.x.toDouble(), vector.y.toDouble(), vector.z.toDouble())
+fun Direction.toVec3(): Vec3 {
+    return Vec3(normal.x.toDouble(), normal.y.toDouble(), normal.z.toDouble())
 }
 

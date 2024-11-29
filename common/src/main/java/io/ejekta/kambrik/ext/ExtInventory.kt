@@ -1,6 +1,6 @@
 package io.ejekta.kambrik.ext
 
-import net.minecraft.item.ItemStack
+import net.minecraft.world.item.ItemStack
 import kotlin.math.min
 
 fun List<ItemStack>.collect(amount: Int, func: ItemStack.() -> Boolean): Map<ItemStack, Int> {

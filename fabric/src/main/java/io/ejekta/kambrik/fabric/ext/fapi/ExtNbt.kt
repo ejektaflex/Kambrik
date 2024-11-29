@@ -1,14 +1,13 @@
 package io.ejekta.kambrik.fabric.ext.fapi
 
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
-import net.minecraft.nbt.NbtCompound
-import net.minecraft.nbt.NbtElement
-import net.minecraft.network.PacketByteBuf
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.Tag
+import net.minecraft.network.FriendlyByteBuf
 
-
-fun NbtElement.wrapToPacketByteBuf(): PacketByteBuf {
+fun Tag.wrapToPacketByteBuf(): FriendlyByteBuf {
     return PacketByteBufs.create().apply {
-        writeNbt(NbtCompound().apply {
+        writeNbt(CompoundTag().apply {
             put("content", this@wrapToPacketByteBuf.copy())
         })
     }

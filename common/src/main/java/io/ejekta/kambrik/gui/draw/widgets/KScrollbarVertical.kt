@@ -1,14 +1,13 @@
 package io.ejekta.kambrik.gui.draw.widgets
 
 import io.ejekta.kambrik.gui.draw.KGuiDsl
-import io.ejekta.kambrik.gui.draw.KSpriteGrid
-import net.minecraft.util.Identifier
+import net.minecraft.resources.ResourceLocation
 
 class KScrollbarVertical(
     scrollHeight: Int,
     scrollWidth: Int,
     override val knobSize: Int,
-    val knobImg: Identifier?,
+    val knobImg: ResourceLocation?,
     backgroundColor: Int? = null
 ) : KScrollbar(backgroundColor) {
     override val height = scrollHeight

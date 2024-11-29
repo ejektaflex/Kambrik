@@ -1,10 +1,10 @@
 package io.ejekta.kambrik.gui.draw
 
 import io.ejekta.kambrik.gui.screen.KambrikScreenCommon
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.entity.EntityType
-import net.minecraft.entity.LivingEntity
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.LivingEntity
 
 
 class KGui(
@@ -20,7 +20,7 @@ class KGui(
 
     val entityRenderCache = mutableMapOf<EntityType<*>, LivingEntity>()
 
-    fun draw(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float? = null) {
+    fun draw(context: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float? = null) {
         logic.boundsStack.clear()
         logic.areaClickStack.clear()
         val toDraw = logic.modalStack.lastOrNull() ?: func // Draw top of modal stack, or func if not exists

@@ -1,44 +1,54 @@
-import java.text.SimpleDateFormat
-import java.util.*
-
 plugins {
-    id("org.jetbrains.kotlin.jvm") version libs.versions.kotlin
-    kotlin("plugin.serialization") version libs.versions.ksx
-    `maven-publish`
-    signing
+    id("multiloader-common")
+    id("net.neoforged.moddev")
+    kotlin("jvm") version "2.0.21"
 }
 
-architectury { common("fabric", "neoforge") }
-
-loom {
-    accessWidenerPath.set(file("src/main/resources/kambrik.accesswidener"))
+neoForge {
+    neoFormVersion = project.property("neo_form_version") as String
+    // Automatically enable AccessTransformers if the file exists
+    val at = file("src/main/resources/META-INF/accesstransformer.cfg")
+    if (at.exists()) {
+        accessTransformers.add(at.absolutePath)
+    }
+    parchment {
+        minecraftVersion = project.property("parchment_minecraft") as String
+        mappingsVersion = project.property("parchment_version") as String
+    }
 }
 
 repositories {
-    mavenCentral()
     mavenLocal()
-    maven("https://maven.terraformersmc.com/releases/") // Shedaniel
 }
 
 dependencies {
-    // Add dependencies on the required Kotlin modules.
-    implementation(kotlin("stdlib-jdk8"))
+
+    compileOnly("org.spongepowered:mixin:0.8.5")
+    // fabric and neoforge both bundle mixinextras, so it is safe to use it in common
+    compileOnly("io.github.llamalad7:mixinextras-common:0.3.5")
+    annotationProcessor("io.github.llamalad7:mixinextras-common:0.3.5")
+
+    compileOnly("io.ejekta.percale:percale-common-1.21:0.0.4")
+
     implementation(kotlin("reflect"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    modImplementation(libs.bundles.mod.deps.common)
 }
 
-kotlin {
-    jvmToolchain(21)
+tasks.test {
+    useJUnitPlatform()
 }
 
-configure<PublishingExtension> {
-    publications {
-        create<MavenPublication>("Kambrik") {
-            groupId = "io.ejekta"
-            artifactId = "kambrik-common"
-            version = "${libs.versions.fullversion.get()}"
-            from(components.getByName("java"))
-        }
+configurations {
+    create("commonJava") {
+        isCanBeResolved = false
+        isCanBeConsumed = true
     }
+    create("commonResources") {
+        isCanBeResolved = false
+        isCanBeConsumed = true
+    }
+}
+
+artifacts {
+    add("commonJava", sourceSets["main"].java.sourceDirectories.singleFile)
+    add("commonResources", sourceSets["main"].resources.sourceDirectories.singleFile)
 }

@@ -1,32 +1,31 @@
 package io.ejekta.kambrik.serial
 
-import io.ejekta.kambrik.serial.serializers.*
+import io.ejekta.kambrik.serial.serializers.BoxSerializer
+import io.ejekta.kambrik.serial.serializers.IdentitySer
+import io.ejekta.kambrik.serial.serializers.Vec3DSer
 import io.ejekta.percale.contextualCodec
-import io.ejekta.percale.reverse.NbtCompoundSerializer
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
+import io.ejekta.percale.reverse.CompoundTagSerializer
+import io.ejekta.percale.reverse.toSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonBuilder
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.contextual
-import net.minecraft.block.Block
-import net.minecraft.item.Item
-import net.minecraft.nbt.NbtCompound
-import net.minecraft.sound.SoundEvent
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
-import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Box
-import net.minecraft.util.math.Vec3d
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.phys.AABB
+import net.minecraft.world.phys.Vec3
 
 @Suppress("PropertyName")
 class KambrikSerialApi {
 
     val DefaultSerializers = SerializersModule {
-        contextual(Identifier::class, IdentitySer)
-        contextual(Box::class, BoxSerializer)
-        contextual(Vec3d::class, Vec3DSer)
-        contextual(NbtCompound::class, NbtCompoundSerializer)
+        contextual(ResourceLocation::class, IdentitySer)
+        contextual(AABB::class, BoxSerializer)
+        contextual(Vec3::class, Vec3DSer)
+        contextual(CompoundTag::class, CompoundTagSerializer)
+        //contextualCodec(ItemStack.CODEC)
+        contextual(ItemStack::class, ItemStack.CODEC.toSerializer(JsonObject.serializer()))
     }
 
     private var networkSerializers = SerializersModule {

@@ -1,18 +1,18 @@
 package io.ejekta.kambrik.ext.math
 
-import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.util.math.Vec3d
+import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.world.phys.Vec3
 
-fun MatrixStack.translate(vec3d: Vec3d) {
-    translate(vec3d.x, vec3d.y, vec3d.z)
+fun PoseStack.translate(vec3: Vec3) {
+    translate(vec3.x, vec3.y, vec3.z)
 }
 
 
-fun MatrixStack.scale(amt: Float) {
+fun PoseStack.scale(amt: Float) {
     scale(amt, amt, amt)
 }
 
 
-operator fun MatrixStack.plusAssign(vec3d: Vec3d) {
+operator fun PoseStack.plusAssign(vec3d: Vec3) {
     translate(vec3d)
 }

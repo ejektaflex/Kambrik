@@ -3,18 +3,18 @@ package io.ejekta.kambrik.internal
 import io.ejekta.kambrik.message.KambrikMsg
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import net.minecraft.network.packet.CustomPayload
-import net.minecraft.util.Identifier
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload
+import net.minecraft.resources.ResourceLocation
 
 @Serializable
-data class TestMsg(val msg: String, @Contextual val id: Identifier) : KambrikMsg() {
+data class TestMsg(val msg: String, @Contextual val id: ResourceLocation) : KambrikMsg() {
     override fun onClientReceived() {
         println("Got Test Msg! It says: $msg")
     }
 
-    override fun getId(): CustomPayload.Id<TestMsg> = ID
+    override fun type(): CustomPacketPayload.Type<TestMsg> = ID
 
     companion object {
-        val ID: CustomPayload.Id<TestMsg> = CustomPayload.id("test_msg")
+        val ID: CustomPacketPayload.Type<TestMsg> = CustomPacketPayload.createType("test_msg")
     }
 }

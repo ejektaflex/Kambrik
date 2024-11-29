@@ -3,15 +3,15 @@ package io.ejekta.kambrik.gui.screen
 import io.ejekta.kambrik.gui.draw.KGuiDsl
 import io.ejekta.kambrik.gui.draw.KRect
 import io.ejekta.kambrik.gui.draw.reactor.MouseReactor
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.Element
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.events.GuiEventListener
 
-interface KambrikScreenCommon : Element {
+interface KambrikScreenCommon : GuiEventListener {
     val boundsStack: MutableList<Pair<MouseReactor, KRect>>
     val areaClickStack: MutableList<Pair<() -> Unit, KRect>>
     val modalStack: MutableList<KGuiDsl.() -> Unit>
-    fun onDrawBackground(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float)
-    fun onDrawForeground(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float)
+    fun onDrawBackground(context: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float)
+    fun onDrawForeground(context: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float)
 
     fun cycleDrawnWidgets(func: (widget: MouseReactor, rect: KRect) -> Unit) {
         for (bounds in boundsStack) {

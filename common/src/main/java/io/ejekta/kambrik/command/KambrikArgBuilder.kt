@@ -13,13 +13,17 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionProvider
 import com.mojang.brigadier.tree.CommandNode
-import net.minecraft.command.EntitySelector
-import net.minecraft.command.argument.*
-import net.minecraft.command.argument.IdentifierArgumentType.identifier
-import net.minecraft.command.argument.NumberRangeArgumentType.intRange
-import net.minecraft.predicate.NumberRange
-import net.minecraft.util.Formatting
-import net.minecraft.util.Identifier
+import net.minecraft.ChatFormatting
+import net.minecraft.commands.arguments.AngleArgument
+import net.minecraft.commands.arguments.ColorArgument
+import net.minecraft.commands.arguments.EntityArgument
+import net.minecraft.commands.arguments.ResourceLocationArgument.id
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument
+import net.minecraft.commands.arguments.coordinates.Coordinates
+import net.minecraft.commands.arguments.coordinates.Vec2Argument
+import net.minecraft.commands.arguments.coordinates.Vec3Argument
+import net.minecraft.commands.arguments.selector.EntitySelector
+import net.minecraft.resources.ResourceLocation
 import java.util.function.Predicate
 
 /**
@@ -31,7 +35,7 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(var arg: A) :
 
     val subArgs = mutableListOf<KambrikArgBuilder<SRC, *>>()
 
-    fun finalize(): A {
+    fun doFinalization(): A {
         for (subArg in subArgs) {
             arg.then(subArg.build())
         }
@@ -43,7 +47,7 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(var arg: A) :
      */
     fun literal(word: String, func: ArgDsl<SRC, LiteralArgumentBuilder<SRC>> = {}): LiteralArgumentBuilder<SRC> {
         val newArg = KambrikArgBuilder<SRC, LiteralArgumentBuilder<SRC>>(LiteralArgumentBuilder.literal(word)).apply(func)
-        newArg.finalize()
+        newArg.doFinalization()
         subArgs.add(newArg)
         return newArg.arg
     }
@@ -57,7 +61,7 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(var arg: A) :
         val built = KambrikArgBuilder(newArg).apply {
             arg.requires(pred)
         }.apply(func)
-        built.finalize()
+        built.doFinalization()
         subArgs.add(built)
     }
 
@@ -78,7 +82,7 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(var arg: A) :
             req.arg.suggests(it)
         }
 
-        req.finalize()
+        req.doFinalization()
         subArgs.add(req)
         return req.arg
     }
@@ -86,34 +90,30 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(var arg: A) :
     // Pre-made argument methods. If you want a custom one, use `argument()` above
 
     fun argBlockPos(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, PosArgument> = {}
-    ) = argument(BlockPosArgumentType.blockPos(), word, items, func)
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, Coordinates> = {}
+    ) = argument(BlockPosArgument.blockPos(), word, items, func)
 
     fun argBool(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, Boolean> = {}
     ) = argument(bool(), word, items, func)
 
     fun argColor(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, Formatting> = {}
-    ) = argument(ColorArgumentType.color(), word, items, func)
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, ChatFormatting> = {}
+    ) = argument(ColorArgument.color(), word, items, func)
 
     fun argFloat(
         word: String, range: ClosedFloatingPointRange<Float>? = null,
         items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, Float> = {}
     ) = argument(if (range != null) FloatArgumentType.floatArg(range.start, range.endInclusive) else FloatArgumentType.floatArg(), word, items, func)
 
-    fun argIdentifier(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, Identifier> = {}
-    ) = argument(identifier(), word, items, func)
+    fun argResource(
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, ResourceLocation> = {}
+    ) = argument(id(), word, items, func)
 
     fun argInt(
         word: String, range: IntRange? = null,
         items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, Int> = {}
     ) = argument(if (range != null) integer(range.first, range.last) else integer(), word, items, func)
-
-    fun argIntRange(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, NumberRange.IntRange> = {}
-    ) = argument(intRange(), word, items, func)
 
     fun argString(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, String> = {}
@@ -125,11 +125,11 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(var arg: A) :
 
     fun argPlayer(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, EntitySelector> = {}
-    ) = argument(EntityArgumentType.player(), word, items, func)
+    ) = argument(EntityArgument.player(), word, items, func)
 
     fun argPlayers(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, EntitySelector> = {}
-    ) = argument(EntityArgumentType.players(), word, items, func)
+    ) = argument(EntityArgument.players(), word, items, func)
 
     // TODO reimplement argItemStack
 //    fun argItemStack(
@@ -138,25 +138,25 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(var arg: A) :
 
     fun argEntity(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, EntitySelector> = {}
-    ) = argument(EntityArgumentType.entity(), word, items, func)
+    ) = argument(EntityArgument.entity(), word, items, func)
 
     fun argEntities(
         word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, EntitySelector> = {}
-    ) = argument(EntityArgumentType.entities(), word, items, func)
+    ) = argument(EntityArgument.entities(), word, items, func)
 
     fun argAngle(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, AngleArgumentType.Angle> = {}
-    ) = argument(AngleArgumentType.angle(), word, items, func)
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, AngleArgument.SingleAngle> = {}
+    ) = argument(AngleArgument.angle(), word, items, func)
 
     fun argVec2(
         word: String, centerInts: Boolean? = null,
-        items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, PosArgument> = {}
-    ) = argument(centerInts?.let { Vec2ArgumentType.vec2(it) } ?: Vec2ArgumentType.vec2(), word, items, func)
+        items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, Coordinates> = {}
+    ) = argument(centerInts?.let { Vec2Argument.vec2(it) } ?: Vec2Argument.vec2(), word, items, func)
 
     fun argVec3(
         word: String, centerInts: Boolean? = null,
-        items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, PosArgument> = {}
-    ) = argument(centerInts?.let { Vec3ArgumentType.vec3(it) } ?: Vec3ArgumentType.vec3(), word, items, func)
+        items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, Coordinates> = {}
+    ) = argument(centerInts?.let { Vec3Argument.vec3(it) } ?: Vec3Argument.vec3(), word, items, func)
 
     /**
      * A shortcut for creating a literal argument.

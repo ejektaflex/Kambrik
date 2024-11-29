@@ -3,17 +3,17 @@ package io.ejekta.kambrik.message
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.bridge.Kambridge
 import kotlinx.serialization.Serializable
-import net.minecraft.network.packet.CustomPayload
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload
+import net.minecraft.server.level.ServerPlayer
 
 /**
  * This represents a serializable message that can be sent to a client.
  */
 @Serializable
-abstract class KambrikMsg : CustomPayload {
+abstract class KambrikMsg : CustomPacketPayload {
 
     data class MsgContext(
-        val player: ServerPlayerEntity
+        val player: ServerPlayer
     )
 
     open fun onClientReceived() {
@@ -24,11 +24,11 @@ abstract class KambrikMsg : CustomPayload {
         // Executes on server thread
     }
 
-    fun sendToClient(player: ServerPlayerEntity) {
+    fun sendToClient(player: ServerPlayer) {
         Kambridge.sendMsgToClient(this, player)
     }
 
-    fun sendToClients(players: Collection<ServerPlayerEntity>) {
+    fun sendToClients(players: Collection<ServerPlayer>) {
         for (player in players) {
             Kambridge.sendMsgToClient(this, player)
         }

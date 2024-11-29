@@ -1,8 +1,8 @@
 package io.ejekta.kambrik.internal.mixins;
 
 import io.ejekta.kambrik.Kambrik;
-import net.minecraft.advancement.criterion.AbstractCriterion;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
+import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -10,17 +10,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.function.Predicate;
 
-@Mixin(AbstractCriterion.class)
-public class AbstractCriterionTriggerer<T extends AbstractCriterion.Conditions> {
-    @Inject(method = "trigger(Lnet/minecraft/server/network/ServerPlayerEntity;Ljava/util/function/Predicate;)V",
+@Mixin(SimpleCriterionTrigger.class)
+public class AbstractCriterionTriggerer<T extends SimpleCriterionTrigger.SimpleInstance> {
+    @Inject(method = "trigger(Lnet/minecraft/server/level/ServerPlayer;Ljava/util/function/Predicate;)V",
             at = @At("HEAD")
     )
-    private void injected(ServerPlayerEntity player, Predicate<T> predicate, CallbackInfo ci) {
-        Kambrik.INSTANCE.getCriterion().handleGameTrigger$Kambrik(
-                player,
-                (AbstractCriterion<AbstractCriterion.Conditions>)(Object)this,
-                (Predicate<AbstractCriterion.Conditions>) predicate
-        );
+    private void injected_kambrik(ServerPlayer player, Predicate<T> predicate, CallbackInfo ci) {
+        // TODO fix criterion hook
+//        Kambrik.INSTANCE.getCriterion().handleGameTrigger$examplemod_common_1_21(
+//                player,
+//                (SimpleCriterionTrigger<SimpleCriterionTrigger.SimpleInstance>)(Object)this,
+//                (Predicate<SimpleCriterionTrigger.SimpleInstance>) predicate
+//        );
     }
 }
 

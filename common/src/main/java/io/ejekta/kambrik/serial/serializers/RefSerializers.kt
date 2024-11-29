@@ -7,12 +7,13 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import net.minecraft.block.Block
-import net.minecraft.item.Item
-import net.minecraft.registry.Registries
-import net.minecraft.registry.Registry
-import net.minecraft.sound.SoundEvent
-import net.minecraft.util.Identifier
+import net.minecraft.core.Registry
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.core.registries.Registries
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.sounds.SoundEvent
+import net.minecraft.world.item.Item
+import net.minecraft.world.level.block.Block
 
 open class RegistryObjectSerializer<T>(private val reg: () -> Registry<T>, serialName: String) : KSerializer<T> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(serialName, PrimitiveKind.STRING)
@@ -23,14 +24,14 @@ open class RegistryObjectSerializer<T>(private val reg: () -> Registry<T>, seria
 
     override fun deserialize(decoder: Decoder): T {
         val id = decoder.decodeString()
-        return reg()[Identifier.of(id)] ?: throw SerializationException("Could not find saved identifier!: $id")
+        return reg()[ResourceLocation.parse(id)] ?: throw SerializationException("Could not find saved identifier!: $id")
     }
 
 }
 
-object ItemRefSerializer : RegistryObjectSerializer<Item>({ Registries.ITEM }, "ref.yarn.Item")
+object ItemRefSerializer : RegistryObjectSerializer<Item>({ BuiltInRegistries.ITEM }, "ref.Item")
 
-object BlockRefSerializer : RegistryObjectSerializer<Block>({ Registries.BLOCK }, "ref.yarn.Block")
+object BlockRefSerializer : RegistryObjectSerializer<Block>({ BuiltInRegistries.BLOCK }, "ref.Block")
 
-object SoundEventRefSerializer : RegistryObjectSerializer<SoundEvent>({ Registries.SOUND_EVENT }, "ref.yarn.SoundEvent")
+object SoundEventRefSerializer : RegistryObjectSerializer<SoundEvent>({ BuiltInRegistries.SOUND_EVENT }, "ref.SoundEvent")
 

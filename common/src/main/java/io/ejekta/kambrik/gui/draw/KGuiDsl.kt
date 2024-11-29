@@ -1,34 +1,31 @@
 package io.ejekta.kambrik.gui.draw
 
+import com.mojang.blaze3d.vertex.PoseStack
 import io.ejekta.kambrik.gui.draw.reactor.MouseReactor
 import io.ejekta.kambrik.text.KambrikTextBuilder
 import io.ejekta.kambrik.text.textLiteral
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.font.TextRenderer
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.ingame.InventoryScreen
-import net.minecraft.client.render.LightmapTextureManager
-import net.minecraft.client.render.Tessellator
-import net.minecraft.client.render.VertexConsumerProvider
-import net.minecraft.client.render.item.ItemRenderer
-import net.minecraft.client.util.BufferAllocator
-import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.entity.EntityType
-import net.minecraft.entity.LivingEntity
-import net.minecraft.item.ItemStack
-import net.minecraft.text.MutableText
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.Font
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.screens.inventory.InventoryScreen
+import net.minecraft.client.renderer.entity.ItemRenderer
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.util.FormattedCharSequence
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.item.ItemStack
 import kotlin.math.max
 import kotlin.math.min
 
-data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val mouseY: Int, val delta: Float?) {
+data class KGuiDsl(val ctx: KGui, val context: GuiGraphics, val mouseX: Int, val mouseY: Int, val delta: Float?) {
 
-    val textRenderer: TextRenderer
-        get() = MinecraftClient.getInstance().textRenderer
+    val fontRenderer: Font
+        get() = Minecraft.getInstance().font
 
     val itemRenderer: ItemRenderer
-        get() = MinecraftClient.getInstance().itemRenderer
+        get() = Minecraft.getInstance().itemRenderer
 
     private val frameDeferredTasks = mutableListOf<KGuiDsl.() -> Unit>()
 
@@ -71,11 +68,11 @@ data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val
     }
 
     fun itemStackIcon(stack: ItemStack, x: Int = 0, y: Int = 0) {
-        context.drawItem(stack, ctx.absX(x), ctx.absY(y))
+        context.renderItem(stack, ctx.absX(x), ctx.absY(y))
     }
 
     fun itemStackOverlay(stack: ItemStack, x: Int = 0, y: Int = 0) {
-        context.drawItem(stack, x, y)
+        context.renderItem(stack, x, y)
     }
 
     fun itemStack(stack: ItemStack, x: Int = 0, y: Int = 0) {
@@ -86,7 +83,7 @@ data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val
     fun itemStackWithTooltip(stack: ItemStack, x: Int, y: Int) {
         itemStack(stack, x, y)
         onHover(x, y, 18, 18) {
-            context.drawItemTooltip(textRenderer, stack, x, y)
+            context.renderTooltip(fontRenderer, stack, x, y)
         }
     }
 
@@ -100,10 +97,10 @@ data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val
         onHover(0, 0, w, h, func)
     }
 
-    fun tooltip(texts: List<Text>) {
+    fun tooltip(texts: List<FormattedCharSequence>) {
         defer {
-            context.drawTooltip(
-                textRenderer,
+            context.renderTooltip(
+                fontRenderer,
                 texts,
                 mouseX,
                 mouseY
@@ -111,44 +108,44 @@ data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val
         }
     }
 
-    fun tooltip(func: KambrikTextBuilder<MutableText>.() -> Unit) {
-        tooltip(listOf(textLiteral("", func)))
+    fun tooltip(func: KambrikTextBuilder<MutableComponent>.() -> Unit) {
+        tooltip(listOf(textLiteral("", func).visualOrderText))
     }
 
-    fun text(x: Int, y: Int, text: Text) {
-        context.drawText(textRenderer, text, ctx.absX(x), ctx.absY(y), 0xFFFFFF, false)
+    fun text(x: Int, y: Int, text: Component) {
+        context.drawString(fontRenderer, text, ctx.absX(x), ctx.absY(y), 0xFFFFFF, false)
     }
 
-    fun text(x: Int = 0, y: Int = 0, textDsl: KambrikTextBuilder<MutableText>.() -> Unit) {
+    fun text(x: Int = 0, y: Int = 0, textDsl: KambrikTextBuilder<MutableComponent>.() -> Unit) {
         text(x, y, textLiteral("", textDsl))
     }
 
-    fun textNoShadow(x: Int, y: Int, text: Text) {
-        context.drawText(textRenderer, text, ctx.absX(x), ctx.absY(y), 0xFFFFFF, false)
+    fun textNoShadow(x: Int, y: Int, text: Component) {
+        context.drawString(fontRenderer, text, ctx.absX(x), ctx.absY(y), 0xFFFFFF, false)
     }
 
-    fun textNoShadow(x: Int = 0, y: Int = 0, textDsl: KambrikTextBuilder<MutableText>.() -> Unit) {
+    fun textNoShadow(x: Int = 0, y: Int = 0, textDsl: KambrikTextBuilder<MutableComponent>.() -> Unit) {
         textNoShadow(x, y, textLiteral("", textDsl))
     }
 
-    fun textCentered(x: Int, y: Int, text: Text) {
-        context.drawText(
-            textRenderer,
+    fun textCentered(x: Int, y: Int, text: Component) {
+        context.drawString(
+            fontRenderer,
             text,
-            ctx.absX(x) - textRenderer.getWidth(text) / 2,
+            ctx.absX(x) - fontRenderer.width(text) / 2,
             ctx.absY(y),
             0xFFFFFF,
             false
         )
     }
 
-    fun textCentered(x: Int = 0, y: Int = 0, textDsl: KambrikTextBuilder<MutableText>.() -> Unit) {
+    fun textCentered(x: Int = 0, y: Int = 0, textDsl: KambrikTextBuilder<MutableComponent>.() -> Unit) {
         textCentered(x, y, textLiteral("", textDsl))
     }
 
-    fun textImmediate(x: Int, y: Int, text: Text) {
-        val matrixStack = MatrixStack()
-        matrixStack.translate(0.0, 0.0, 201.0)
+    fun textImmediate(x: Int, y: Int, text: Component) {
+        val poseStack = PoseStack()
+        poseStack.translate(0.0, 0.0, 201.0)
 //        textRenderer.draw
         // TODO allocator visibility? How is this done now, anyways?
         //val immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().allocator)
@@ -159,7 +156,7 @@ data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val
 //            ctx.absY(y).toFloat(),
 //            0xFFFFFF,
 //            true,
-//            matrixStack.peek().positionMatrix,
+//            PoseStack.peek().positionMatrix,
 //            immediate,
 //            TextRenderer.TextLayerType.NORMAL,
 //            0,
@@ -184,8 +181,8 @@ data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val
         }
     }
 
-    fun img(id: Identifier, w: Int, h: Int, x: Int = 0, y: Int = 0, func: (AreaDsl.() -> Unit)? = null) {
-        context.drawGuiTexture(id, ctx.absX(x), ctx.absY(y), w, h)
+    fun img(id: ResourceLocation, w: Int, h: Int, x: Int = 0, y: Int = 0, func: (AreaDsl.() -> Unit)? = null) {
+        context.blitSprite(id, ctx.absX(x), ctx.absY(y), w, h)
         func?.let { area(x, y, w, h, it) }
     }
 
@@ -245,7 +242,7 @@ data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val
         fun livingEntity(entity: LivingEntity, size: Double = min(w, h).toDouble()) {
             val dims = entity.getDimensions(entity.pose)
             val maxDim = (1 / max(dims.height, dims.width) * size).toInt().coerceAtLeast(1)
-            InventoryScreen.drawEntity(
+            InventoryScreen.renderEntityInInventoryFollowsMouse(
                 context,
                 ctx.absX(), ctx.absY(),
                 ctx.absX(w), ctx.absY(h),
@@ -256,9 +253,8 @@ data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val
         }
 
         fun livingEntity(entityType: EntityType<out LivingEntity>, size: Double = 20.0) {
-            val entity = ctx.entityRenderCache.getOrPut(entityType) {
-                entityType.create(MinecraftClient.getInstance().world) as LivingEntity
-            }
+            val eet = Minecraft.getInstance().level?.let { entityType.create(it) } ?: return
+            val entity = ctx.entityRenderCache.getOrPut(entityType) { eet }
             livingEntity(entity, size)
         }
 
@@ -280,7 +276,7 @@ data class KGuiDsl(val ctx: KGui, val context: DrawContext, val mouseX: Int, val
             onHover(w, h, func)
         }
 
-        fun textCentered(y: Int, text: Text) {
+        fun textCentered(y: Int, text: Component) {
             textCentered(w / 2, y, text)
         }
 

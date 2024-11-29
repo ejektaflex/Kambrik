@@ -1,29 +1,28 @@
 package io.ejekta.kambrik.text
 
-import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.ChatFormatting
 import net.minecraft.server.MinecraftServer
-import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.text.MutableText
-import net.minecraft.util.Formatting
+import net.minecraft.commands.CommandSourceStack
+import net.minecraft.network.chat.MutableComponent
+import net.minecraft.world.entity.player.Player
 
-fun ServerCommandSource.sendError(literal: String, text: KambrikTextBuilder<MutableText>.() -> Unit = {}) {
-    sendError(textLiteral(literal, text))
+fun CommandSourceStack.sendFailure(literal: String, text: KambrikTextBuilder<MutableComponent>.() -> Unit = {}) {
+    sendFailure(textLiteral(literal, text))
 }
 
-fun ServerCommandSource.sendFeedback(literal: String, broadcastToOps: Boolean = false, dsl: KambrikTextBuilder<MutableText>.() -> Unit = {}) {
-    sendFeedback({ textLiteral(literal, dsl) }, broadcastToOps)
+fun CommandSourceStack.sendSuccess(literal: String, broadcastToOps: Boolean = false, dsl: KambrikTextBuilder<MutableComponent>.() -> Unit = {}) {
+    sendSuccess({ textLiteral(literal, dsl) }, broadcastToOps)
 }
 
-fun MinecraftServer.broadcast(literal: String = "", overlay: Boolean = false, text: KambrikTextBuilder<MutableText>.() -> Unit) {
-    playerManager.broadcast(textLiteral(literal, text), overlay)
+fun MinecraftServer.broadcastSystemMessage(literal: String = "", overlay: Boolean = false, text: KambrikTextBuilder<MutableComponent>.() -> Unit) {
+    playerList.broadcastSystemMessage(textLiteral(literal, text), overlay)
 }
 
-fun PlayerEntity.sendMessage(literal: String = "", vararg formats: Formatting, actionBar: Boolean = false, text: KambrikTextBuilder<MutableText>.() -> Unit = {}) {
-    sendMessage(
+fun Player.sendMessage(literal: String = "", vararg formats: ChatFormatting, actionBar: Boolean = false, text: KambrikTextBuilder<MutableComponent>.() -> Unit = {}) {
+    sendSystemMessage(
         textLiteral(literal) {
             format(*formats)
             apply(text)
-        },
-        actionBar
+        }
     )
 }

@@ -1,21 +1,13 @@
 package io.ejekta.kambrik.ext.math
 
-import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Vec3d
-import net.minecraft.util.math.Vec3i
+import net.minecraft.core.BlockPos
+import net.minecraft.core.Vec3i
+import net.minecraft.world.phys.Vec3
 
-operator fun BlockPos.plus(other: Vec3i): BlockPos {
-    return add(other.x, other.y, other.z)
+fun BlockPos.asVec3i(): Vec3i {
+    return this as Vec3i
 }
 
-operator fun BlockPos.minus(other: Vec3i): BlockPos {
-    return subtract(other)
-}
-
-operator fun BlockPos.times(int: Int): BlockPos {
-    return BlockPos(x * int, y * int, z * int)
-}
-
-fun BlockPos.toVec3d(): Vec3d {
-    return Vec3d(x.toDouble(), y.toDouble(), z.toDouble())
+fun BlockPos.toVec3(): Vec3 {
+    return Vec3(x.toDouble(), y.toDouble(), z.toDouble())
 }

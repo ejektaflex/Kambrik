@@ -3,26 +3,28 @@ package io.ejekta.kambrik.message
 import io.ejekta.kambrik.Kambrik
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
-import net.minecraft.network.RegistryByteBuf
-import net.minecraft.network.codec.PacketCodec
-import net.minecraft.network.packet.CustomPayload
-import net.minecraft.util.Identifier
+import net.minecraft.network.RegistryFriendlyByteBuf
+import net.minecraft.network.codec.StreamCodec
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload
+import net.minecraft.resources.ResourceLocation
 import kotlin.reflect.KClass
 
-interface INetworkLink<M : CustomPayload> {
+interface INetworkLink<M : CustomPacketPayload> {
 
-    val id: CustomPayload.Id<M>
+    val id: CustomPacketPayload.Type<M>
     val ser: KSerializer<M>
     val json: Json
 
-//    override fun getId(): CustomPayload.Id<out CustomPayload> {
+//    override fun getId(): CustomPacketPayload.Type<out CustomPayload> {
 //        return CustomPayload.id(id.toString())
 //    }
 
-    val packetCodec: PacketCodec<RegistryByteBuf, M>
-        get() = PacketCodec.of(
-            { value, buf -> buf.writeString(json.encodeToString(ser, value)) },
-            { json.decodeFromString(ser, it.readString()) }
+    val packetCodec: StreamCodec<RegistryFriendlyByteBuf, M>
+        get() = StreamCodec.of(
+            { buf, value ->
+                buf.writeUtf(json.encodeToString(ser, value))
+            },
+            { json.decodeFromString(ser, it.readUtf()) }
         )
 
     fun register(): Boolean

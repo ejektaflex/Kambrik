@@ -1,44 +1,49 @@
 package io.ejekta.kambrik.text
 
-import net.minecraft.entity.Entity
-import net.minecraft.item.ItemStack
-import net.minecraft.text.*
-import net.minecraft.util.Formatting
+import net.minecraft.ChatFormatting
+import net.minecraft.network.chat.*
+import net.minecraft.network.chat.contents.KeybindContents
+import net.minecraft.network.chat.contents.PlainTextContents
+import net.minecraft.network.chat.contents.ScoreContents
+import net.minecraft.network.chat.contents.SelectorContents
+import net.minecraft.network.chat.contents.TranslatableContents
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.item.ItemStack
 import java.util.*
 
 
-fun textLiteral(str: String = "", func: KambrikTextBuilder<MutableText>.() -> Unit = {}): MutableText {
-    return textBuilder(MutableText.of(PlainTextContent.of(str)), func)
+fun textLiteral(str: String = "", func: KambrikTextBuilder<MutableComponent>.() -> Unit = {}): MutableComponent {
+    return textBuilder(MutableComponent.create(PlainTextContents.LiteralContents(str)), func)
 }
 
-fun textTranslate(key: String, fallback: String, args: Array<Any> = emptyArray(), func: KambrikTextBuilder<MutableText>.() -> Unit = {}): MutableText {
-    return textBuilder(MutableText.of(TranslatableTextContent(key, fallback, args)), func)
+fun textTranslate(key: String, fallback: String, args: Array<Any> = emptyArray(), func: KambrikTextBuilder<MutableComponent>.() -> Unit = {}): MutableComponent {
+    return textBuilder(MutableComponent.create(TranslatableContents(key, fallback, args)), func)
 }
 
-fun textKeybind(key: String, func: KambrikTextBuilder<MutableText>.() -> Unit = {}): MutableText {
-    return textBuilder(MutableText.of(KeybindTextContent(key)), func)
+fun textKeybind(key: String, func: KambrikTextBuilder<MutableComponent>.() -> Unit = {}): MutableComponent {
+    return textBuilder(MutableComponent.create(KeybindContents(key)), func)
 }
 
-fun textScore(name: String, objective: String, func: KambrikTextBuilder<MutableText>.() -> Unit = {}): MutableText {
-    return textBuilder(MutableText.of(ScoreTextContent(name, objective)), func)
+fun textScore(name: String, objective: String, func: KambrikTextBuilder<MutableComponent>.() -> Unit = {}): MutableComponent {
+    return textBuilder(MutableComponent.create(ScoreContents(name, objective)), func)
 }
 
-fun textSelector(pattern: String, separator: Text?, func: KambrikTextBuilder<MutableText>.() -> Unit = {}): MutableText {
-    return textBuilder(MutableText.of(SelectorTextContent(pattern, Optional.ofNullable(separator))), func)
+fun textSelector(pattern: String, separator: Component?, func: KambrikTextBuilder<MutableComponent>.() -> Unit = {}): MutableComponent {
+    return textBuilder(MutableComponent.create(SelectorContents(pattern, Optional.ofNullable(separator))), func)
 }
 
-internal fun <T : MutableText> textBuilder(starterText: T, func: KambrikTextBuilder<T>.() -> Unit): T {
+internal fun <T : MutableComponent> textBuilder(starterText: T, func: KambrikTextBuilder<T>.() -> Unit): T {
     val builder = KambrikTextBuilder(starterText)
     builder.func()
     return builder.root
 }
 
-class KambrikTextBuilder<T : MutableText>(
+class KambrikTextBuilder<T : MutableComponent>(
     var root: T
 ) {
 
-    fun format(vararg formats: Formatting) {
-        root.formatted(*formats)
+    fun format(vararg formats: ChatFormatting) {
+        root.withStyle(*formats)
     }
 
     fun color(color: Int) {
@@ -70,7 +75,7 @@ class KambrikTextBuilder<T : MutableText>(
         }
 
     var color: Int
-        get() = root.style.color?.rgb ?: 0x000000
+        get() = root.style.color?.value ?: 0x000000
         set(value) {
             color(value)
         }
@@ -88,19 +93,19 @@ class KambrikTextBuilder<T : MutableText>(
         }
 
     fun onHoverShowItem(itemStack: ItemStack) {
-        hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ITEM, HoverEvent.ItemStackContent(itemStack))
+        hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ITEM, HoverEvent.ItemStackInfo(itemStack))
     }
 
-    fun onHoverShowText(text: Text) {
+    fun onHoverShowText(text: Component) {
         hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, text)
     }
 
-    fun onHoverShowText(inFunc: KambrikTextBuilder<MutableText>.() -> Unit) {
+    fun onHoverShowText(inFunc: KambrikTextBuilder<MutableComponent>.() -> Unit) {
         hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, textLiteral("", inFunc))
     }
 
     fun onHoverShowEntity(entity: Entity) {
-        hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ENTITY, HoverEvent.EntityContent(entity.type, entity.uuid, entity.name))
+        hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ENTITY, HoverEvent.EntityTooltipInfo(entity.type, entity.uuid, entity.name))
     }
 
     fun newLine() = addLiteral("\n")
@@ -109,19 +114,19 @@ class KambrikTextBuilder<T : MutableText>(
         return KambrikTextBuilder(this).apply(inFunc)
     }
 
-    operator fun String.invoke(inFunc: KambrikTextBuilder<MutableText>.() -> Unit): MutableText {
-        return KambrikTextBuilder(MutableText.of(PlainTextContent { this })).apply(inFunc).root
+    operator fun String.invoke(inFunc: KambrikTextBuilder<MutableComponent>.() -> Unit): MutableComponent {
+        return KambrikTextBuilder(MutableComponent.create(PlainTextContents.LiteralContents(this))).apply(inFunc).root
     }
 
-    fun add(text: Text) {
+    fun add(text: Component) {
         root.append(text)
     }
 
-    fun addLiteral(str: String, func: KambrikTextBuilder<MutableText>.() -> Unit = {}) {
+    fun addLiteral(str: String, func: KambrikTextBuilder<MutableComponent>.() -> Unit = {}) {
         root.append(textLiteral(str, func))
     }
 
-    fun addTranslate(key: String, fallback: String, args: Array<Any> = emptyArray(), func: KambrikTextBuilder<MutableText>.() -> Unit = {}) {
+    fun addTranslate(key: String, fallback: String, args: Array<Any> = emptyArray(), func: KambrikTextBuilder<MutableComponent>.() -> Unit = {}) {
         root.append(textTranslate(key, fallback, args, func))
     }
 

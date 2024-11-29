@@ -1,15 +1,16 @@
 package io.ejekta.kambrik.structure
 
 import com.mojang.datafixers.util.Pair
+import io.ejekta.kambrik.ext.Identifier
 import io.ejekta.kambrik.internal.mixins.StructurePoolAccessor
-import net.minecraft.registry.RegistryKey
-import net.minecraft.registry.RegistryKeys
-import net.minecraft.registry.entry.RegistryEntry
+import net.minecraft.core.Holder
+import net.minecraft.core.registries.Registries
+import net.minecraft.resources.ResourceKey
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.MinecraftServer
-import net.minecraft.structure.pool.StructurePool
-import net.minecraft.structure.pool.StructurePoolElement
-import net.minecraft.structure.processor.StructureProcessorList
-import net.minecraft.util.Identifier
+import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement
+import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList
 import kotlin.jvm.optionals.getOrNull
 
 /**
@@ -17,21 +18,20 @@ import kotlin.jvm.optionals.getOrNull
  */
 class KambrikStructureApi internal constructor() {
 
-    private val EMPTY_PROCESSOR_LIST_KEY = RegistryKey.of(RegistryKeys.PROCESSOR_LIST, Identifier.of("minecraft", "empty"))
+    private val EMPTY_PROCESSOR_LIST_KEY = ResourceKey.create(Registries.PROCESSOR_LIST, Identifier("minecraft", "empty"))
 
     // Meant to be called from inside a ServerLifecycleEvents.SERVER_STARTING event
-    fun addToStructurePool(server: MinecraftServer, nbtLocation: Identifier, poolLocation: Identifier, processorLocation: Identifier, weight: Int = 10_000) {
-        val emptyProcessorList: RegistryEntry<StructureProcessorList> =
-            server.registryManager[RegistryKeys.PROCESSOR_LIST]
-                .entryOf(EMPTY_PROCESSOR_LIST_KEY)
+    fun addToStructurePool(server: MinecraftServer, nbtLocation: ResourceLocation, poolLocation: ResourceLocation, processorLocation: ResourceLocation, weight: Int = 10_000) {
+        val emptyProcessorList: Holder.Reference<StructureProcessorList> =
+            server.registryAccess().registry(Registries.PROCESSOR_LIST).get().getHolderOrThrow(EMPTY_PROCESSOR_LIST_KEY)
 
-        val OUR_PROCESSOR_LIST_KEY = RegistryKey.of(RegistryKeys.PROCESSOR_LIST, processorLocation)
+        val OUR_PROCESSOR_LIST_KEY = ResourceKey.create(Registries.PROCESSOR_LIST, processorLocation)
 
-        val ourProcessorList: RegistryEntry<StructureProcessorList> =
-            server.registryManager[RegistryKeys.PROCESSOR_LIST]
-                .getEntry(OUR_PROCESSOR_LIST_KEY).getOrNull() ?: emptyProcessorList
+        val ourProcessorList: Holder.Reference<StructureProcessorList> =
+            server.registryAccess().registry(Registries.PROCESSOR_LIST).get()
+                .getHolder(OUR_PROCESSOR_LIST_KEY).getOrNull() ?: emptyProcessorList
 
-        val poolGrabber = server.registryManager[RegistryKeys.TEMPLATE_POOL].getOrEmpty(poolLocation)
+        val poolGrabber = server.registryAccess().registry(Registries.TEMPLATE_POOL).get().getOptional(poolLocation)
 
         if (!poolGrabber.isPresent) {
             throw Exception("Cannot add to '$poolLocation' as it cannot be found!")
@@ -40,7 +40,8 @@ class KambrikStructureApi internal constructor() {
         val pool = poolGrabber.get()
 
         val pieceList = (pool as StructurePoolAccessor).elements
-        val piece = StructurePoolElement.ofProcessedSingle(nbtLocation.toString(), ourProcessorList).apply(StructurePool.Projection.RIGID)
+        val piece = StructurePoolElement.single(nbtLocation.toString(), ourProcessorList).apply(
+            StructureTemplatePool.Projection.RIGID)
 
         val list = (pool as StructurePoolAccessor).elementCounts.toMutableList()
         list.add(Pair(piece, weight))

@@ -1,7 +1,5 @@
 package io.ejekta.kambrik.gui.draw
 
-import io.ejekta.kambrik.gui.draw.KGuiDsl
-
 interface KWidget {
 
     val width: Int

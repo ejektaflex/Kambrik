@@ -4,11 +4,8 @@ import io.ejekta.kambrik.Kambrik
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.modules.SerializersModule
-import net.minecraft.component.Component
-import net.minecraft.component.DataComponentTypes
-import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NbtElement
-import net.minecraft.util.Identifier
+import net.minecraft.nbt.Tag
+import net.minecraft.resources.ResourceLocation
 
 //abstract class ItemData<T> {
 //
@@ -20,15 +17,15 @@ import net.minecraft.util.Identifier
 //
 //    abstract val default: () -> T
 //
-//    abstract val defaultTag: NbtElement
+//    abstract val defaultTag: Tag
 //
-//    abstract fun encode(value: T): NbtElement
+//    abstract fun encode(value: T): Tag
 //
-//    abstract fun decode(nbt: NbtElement): T
+//    abstract fun decode(nbt: Tag): T
 //
 //    fun of(stack: ItemStack) = get(stack)
 //
-//    private fun getSubtag(stack: ItemStack): NbtElement {
+//    private fun getSubtag(stack: ItemStack): Tag {
 //        DataComponentTypes.DAMAGE
 //        stack.orCreateNbt.apply {
 //            val key = identifier.toString()
@@ -43,7 +40,7 @@ import net.minecraft.util.Identifier
 //
 //    }
 //
-//    private fun setSubtag(stack: ItemStack, tag: NbtElement) {
+//    private fun setSubtag(stack: ItemStack, tag: Tag) {
 //        stack.orCreateNbt.apply {
 //            put(identifier.toString(), tag)
 //        }

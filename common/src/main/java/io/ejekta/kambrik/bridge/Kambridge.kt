@@ -9,5 +9,5 @@ val Kambridge: KambrikSharedApi by lazy {
 
     Kambrik.Logger.info("Eh?")
 
-    sls.findFirst().get().also { Kambrik.Logger.debug("Created API For: ${it.side}") }
+    sls.findFirst().get().also { Kambrik.Logger.debug("Created API For: ${it.platform}") }
 }

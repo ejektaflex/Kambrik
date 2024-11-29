@@ -1,35 +1,35 @@
 package io.ejekta.kambrik.ext
 
-import net.minecraft.nbt.NbtCompound
-import net.minecraft.nbt.StringNbtReader
-import net.minecraft.nbt.NbtElement
-import net.minecraft.network.PacketByteBuf
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.Tag
+import net.minecraft.nbt.TagParser
+import net.minecraft.network.FriendlyByteBuf
 
-operator fun NbtCompound.iterator(): Iterator<Pair<String, NbtElement>> {
-    return keys.map { it to get(it)!! }.iterator()
+operator fun CompoundTag.iterator(): Iterator<Pair<String, Tag>> {
+    return allKeys.map { it to get(it)!! }.iterator()
 }
 
-fun NbtCompound.toMap(): Map<String, NbtElement> {
-    return keys.associateWith { get(it)!! }
+fun CompoundTag.toMap(): Map<String, Tag> {
+    return allKeys.associateWith { get(it)!! }
 }
 
-fun Map<String, NbtElement>.toNbtCompound(): NbtCompound {
-    return NbtCompound().apply {
-        this@toNbtCompound.forEach { (key, tag) ->
+fun Map<String, Tag>.toCompoundTag(): CompoundTag {
+    return CompoundTag().apply {
+        this@toCompoundTag.forEach { (key, tag) ->
             put(key, tag)
         }
     }
 }
 
-fun StringNbtReader.parseTag(nbt: String): NbtElement {
-    return StringNbtReader.parse("{content:$nbt}")
+fun TagParser.parseTagNonCompound(nbt: String): Tag {
+    return TagParser.parseTag("{content:$nbt}")
 }
 
-fun String.toTag(): NbtElement {
-    return StringNbtReader.parse("{content:$this}").get("content")!!
+fun String.toTagNonCompound(): Tag {
+    return TagParser.parseTag("{content:$this}").get("content")!!
 }
 
-fun PacketByteBuf.unwrapToTag(): NbtElement {
+fun FriendlyByteBuf.unwrapToTag(): Tag {
     return readNbt()!!.get("content")!!
 }
 

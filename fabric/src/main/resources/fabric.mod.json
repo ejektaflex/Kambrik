@@ -25,6 +25,12 @@
         "adapter": "kotlin",
         "value": "io.ejekta.kambrik.fabric.internal.client.KambrikClientMod"
       }
+    ],
+    "kambrik": [
+      {
+        "adapter": "kotlin",
+        "value": "io.ejekta.kambrik.internal.TestContent"
+      }
     ]
   },
   "mixins": [
@@ -37,7 +43,7 @@
   },
   "depends": {
     "fabric": ">=0.83.0",
-    "minecraft": "1.21.0",
+    "minecraft": ">=1.21 <=1.21.1",
     "fabric-language-kotlin": ">=1.9.10"
   }
 }

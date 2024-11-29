@@ -3,7 +3,7 @@ package io.ejekta.kambrik.gui.draw.widgets
 import io.ejekta.kambrik.gui.draw.KGuiDsl
 import io.ejekta.kambrik.gui.draw.KWidget
 import io.ejekta.kambrik.gui.draw.reactor.MouseReactor
-import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.gui.screens.Screen
 import kotlin.math.max
 import kotlin.math.min
 

@@ -3,18 +3,18 @@ package io.ejekta.kambrik.bridge
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.internal.TestMsg
 import io.ejekta.kambrik.message.KambrikMsg
-import io.ejekta.kambrik.message.INetworkLink
 import io.ejekta.kambrik.registration.KambrikAutoRegistrar
 import kotlinx.serialization.KSerializer
-import net.minecraft.network.packet.CustomPayload
-import net.minecraft.registry.Registry
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.core.Registry
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload
+import net.minecraft.server.level.ServerPlayer
+import java.nio.file.Path
 
 interface KambrikSharedApi {
 
     // Loader
 
-    val side: BridgeSide
+    val platform: BridgePlatform
 
     // Messaging
 
@@ -24,13 +24,13 @@ interface KambrikSharedApi {
 
     fun isOnServer(): Boolean
 
-    fun <M : KambrikMsg> registerClientMessage(serializer: KSerializer<M>, id: CustomPayload.Id<M>): Boolean
+    fun <M : KambrikMsg> registerClientMessage(serializer: KSerializer<M>, id: CustomPacketPayload.Type<M>): Boolean
 
-    fun <M : KambrikMsg> sendMsgToClient(msg: M, player: ServerPlayerEntity)
+    fun <M : KambrikMsg> sendMsgToClient(msg: M, player: ServerPlayer)
 
     // * Server
 
-    fun <M : KambrikMsg> registerServerMessage(serializer: KSerializer<M>, id: CustomPayload.Id<M>): Boolean
+    fun <M : KambrikMsg> registerServerMessage(serializer: KSerializer<M>, id: CustomPacketPayload.Type<M>): Boolean
 
     fun <M : KambrikMsg> sendMsgToServer(msg: M)
 
@@ -46,5 +46,7 @@ interface KambrikSharedApi {
             TestMsg.ID
         )
     }
+
+    fun getConfigDir(): Path
 
 }

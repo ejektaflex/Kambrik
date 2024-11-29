@@ -1,13 +1,14 @@
 package io.ejekta.kambrikx.ext
 
-import net.minecraft.block.BlockState
-import net.minecraft.util.BlockRotation
+import net.minecraft.world.level.block.Rotation
+import net.minecraft.world.level.block.state.BlockState
 
+// TODO evaluate necessity of this nowadays, might be obsolete and no reimpl needed
 fun BlockState.rotated(times: Int): BlockState {
-    var rot = BlockRotation.NONE
+    var rot = Rotation.NONE
 
-    val numRots = BlockRotation.values().size
-    val new = BlockRotation.values()[(rot.ordinal + times) % numRots]
+    val numRots = Rotation.entries.size
+    val new = Rotation.entries[(rot.ordinal + times) % numRots]
 
     return rotate(new)
 }

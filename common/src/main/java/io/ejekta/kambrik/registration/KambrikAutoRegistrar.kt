@@ -1,46 +1,37 @@
 package io.ejekta.kambrik.registration
 
+import io.ejekta.kambrik.Kambrik
+import io.ejekta.kambrik.ext.Identifier
 import io.ejekta.kambrik.internal.KambrikMarker
-import io.ejekta.kambrik.internal.registration.KambrikRegistrar
 import io.ejekta.percale.toCodec
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.modules.EmptySerializersModule
-import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
-import net.minecraft.advancement.criterion.Criterion
-import net.minecraft.block.Block
-import net.minecraft.block.BlockState
-import net.minecraft.block.entity.BlockEntity
-import net.minecraft.block.entity.BlockEntityType
-import net.minecraft.component.ComponentType
-import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityType
-import net.minecraft.entity.attribute.EntityAttribute
-import net.minecraft.entity.effect.StatusEffect
-import net.minecraft.item.Item
-import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
-import net.minecraft.particle.ParticleEffect
-import net.minecraft.particle.ParticleType
-import net.minecraft.potion.Potion
-import net.minecraft.registry.Registries
-import net.minecraft.registry.Registry
-import net.minecraft.resource.featuretoggle.FeatureFlags
-import net.minecraft.screen.ScreenHandler
-import net.minecraft.screen.ScreenHandlerType
-import net.minecraft.sound.SoundEvent
-import net.minecraft.stat.Stat
-import net.minecraft.stat.StatFormatter
-import net.minecraft.stat.Stats
-import net.minecraft.util.Identifier
-import net.minecraft.util.math.BlockPos
-import net.minecraft.village.VillagerProfession
-import net.minecraft.village.VillagerType
-import net.minecraft.world.gen.carver.Carver
-import net.minecraft.world.gen.carver.CarverConfig
-import net.minecraft.world.gen.feature.Feature
-import net.minecraft.world.gen.feature.FeatureConfig
+import net.minecraft.advancements.CriterionTrigger
+import net.minecraft.core.BlockPos
+import net.minecraft.core.Registry
+import net.minecraft.core.component.DataComponentType
+import net.minecraft.core.particles.ParticleOptions
+import net.minecraft.core.particles.ParticleType
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.sounds.SoundEvent
+import net.minecraft.stats.Stat
+import net.minecraft.stats.StatFormatter
+import net.minecraft.stats.Stats
+import net.minecraft.world.effect.MobEffect
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.ai.attributes.Attribute
+import net.minecraft.world.entity.npc.VillagerProfession
+import net.minecraft.world.entity.npc.VillagerType
+import net.minecraft.world.item.Item
+import net.minecraft.world.item.alchemy.Potion
+import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.entity.BlockEntityType
+import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.levelgen.carver.CarverConfiguration
+import net.minecraft.world.level.levelgen.carver.WorldCarver
+import net.minecraft.world.level.levelgen.feature.Feature
+import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration
 
 
 @Suppress("UNCHECKED_CAST")
@@ -56,71 +47,81 @@ interface KambrikAutoRegistrar : KambrikMarker {
 
     fun afterRegistration() {}
 
-
     fun <T> String.forRegistration(reg: Registry<T>, obj: () -> T): Lazy<T> {
         return KambrikRegistrar.register(this@KambrikAutoRegistrar, reg, this, lazy(obj))
     }
 
-    infix fun String.forItem(item: () -> Item) = forRegistration(Registries.ITEM, item)
+    infix fun String.forItem(item: () -> Item) = forRegistration(BuiltInRegistries.ITEM, item)
 
-    infix fun String.forBlock(block: () -> Block) = forRegistration(Registries.BLOCK, block)
+    infix fun String.forBlock(block: () -> Block) = forRegistration(BuiltInRegistries.BLOCK, block)
 
-    infix fun <C : CarverConfig?> String.forCarver(carver: () -> Carver<C>): Carver<C> = forRegistration(Registries.CARVER, carver) as Carver<C>
+    infix fun <C : CarverConfiguration?> String.forCarver(carver: () -> WorldCarver<C>): WorldCarver<C> = forRegistration(BuiltInRegistries.CARVER, carver) as WorldCarver<C>
 
-    infix fun <FC : FeatureConfig?> String.forFeature(feature: () -> Feature<FC>): () -> Feature<FC> = forRegistration(Registries.FEATURE, feature) as () -> Feature<FC>
+    infix fun <FC : FeatureConfiguration?> String.forFeature(feature: () -> Feature<FC>): () -> Feature<FC> =
+        forRegistration(BuiltInRegistries.FEATURE, feature) as () -> Feature<FC>
 
-    infix fun String.forStatusEffect(status: () -> StatusEffect) = forRegistration(Registries.STATUS_EFFECT, status)
+    infix fun String.forEffect(status: () -> MobEffect) =
+        forRegistration(BuiltInRegistries.MOB_EFFECT, status)
 
-    infix fun String.forAttribute(attribute: () -> EntityAttribute) = forRegistration(Registries.ATTRIBUTE, attribute)
+    infix fun String.forAttribute(attribute: () -> Attribute) =
+        forRegistration(BuiltInRegistries.ATTRIBUTE, attribute)
 
-    infix fun String.forPotion(potion: () -> Potion) = forRegistration(Registries.POTION, potion)
+    infix fun String.forPotion(potion: () -> Potion) =
+        forRegistration(BuiltInRegistries.POTION, potion)
 
-    infix fun <PE : ParticleEffect> String.forParticle(particle: () -> ParticleType<PE>) = forRegistration(Registries.PARTICLE_TYPE, particle)
+    infix fun <PO : ParticleOptions> String.forParticle(particle: () -> ParticleType<PO>) =
+        forRegistration(BuiltInRegistries.PARTICLE_TYPE, particle)
 
-    infix fun String.forVillagerProfession(profession: () -> VillagerProfession) = forRegistration(Registries.VILLAGER_PROFESSION, profession)
+    infix fun String.forVillagerProfession(profession: () -> VillagerProfession) =
+        forRegistration(BuiltInRegistries.VILLAGER_PROFESSION, profession)
 
-    infix fun <T : Entity> String.forEntityType(type: () -> EntityType<T>): Lazy<EntityType<T>> = forRegistration(Registries.ENTITY_TYPE, type) as Lazy<EntityType<T>>
+    infix fun <T : Entity> String.forEntityType(type: () -> EntityType<T>): Lazy<EntityType<T>> =
+        forRegistration(BuiltInRegistries.ENTITY_TYPE, type) as Lazy<EntityType<T>>
 
-    infix fun String.forVillagerType(type: () -> VillagerType) = forRegistration(Registries.VILLAGER_TYPE, type)
+    infix fun String.forVillagerType(type: () -> VillagerType) =
+        forRegistration(BuiltInRegistries.VILLAGER_TYPE, type)
 
-    infix fun String.forSoundEvent(event: () -> SoundEvent) = forRegistration(Registries.SOUND_EVENT, event)
+    infix fun String.forSoundEvent(event: () -> SoundEvent) =
+        forRegistration(BuiltInRegistries.SOUND_EVENT, event)
 
     fun <T : BlockEntity> String.forBlockEntity(block: Lazy<Block>, factory: (pos: BlockPos, state: BlockState) -> T): Lazy<BlockEntityType<T>> {
-        return forRegistration(Registries.BLOCK_ENTITY_TYPE) {
-            BlockEntityType.Builder.create(factory, block.value).build(null)
+        return forRegistration(BuiltInRegistries.BLOCK_ENTITY_TYPE) {
+            BlockEntityType.Builder.of(factory, block.value).build(null)
         } as Lazy<BlockEntityType<T>>
     }
 
     //TODO screen handler registration
-    infix fun <T : ScreenHandler> String.forScreen(factory: ScreenHandlerType.Factory<T>): Lazy<ScreenHandlerType<T>> {
-        return forRegistration(Registries.SCREEN_HANDLER) {
-            ScreenHandlerType(
-                factory,
-                FeatureFlags.VANILLA_FEATURES
-            )
-        } as Lazy<ScreenHandlerType<T>>
-    }
+//    infix fun <T : AbstractContainerMenu> String.forScreen(factory: MenuType<T>): Lazy<MenuType<T>> {
+//        return forRegistration(Registries.MENU) {
+//            // TODO access transformer?
+//            MenuType(
+//                factory,
+//                FeatureFlags.VANILLA_SET
+//            )
+//        } as Lazy<MenuType<T>>
+//    }
 
-    infix fun <T : Criterion<*>> String.forCriterion(criterion: () -> T): Lazy<T> = forRegistration(Registries.CRITERION, criterion) as Lazy<T>
+    infix fun <T : CriterionTrigger<*>> String.forCriterionTrigger(criterion: () -> T): Lazy<T> =
+        forRegistration(BuiltInRegistries.TRIGGER_TYPES, criterion) as Lazy<T>
 
     infix fun String.forStat(formatter: StatFormatter): Lazy<Stat<*>> {
-        val statId = Identifier.of(getId(), this)
-        val resultId = forRegistration(Registries.CUSTOM_STAT) { statId }
-        return lazy { Stats.CUSTOM.getOrCreateStat(resultId.value, formatter) }
+        val statId = Identifier(getId(), this)
+        val resultId = forRegistration(BuiltInRegistries.CUSTOM_STAT) { statId }
+        return lazy { Stats.CUSTOM.get(resultId.value, formatter) }
     }
 
-    fun <C : Any> String.forComponent(component: ComponentType<C>): Lazy<ComponentType<C>> {
-        return forRegistration(Registries.DATA_COMPONENT_TYPE) { component } as Lazy<ComponentType<C>>
+    infix fun <C : Any> String.forComponent(component: () -> DataComponentType<C>): Lazy<DataComponentType<C>> {
+        return forRegistration(BuiltInRegistries.DATA_COMPONENT_TYPE) { component() } as Lazy<DataComponentType<C>>
     }
 
-    fun <C : Any> String.forComponent(
-        serializer: KSerializer<C>,
-        serializersModule: SerializersModule = EmptySerializersModule()
-    ): Lazy<ComponentType<C>> {
-        return forComponent(
-            ComponentType.builder<C>().codec(serializer.toCodec(serializersModule)).build()
-        )
+    companion object {
+        inline fun <reified C : Any> KambrikAutoRegistrar.serialComponent(itemId: String): Lazy<DataComponentType<C>> {
+            return KambrikRegistrar.register(this, BuiltInRegistries.DATA_COMPONENT_TYPE, itemId, lazy { DataComponentType
+                .Builder<C>()
+                .persistent(serializer<C>().toCodec(Kambrik.Serial.DefaultSerializers))
+                .build() }) as Lazy<DataComponentType<C>>
+        }
     }
-
 
 }
+
