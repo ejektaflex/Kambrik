@@ -18,7 +18,7 @@ object Kambrik {
 
     fun idOf(unique: String) = Identifier(ID, unique)
 
-    internal val Logger = LogManager.getLogger("Kambrik")
+    val Logger = LogManager.getLogger("Kambrik")
 
     val Criterion: KambrikCriterionApi by lazy {
         KambrikCriterionApi()

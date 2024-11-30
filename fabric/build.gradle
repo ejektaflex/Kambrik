@@ -4,14 +4,11 @@ plugins {
 }
 
 repositories {
+    mavenLocal()
     maven {
         name = "Terraformers"
         url = "https://maven.terraformersmc.com/"
     }
-}
-
-repositories {
-    mavenLocal()
 }
 
 dependencies {

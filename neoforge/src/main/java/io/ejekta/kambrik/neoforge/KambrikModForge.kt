@@ -8,7 +8,7 @@ import io.ejekta.kambrik.neoforge.client.KambrikModForgeClient
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.Mod
 import net.neoforged.neoforge.event.RegisterCommandsEvent
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
 import thedarkcolour.kotlinforforge.neoforge.forge.FORGE_BUS
 import thedarkcolour.kotlinforforge.neoforge.forge.MOD_CONTEXT
 import thedarkcolour.kotlinforforge.neoforge.forge.runForDist
@@ -47,7 +47,7 @@ object KambrikModForge {
     object KambrikModCommonEvents {
         @JvmStatic
         @SubscribeEvent
-        fun registerPayloads(event: RegisterPayloadHandlerEvent) {
+        fun registerPayloads(event: RegisterPayloadHandlersEvent) {
             Kambrik.Logger.info("Registering network payloads..")
             (Kambridge as KambrikSharedApiForge).registerPayloads(event)
         }

@@ -3,6 +3,22 @@ plugins {
     id 'net.neoforged.moddev'
 }
 
+repositories {
+    mavenLocal()
+    maven {
+        name = 'Kotlin for Forge'
+        url = 'https://thedarkcolour.github.io/KotlinForForge/'
+    }
+}
+
+dependencies {
+    implementation("thedarkcolour:kotlinforforge-neoforge:${forgelike_adapter_version}")
+
+    // Jar-in-Jar Percale
+    implementation("io.ejekta.percale:percale-neoforge:${percale_version}")
+    jarJar("io.ejekta.percale:percale-neoforge:${percale_version}")
+}
+
 neoForge {
     version = neoforge_version
     // Automatically enable neoforge AccessTransformers if the file exists
