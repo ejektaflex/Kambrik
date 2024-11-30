@@ -10,5 +10,5 @@
 	"injectors": {
 		"defaultRequire": 1
 	},
-	"refmap": "Kambrik-common-refmap.json"
+	"refmap": "kambrik.refmap.json"
 }

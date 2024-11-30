@@ -18,8 +18,6 @@ class KambrikModFabric : ModInitializer {
 
     override fun onInitialize() {
 
-        val k = Kambrik
-
         println("Manually registering Kambrik registrations for now..")
 
         // TODO why is this not auto? Do we even care for dev purposes? is it because of kotlin adapter?

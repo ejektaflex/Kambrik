@@ -25,10 +25,10 @@ dependencies {
 
     // Jar-in-Jar Percale
 
-    modImplementation("io.ejekta.percale:percale-common-1.21:0.0.4")
-    include("io.ejekta.percale:percale-fabric-1.21:0.0.4")
+    modImplementation("io.ejekta.percale:percale-fabric:${percale_version}")
+    include("io.ejekta.percale:percale-fabric:${percale_version}")
 
-    modRuntimeOnly "com.terraformersmc:modmenu:11.0.3"
+    modRuntimeOnly "com.terraformersmc:modmenu:${mod_menu_version}"
     modImplementation "net.fabricmc:fabric-language-kotlin:1.12.3+kotlin.2.0.21"
 }
 

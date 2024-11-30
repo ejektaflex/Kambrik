@@ -16,12 +16,11 @@ public class AbstractCriterionTriggerer<T extends SimpleCriterionTrigger.SimpleI
             at = @At("HEAD")
     )
     private void injected_kambrik(ServerPlayer player, Predicate<T> predicate, CallbackInfo ci) {
-        // TODO fix criterion hook
-//        Kambrik.INSTANCE.getCriterion().handleGameTrigger$examplemod_common_1_21(
-//                player,
-//                (SimpleCriterionTrigger<SimpleCriterionTrigger.SimpleInstance>)(Object)this,
-//                (Predicate<SimpleCriterionTrigger.SimpleInstance>) predicate
-//        );
+        Kambrik.INSTANCE.getCriterion().handleGameTrigger(
+                player,
+                (SimpleCriterionTrigger<SimpleCriterionTrigger.SimpleInstance>)(Object)this,
+                (Predicate<SimpleCriterionTrigger.SimpleInstance>) predicate
+        );
     }
 }
 

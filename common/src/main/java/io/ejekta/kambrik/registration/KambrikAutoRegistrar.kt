@@ -22,6 +22,10 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.ai.attributes.Attribute
 import net.minecraft.world.entity.npc.VillagerProfession
 import net.minecraft.world.entity.npc.VillagerType
+import net.minecraft.world.entity.player.Inventory
+import net.minecraft.world.flag.FeatureFlags
+import net.minecraft.world.inventory.AbstractContainerMenu
+import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.alchemy.Potion
 import net.minecraft.world.level.block.Block
@@ -90,16 +94,9 @@ interface KambrikAutoRegistrar : KambrikMarker {
         } as Lazy<BlockEntityType<T>>
     }
 
-    //TODO screen handler registration
-//    infix fun <T : AbstractContainerMenu> String.forScreen(factory: MenuType<T>): Lazy<MenuType<T>> {
-//        return forRegistration(Registries.MENU) {
-//            // TODO access transformer?
-//            MenuType(
-//                factory,
-//                FeatureFlags.VANILLA_SET
-//            )
-//        } as Lazy<MenuType<T>>
-//    }
+    infix fun <T : AbstractContainerMenu> String.forScreen(menuConstructor: (containerId: Int, inv: Inventory) -> T): Lazy<MenuType<T>> {
+        return forRegistration(BuiltInRegistries.MENU) { MenuType(menuConstructor, FeatureFlags.VANILLA_SET) } as Lazy<MenuType<T>>
+    }
 
     infix fun <T : CriterionTrigger<*>> String.forCriterionTrigger(criterion: () -> T): Lazy<T> =
         forRegistration(BuiltInRegistries.TRIGGER_TYPES, criterion) as Lazy<T>

@@ -28,7 +28,7 @@ class KambrikCriterionApi internal constructor() {
 
     private val subscribers = mutableListOf<KambrikCriterionSubscriber>()
 
-    internal fun handleGameTrigger(player: ServerPlayer, criterion: SimpleTrigger, predicate: SimpleTriggerPredicate) {
+    fun handleGameTrigger(player: ServerPlayer, criterion: SimpleTrigger, predicate: SimpleTriggerPredicate) {
         for (subscriber in subscribers) {
             subscriber.handle(player, criterion, predicate)
         }
