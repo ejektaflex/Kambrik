@@ -15,6 +15,8 @@ data class TestMsg(val msg: String, @Contextual val id: ResourceLocation) : Kamb
     override fun type(): CustomPacketPayload.Type<TestMsg> = ID
 
     companion object {
-        val ID: CustomPacketPayload.Type<TestMsg> = CustomPacketPayload.createType("test_msg")
+        val ID: CustomPacketPayload.Type<TestMsg> = CustomPacketPayload.Type(
+            ResourceLocation.fromNamespaceAndPath("kambrik", "test_msg")
+        )
     }
 }

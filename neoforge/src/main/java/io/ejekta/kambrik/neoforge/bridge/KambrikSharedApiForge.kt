@@ -23,14 +23,14 @@ import net.neoforged.neoforge.network.registration.HandlerThread
 import java.nio.file.Path
 
 
-class KambrikSharedApiForge(override val platform: BridgePlatform) : KambrikSharedApi {
+class KambrikSharedApiForge() : KambrikSharedApi {
 
     init {
         Kambrik.Logger.debug("Kambrik Shared API (Forge) Initialized.")
     }
 
-//    override val side: BridgePlatform
-//        get() = BridgePlatform.NEOFORGE
+    override val platform: BridgePlatform
+        get() = BridgePlatform.NEOFORGE
 
     // Event methods
 
