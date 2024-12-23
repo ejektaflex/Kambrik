@@ -3,7 +3,9 @@ package io.ejekta.kambrik.message
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.bridge.Kambridge
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
 
 /**

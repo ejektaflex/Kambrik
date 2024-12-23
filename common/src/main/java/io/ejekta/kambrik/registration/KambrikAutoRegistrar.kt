@@ -4,6 +4,9 @@ import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.ext.Identifier
 import io.ejekta.kambrik.internal.KambrikMarker
 import io.ejekta.percale.toCodec
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.modules.EmptySerializersModule
+import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
 import net.minecraft.advancements.CriterionTrigger
 import net.minecraft.core.BlockPos
@@ -105,6 +108,15 @@ interface KambrikAutoRegistrar : KambrikMarker {
         val statId = Identifier(getId(), this)
         val resultId = forRegistration(BuiltInRegistries.CUSTOM_STAT) { statId }
         return lazy { Stats.CUSTOM.get(resultId.value, formatter) }
+    }
+
+    fun <C : Any> String.forComponent(
+        serializer: KSerializer<C>,
+        serializersModule: SerializersModule = EmptySerializersModule()
+    ): Lazy<DataComponentType<C>> {
+        return forComponent {
+            DataComponentType.builder<C>().persistent(serializer.toCodec(serializersModule)).build()
+        }
     }
 
     infix fun <C : Any> String.forComponent(component: () -> DataComponentType<C>): Lazy<DataComponentType<C>> {
