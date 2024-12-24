@@ -7,6 +7,7 @@ import io.ejekta.kambrik.registration.KambrikAutoRegistrar
 import kotlinx.serialization.KSerializer
 import net.minecraft.core.Registry
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
 import java.nio.file.Path
 
@@ -41,9 +42,8 @@ interface KambrikSharedApi {
     // Internal
 
     fun registerTestMessage() {
-        Kambrik.Message.registerClientMessage(
-            TestMsg.serializer(),
-            TestMsg.ID
+        Kambrik.Message.registerClientMessage<TestMsg>(
+            ResourceLocation.fromNamespaceAndPath("kambrik", "test_msg")
         )
     }
 

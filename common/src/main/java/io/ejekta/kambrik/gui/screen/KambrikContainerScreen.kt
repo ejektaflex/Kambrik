@@ -36,11 +36,15 @@ abstract class KambrikContainerScreen<AM : AbstractContainerMenu>(
         /* Pass here */
     }
 
+    override fun renderLabels(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int) {
+        /* Do not draw default labels */
+    }
+
     override fun render(context: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
         renderBackground(context, mouseX, mouseY, delta)
         super.render(context, mouseX, mouseY, delta)
         onDrawForeground(context, mouseX, mouseY, delta)
-        // TODO drawMouseoverTooltip(context, mouseX, mouseY)
+        renderTooltip(context, mouseX, mouseY)
     }
 
     override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {

@@ -97,7 +97,11 @@ data class KGuiDsl(val ctx: KGui, val context: GuiGraphics, val mouseX: Int, val
         onHover(0, 0, w, h, func)
     }
 
-    fun tooltip(texts: List<FormattedCharSequence>) {
+    fun tooltip(components: List<Component>) {
+        tooltipText(components.map { it.visualOrderText })
+    }
+
+    fun tooltipText(texts: List<FormattedCharSequence>) {
         defer {
             context.renderTooltip(
                 fontRenderer,
@@ -109,7 +113,7 @@ data class KGuiDsl(val ctx: KGui, val context: GuiGraphics, val mouseX: Int, val
     }
 
     fun tooltip(func: KambrikTextBuilder<MutableComponent>.() -> Unit) {
-        tooltip(listOf(textLiteral("", func).visualOrderText))
+        tooltipText(listOf(textLiteral("", func).visualOrderText))
     }
 
     fun text(x: Int, y: Int, text: Component) {

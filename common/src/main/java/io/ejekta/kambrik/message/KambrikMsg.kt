@@ -2,6 +2,7 @@ package io.ejekta.kambrik.message
 
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.bridge.Kambridge
+import io.ejekta.kambrik.internal.TestMsg
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
@@ -40,4 +41,7 @@ abstract class KambrikMsg : CustomPacketPayload {
         Kambridge.sendMsgToServer(this)
     }
 
+    override fun type(): CustomPacketPayload.Type<out TestMsg> {
+        return Kambrik.Message.payloadMap[this::class] as CustomPacketPayload.Type<out TestMsg>
+    }
 }

@@ -13,13 +13,13 @@ interface KambrikScreenCommon : GuiEventListener {
     fun onDrawBackground(context: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float)
     fun onDrawForeground(context: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float)
 
-    fun cycleDrawnWidgets(func: (widget: MouseReactor, rect: KRect) -> Unit) {
+    private fun cycleDrawnWidgets(func: (widget: MouseReactor, rect: KRect) -> Unit) {
         for (bounds in boundsStack) {
             func(bounds.first, bounds.second)
         }
     }
 
-    fun cycleDrawnWidgetsInBounds(mouseX: Double, mouseY: Double, func: (widget: MouseReactor, rect: KRect, mX: Int, mY: Int) -> Unit) {
+    private fun cycleDrawnWidgetsInBounds(mouseX: Double, mouseY: Double, func: (widget: MouseReactor, rect: KRect, mX: Int, mY: Int) -> Unit) {
         for (bounds in boundsStack) {
             if (bounds.second.isInside(mouseX.toInt(), mouseY.toInt())) {
                 func(bounds.first, bounds.second, mouseX.toInt(), mouseY.toInt())

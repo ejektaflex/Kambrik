@@ -3,7 +3,10 @@ package io.ejekta.kambrik.message
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.bridge.Kambridge
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.serializer
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
+import net.minecraft.resources.ResourceLocation
+import kotlin.reflect.KClass
 
 class KambrikMessageApi internal constructor() {
 
@@ -11,12 +14,21 @@ class KambrikMessageApi internal constructor() {
         Kambrik.Logger.debug("Kambrik Message API Initialized.")
     }
 
-    fun <C : KambrikMsg> registerClientMessage(ser: KSerializer<C>, id: CustomPacketPayload.Type<C>) {
-        Kambridge.registerClientMessage(ser, id)
+    @PublishedApi
+    internal val payloadMap = mutableMapOf<KClass<out KambrikMsg>, CustomPacketPayload.Type<*>>()
+
+    inline fun <reified C : KambrikMsg> registerClientMessage(id: ResourceLocation, ser: KSerializer<C> = serializer<C>()) {
+        val clazz = C::class
+        val payloadId = CustomPacketPayload.Type<C>(id)
+        payloadMap[clazz] = payloadId
+        Kambridge.registerClientMessage(ser, payloadId)
     }
 
-    fun <S : KambrikMsg> registerServerMessage(ser: KSerializer<S>, id: CustomPacketPayload.Type<S>) {
-        Kambridge.registerServerMessage(ser, id)
+    inline fun <reified S : KambrikMsg> registerServerMessage(id: ResourceLocation, ser: KSerializer<S> = serializer<S>()) {
+        val clazz = S::class
+        val payloadId = CustomPacketPayload.Type<S>(id)
+        payloadMap[clazz] = payloadId
+        Kambridge.registerServerMessage(ser, payloadId)
     }
 
 }

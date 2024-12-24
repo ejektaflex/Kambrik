@@ -1,5 +1,7 @@
 package io.ejekta.kambrik.internal
 
+import io.ejekta.kambrik.Kambrik
+import io.ejekta.kambrik.message.KambrikMessageApi
 import io.ejekta.kambrik.message.KambrikMsg
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
@@ -13,13 +15,5 @@ data class TestMsg(val msg: String, @Contextual val id: ResourceLocation) : Kamb
     override fun onClientReceived() {
         Minecraft.getInstance().player?.sendSystemMessage(Component.literal("Got Test Msg! It says: $msg"))
         println("Got Test Msg! It says: $msg")
-    }
-
-    override fun type(): CustomPacketPayload.Type<TestMsg> = ID
-
-    companion object {
-        val ID: CustomPacketPayload.Type<TestMsg> = CustomPacketPayload.Type(
-            ResourceLocation.fromNamespaceAndPath("kambrik", "test_msg")
-        )
     }
 }
