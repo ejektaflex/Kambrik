@@ -10,6 +10,7 @@ import io.ejekta.kambrik.command.*
 import io.ejekta.kambrik.ext.Identifier
 import io.ejekta.kambrik.text.sendSuccess
 import io.ejekta.kambrik.text.textLiteral
+import io.ejekta.percale.Percale
 import io.ejekta.percale.contextualCodec
 import io.ejekta.percale.deserialize
 import io.ejekta.percale.reverse.GsonElementSerializer
@@ -79,6 +80,15 @@ object KambrikCommands {
 
                 "comp" runs {
                     compTests(this)
+                }
+
+                "percale" {
+                    "toggle" {
+                        "logs" runs {
+                            Percale.shouldSyslog = !Percale.shouldSyslog
+                            println("Percale logging is now: ${Percale.shouldSyslog}")
+                        }
+                    }
                 }
             }
         }

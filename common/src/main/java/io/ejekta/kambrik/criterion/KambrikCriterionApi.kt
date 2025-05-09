@@ -14,6 +14,7 @@ import kotlin.reflect.full.isSubclassOf
 typealias SimpleTriggerInstance = SimpleCriterionTrigger.SimpleInstance
 typealias SimpleTrigger = SimpleCriterionTrigger<SimpleTriggerInstance>
 typealias SimpleTriggerPredicate = Predicate<SimpleTriggerInstance>
+typealias GsonObject = com.google.gson.JsonObject
 
 /**
  * Accessed via [Kambrik.Criterion][io.ejekta.kambrik.Kambrik.Criterion]
@@ -62,9 +63,12 @@ class KambrikCriterionApi internal constructor() {
 
     fun createCriterionConditionsFromJson(jsonCriterion: JsonObject): SimpleTriggerInstance? {
         val gsonData = GsonHelper.parse(jsonCriterion.toString()) // KSX Json to GSON Json
+        return createCriterionConditionsFromGson(gsonData)
+    }
+
+    fun createCriterionConditionsFromGson(gsonCriterion: GsonObject): SimpleTriggerInstance? {
         return try {
-            //AdvancementCriterion.fromJson(gsonData, predicateDeserializer).conditions as AbstractCriterion.Conditions
-            val abc = Criterion.CODEC.decode(JsonOps.INSTANCE, gsonData)
+            val abc = Criterion.CODEC.decode(JsonOps.INSTANCE, gsonCriterion)
             val res = abc.result().getOrNull()
             res?.first?.triggerInstance as? SimpleTriggerInstance
         } catch (e: Exception) {

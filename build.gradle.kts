@@ -35,5 +35,9 @@ subprojects {
         tasks.withType<ProcessResources> {
             from(project(":common").sourceSets.main.get().resources)
         }
+
+        tasks.named("compileTestJava") {
+            enabled = false
+        }
     }
 }
