@@ -42,9 +42,11 @@ interface KambrikSharedApi {
     // Internal
 
     fun registerTestMessage() {
-        Kambrik.Message.registerClientMessage<TestMsg>(
-            ResourceLocation.fromNamespaceAndPath("kambrik", "test_msg")
-        )
+        if (!isOnServer()) {
+            Kambrik.Message.registerClientMessage<TestMsg>(
+                ResourceLocation.fromNamespaceAndPath("kambrik", "test_msg")
+            )
+        }
     }
 
     fun getConfigDir(): Path

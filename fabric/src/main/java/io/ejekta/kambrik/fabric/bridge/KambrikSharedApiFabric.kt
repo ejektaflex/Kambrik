@@ -8,7 +8,6 @@ import io.ejekta.kambrik.registration.KambrikAutoRegistrar
 import io.ejekta.kambrikx.serial.toSimplePacketCodec
 import kotlinx.serialization.KSerializer
 import net.fabricmc.api.EnvType
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.loader.api.FabricLoader
@@ -34,9 +33,12 @@ class KambrikSharedApiFabric : KambrikSharedApi {
 
     override fun <M : KambrikMsg> registerClientMessage(serializer: KSerializer<M>, id: CustomPacketPayload.Type<M>): Boolean {
         PayloadTypeRegistry.playS2C().register(id, serializer.toSimplePacketCodec())
-        return ClientPlayNetworking.registerGlobalReceiver(id) { payload, context ->
-            (payload as KambrikMsg).onClientReceived()
+        if (!isOnClient()) {
+            return true
         }
+
+        @Suppress("UNCHECKED_CAST")
+        return clientMessageRegistrar?.invoke(id as CustomPacketPayload.Type<out KambrikMsg>) ?: true
     }
 
     override fun <M : KambrikMsg> registerServerMessage(serializer: KSerializer<M>, id: CustomPacketPayload.Type<M>): Boolean {
@@ -51,7 +53,7 @@ class KambrikSharedApiFabric : KambrikSharedApi {
     }
 
     override fun <M : KambrikMsg> sendMsgToServer(msg: M) {
-        ClientPlayNetworking.send(msg)
+        clientMessageSender?.invoke(msg)
     }
 
     // Registration
@@ -62,6 +64,11 @@ class KambrikSharedApiFabric : KambrikSharedApi {
 
     override fun getConfigDir(): Path {
         return FabricLoader.getInstance().configDir
+    }
+
+    companion object {
+        var clientMessageRegistrar: ((CustomPacketPayload.Type<out KambrikMsg>) -> Boolean)? = null
+        var clientMessageSender: ((KambrikMsg) -> Unit)? = null
     }
 
 }

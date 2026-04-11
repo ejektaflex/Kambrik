@@ -26,8 +26,10 @@ class KambrikModFabric : ModInitializer {
         // Kambrik commands
         CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback(KambrikCommands::register))
 
-        // Server data lifecycle management
-        Kambridge.registerTestMessage()
+        // Test packets are client-only and should not be registered on a dedicated test server.
+        if (FabricLoader.getInstance().environmentType != EnvType.SERVER) {
+            Kambridge.registerTestMessage()
+        }
 
         ServerLifecycleEvents.SERVER_STARTED.register {
             KambrikPersistence.loadServerResults()
