@@ -22,6 +22,10 @@ class KambrikStructureApi internal constructor() {
 
     // Meant to be called from inside a ServerLifecycleEvents.SERVER_STARTING event
     fun addToStructurePool(server: MinecraftServer, nbtLocation: ResourceLocation, poolLocation: ResourceLocation, processorLocation: ResourceLocation, weight: Int = 10_000) {
+        if (weight == 0) {
+            return
+        }
+
         val emptyProcessorList: Holder.Reference<StructureProcessorList> =
             server.registryAccess().registry(Registries.PROCESSOR_LIST).get().getHolderOrThrow(EMPTY_PROCESSOR_LIST_KEY)
 
