@@ -1,6 +1,6 @@
 package io.ejekta.kambrik.logging
 
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.Marker
@@ -17,7 +17,7 @@ class KambrikLoggingApi internal constructor() {
         return LogManager.getLogger(modid)
     }
 
-    fun createMarker(id: ResourceLocation): Marker {
+    fun createMarker(id: Identifier): Marker {
         return MarkerManager.getMarker(id.toString())
     }
 

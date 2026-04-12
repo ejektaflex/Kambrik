@@ -1,6 +1,6 @@
 package io.ejekta.kambrikx.recipe
 
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.ItemStack
 
 typealias KambrikCustomAnvilRecipe =  (stackA: ItemStack, stackB: ItemStack) -> ItemStack?
@@ -12,12 +12,12 @@ typealias KambrikCustomAnvilRecipe =  (stackA: ItemStack, stackB: ItemStack) -> 
  */
 class KambrikSpecialRecipeApi internal constructor() {
 
-    internal val anvilRecipes = mutableMapOf<ResourceLocation, KambrikCustomAnvilRecipe>()
+    internal val anvilRecipes = mutableMapOf<Identifier, KambrikCustomAnvilRecipe>()
 
-    val AnvilRecipes: Map<ResourceLocation, KambrikCustomAnvilRecipe>
+    val AnvilRecipes: Map<Identifier, KambrikCustomAnvilRecipe>
         get() = anvilRecipes.toMap()
 
-    fun addAnvilRecipe(id: ResourceLocation, func: KambrikCustomAnvilRecipe) {
+    fun addAnvilRecipe(id: Identifier, func: KambrikCustomAnvilRecipe) {
         anvilRecipes[id] = func
     }
 

@@ -32,7 +32,7 @@ class KambrikSharedApiFabric : KambrikSharedApi {
     }
 
     override fun <M : KambrikMsg> registerClientMessage(serializer: KSerializer<M>, id: CustomPacketPayload.Type<M>): Boolean {
-        PayloadTypeRegistry.playS2C().register(id, serializer.toSimplePacketCodec())
+        PayloadTypeRegistry.clientboundPlay().register(id, serializer.toSimplePacketCodec())
         if (!isOnClient()) {
             return true
         }
@@ -42,7 +42,7 @@ class KambrikSharedApiFabric : KambrikSharedApi {
     }
 
     override fun <M : KambrikMsg> registerServerMessage(serializer: KSerializer<M>, id: CustomPacketPayload.Type<M>): Boolean {
-        PayloadTypeRegistry.playC2S().register(id, serializer.toSimplePacketCodec())
+        PayloadTypeRegistry.serverboundPlay().register(id, serializer.toSimplePacketCodec())
         return ServerPlayNetworking.registerGlobalReceiver(id) { payload, context ->
             (payload as KambrikMsg).onServerReceived(KambrikMsg.MsgContext(context.player()))
         }
@@ -58,7 +58,7 @@ class KambrikSharedApiFabric : KambrikSharedApi {
 
     // Registration
 
-    override fun <T> register(autoReg: KambrikAutoRegistrar, reg: Registry<T>, thingId: String, obj: T): T {
+    override fun <T : Any> register(autoReg: KambrikAutoRegistrar, reg: Registry<T>, thingId: String, obj: T): T {
         return KambrikRegistrar.register(autoReg, reg, thingId, lazyOf(obj)).value
     }
 

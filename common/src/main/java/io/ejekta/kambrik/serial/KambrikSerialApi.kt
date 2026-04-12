@@ -11,7 +11,7 @@ import kotlinx.serialization.json.JsonBuilder
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.modules.SerializersModule
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
@@ -20,7 +20,7 @@ import net.minecraft.world.phys.Vec3
 class KambrikSerialApi {
 
     val DefaultSerializers = SerializersModule {
-        contextual(ResourceLocation::class, IdentitySer)
+        contextual(Identifier::class, IdentitySer)
         contextual(AABB::class, BoxSerializer)
         contextual(Vec3::class, Vec3DSer)
         contextual(CompoundTag::class, CompoundTagSerializer)

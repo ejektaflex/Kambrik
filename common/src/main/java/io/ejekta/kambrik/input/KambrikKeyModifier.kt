@@ -1,6 +1,6 @@
 package io.ejekta.kambrik.input
 
-import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.Minecraft
 import org.lwjgl.glfw.GLFW
 
 class KambrikKeyModifier(
@@ -9,7 +9,8 @@ class KambrikKeyModifier(
     val alt: Boolean = false
 ) {
     fun getIsPressed(): Boolean {
-        return (shift == Screen.hasShiftDown() && ctrl == Screen.hasControlDown() && alt == Screen.hasAltDown())
+        val mc = Minecraft.getInstance()
+        return (shift == mc.hasShiftDown() && ctrl == mc.hasControlDown() && alt == mc.hasAltDown())
     }
 
     companion object {

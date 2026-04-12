@@ -7,7 +7,7 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.JsonOps
 import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.command.*
-import io.ejekta.kambrik.ext.Identifier
+import io.ejekta.kambrik.ext.Identifier as kId
 import io.ejekta.kambrik.text.sendSuccess
 import io.ejekta.kambrik.text.textLiteral
 import io.ejekta.percale.Percale
@@ -31,7 +31,7 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.NbtOps
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.RegistryOps
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.ItemStack
 import kotlin.jvm.optionals.getOrNull
 
@@ -46,7 +46,7 @@ object KambrikCommands {
 
             "dump" {
                 "registry" {
-                    val dumpables = suggestionList { BuiltInRegistries.REGISTRY.entrySet().toList().map { it.key.location() } }
+                    val dumpables = suggestionList { BuiltInRegistries.REGISTRY.entrySet().toList().map { it.key.identifier() } }
                     argResource("dump_what", items = dumpables) runs { what ->
                         dumpRegistry(what()).run(this)
                     }
@@ -63,7 +63,7 @@ object KambrikCommands {
                 "net" runs {
                     try {
                         Kambrik.Logger.debug("Sending Net Test Message..")
-                        TestMsg("net send here", Identifier("a", "b")).sendToClient(source.playerOrException)
+                        TestMsg("net send here", kId("a", "b")).sendToClient(source.playerOrException)
                     } catch (e: Exception) {
                         Kambrik.Logger.debug("Kambrik Net Test Message Failed.")
                         e.printStackTrace()
@@ -112,7 +112,7 @@ object KambrikCommands {
 
                 val json = Json {
                     serializersModule = SerializersModule {
-                        contextualCodec(ResourceLocation.CODEC)
+                        contextualCodec(Identifier.CODEC)
                         contextual(GsonElementSerializer)
                         contextual(GsonObjectSerializer)
                     }
@@ -171,7 +171,7 @@ object KambrikCommands {
 
                 val json = Json {
                     serializersModule = SerializersModule {
-                        contextualCodec(ResourceLocation.CODEC)
+                        contextualCodec(Identifier.CODEC)
                         contextualCodec(ItemStack.CODEC)
                         contextual(GsonElementSerializer)
                         contextual(GsonObjectSerializer)
@@ -218,11 +218,12 @@ object KambrikCommands {
         }
     }
 
-    private fun dumpRegistry(what: ResourceLocation) = kambrikServerCommand {
-        if (BuiltInRegistries.REGISTRY.containsKey(what)) {
-            val reg = BuiltInRegistries.REGISTRY[what]!!
+    private fun dumpRegistry(what: Identifier) = kambrikServerCommand {
+        val regOpt = BuiltInRegistries.REGISTRY.getOptional(what)
+        if (regOpt.isPresent) {
+            val reg = regOpt.get()
             Kambrik.Logger.info("Contents of registry '$what':")
-            reg.keySet().forEach { id ->
+            reg.keySet().forEach { id: Identifier ->
                 Kambrik.Logger.info("  * [ID] $id")
             }
             source.sendSuccess("Dumped contents of '$what' to log.")

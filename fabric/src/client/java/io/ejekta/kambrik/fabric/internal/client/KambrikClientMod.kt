@@ -8,7 +8,7 @@ import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents
 
 object KambrikClientMod : ClientModInitializer {
 
@@ -24,7 +24,7 @@ object KambrikClientMod : ClientModInitializer {
 
         // Client data lifecycle management
 
-        WorldRenderEvents.LAST.register(WorldRenderEvents.Last {
+        LevelRenderEvents.END_MAIN.register(LevelRenderEvents.EndMain {
             Kambrik.Input.updateRealBinds()
         })
 
@@ -39,4 +39,3 @@ object KambrikClientMod : ClientModInitializer {
     }
 
 }
-

@@ -7,5 +7,5 @@ repositories {
 }
 
 dependencies {
-    implementation("io.ejekta.percale:percale-common:${project.property("percale_version")}")
+    compileOnly("io.ejekta.percale:percale-common-${project.property("minecraft_version")}:${project.property("percale_version")}")
 }

@@ -17,13 +17,13 @@ import net.minecraft.ChatFormatting
 import net.minecraft.commands.arguments.AngleArgument
 import net.minecraft.commands.arguments.ColorArgument
 import net.minecraft.commands.arguments.EntityArgument
-import net.minecraft.commands.arguments.ResourceLocationArgument.id
+import net.minecraft.commands.arguments.IdentifierArgument.id
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument
 import net.minecraft.commands.arguments.coordinates.Coordinates
 import net.minecraft.commands.arguments.coordinates.Vec2Argument
 import net.minecraft.commands.arguments.coordinates.Vec3Argument
 import net.minecraft.commands.arguments.selector.EntitySelector
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import java.util.function.Predicate
 
 /**
@@ -107,7 +107,7 @@ class KambrikArgBuilder<SRC, A : ArgumentBuilder<SRC, *>>(var arg: A) :
     ) = argument(if (range != null) FloatArgumentType.floatArg(range.start, range.endInclusive) else FloatArgumentType.floatArg(), word, items, func)
 
     fun argResource(
-        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, ResourceLocation> = {}
+        word: String, items: SuggestionProvider<SRC>? = null, func: ArgDslTyped<SRC, Identifier> = {}
     ) = argument(id(), word, items, func)
 
     fun argInt(

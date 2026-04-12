@@ -9,16 +9,15 @@ import io.ejekta.kambrik.registration.KambrikAutoRegistrar
 import io.ejekta.kambrikx.serial.toSimplePacketCodec
 import kotlinx.serialization.KSerializer
 import net.minecraft.core.Registry
+import net.minecraft.network.protocol.PacketFlow
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.server.level.ServerPlayer
-import net.neoforged.api.distmarker.Dist
 import net.neoforged.fml.loading.FMLEnvironment
 import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
-import net.neoforged.neoforge.network.handling.ClientPayloadContext
 import net.neoforged.neoforge.network.handling.IPayloadHandler
-import net.neoforged.neoforge.network.handling.ServerPayloadContext
+import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.HandlerThread
 import java.nio.file.Path
 
@@ -35,11 +34,11 @@ class KambrikSharedApiForge() : KambrikSharedApi {
     // Event methods
 
     override fun isOnClient(): Boolean {
-        return FMLEnvironment.dist == Dist.CLIENT
+        return FMLEnvironment.getDist().isClient
     }
 
     override fun isOnServer(): Boolean {
-        return FMLEnvironment.dist == Dist.DEDICATED_SERVER
+        return FMLEnvironment.getDist().isDedicatedServer
     }
 
     // Messaging
@@ -51,10 +50,9 @@ class KambrikSharedApiForge() : KambrikSharedApi {
         val streamCodec = ser.toSimplePacketCodec()
         val payloadHandler = IPayloadHandler<M> { p0, p1 ->
             p1.enqueueWork {
-                when (p1) {
-                    is ClientPayloadContext -> { p0.onClientReceived() }
-                    is ServerPayloadContext -> { p0.onServerReceived(KambrikMsg.MsgContext(p1.player())) }
-                    else -> throw Exception("No valid payload context for this message serializer: $ser")
+                when (p1.flow()) {
+                    PacketFlow.CLIENTBOUND -> { p0.onClientReceived() }
+                    PacketFlow.SERVERBOUND -> { p0.onServerReceived(KambrikMsg.MsgContext(p1.player() as ServerPlayer)) }
                 }
             }.exceptionally { throwable ->
                 throwable.printStackTrace()
@@ -96,7 +94,7 @@ class KambrikSharedApiForge() : KambrikSharedApi {
     }
 
     override fun <M : KambrikMsg> sendMsgToServer(msg: M) {
-        PacketDistributor.sendToServer(msg)
+        clientSendToServer(msg)
     }
 
     override fun <M : KambrikMsg> sendMsgToClient(msg: M, player: ServerPlayer) {
@@ -108,9 +106,16 @@ class KambrikSharedApiForge() : KambrikSharedApi {
         return Path.of("config")
     }
 
-    override fun <T> register(autoReg: KambrikAutoRegistrar, reg: Registry<T>, thingId: String, obj: T): T {
-        reg.register(ResourceLocation.fromNamespaceAndPath(autoReg.getId(), thingId), obj)
+    override fun <T : Any> register(autoReg: KambrikAutoRegistrar, reg: Registry<T>, thingId: String, obj: T): T {
+        reg.register(Identifier.fromNamespaceAndPath(autoReg.getId(), thingId), obj)
         return obj
+    }
+
+    companion object {
+        // Isolated in companion to avoid loading client-only class on dedicated server
+        fun <M : KambrikMsg> clientSendToServer(msg: M) {
+            net.neoforged.neoforge.client.network.ClientPacketDistributor.sendToServer(msg)
+        }
     }
 
 }

@@ -7,7 +7,7 @@ import net.minecraft.core.Registry
 
 object KambrikRegistrar {
 
-    data class RegistrationEntry<T>(val registry: Registry<T>, val itemId: String, val item: Lazy<T>) {
+    data class RegistrationEntry<T : Any>(val registry: Registry<T>, val itemId: String, val item: Lazy<T>) {
         fun register(modId: String) {
             Kambrik.Logger.debug("Registering item: ${modId}:${itemId}")
             registry.register(Identifier(modId, itemId), item.value)
@@ -22,7 +22,7 @@ object KambrikRegistrar {
         return registrars.getOrPut(requester) { ModRegistrar(requester) }
     }
 
-    fun <T> register(requester: KambrikAutoRegistrar, reg: Registry<T>, itemId: String, obj: Lazy<T>): Lazy<T> {
+    fun <T : Any> register(requester: KambrikAutoRegistrar, reg: Registry<T>, itemId: String, obj: Lazy<T>): Lazy<T> {
         Kambrik.Logger.debug("Kambrik registering '${requester::class.qualifiedName} for '$itemId' for auto-registration")
         this[requester].content.add(RegistrationEntry(reg, itemId, obj))
         return obj

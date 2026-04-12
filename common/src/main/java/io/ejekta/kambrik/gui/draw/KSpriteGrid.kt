@@ -1,10 +1,11 @@
 package io.ejekta.kambrik.gui.draw
 
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.Screen
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.client.renderer.RenderPipelines
+import net.minecraft.resources.Identifier
 
-open class KSpriteGrid(val location: ResourceLocation, val texWidth: Int, val texHeight: Int) {
+open class KSpriteGrid(val location: Identifier, val texWidth: Int, val texHeight: Int) {
 
     inner class Sprite(
         val u: Float = 0f,
@@ -16,8 +17,8 @@ open class KSpriteGrid(val location: ResourceLocation, val texWidth: Int, val te
         val grid: KSpriteGrid
             get() = this@KSpriteGrid
 
-        fun draw(screen: Screen, context: GuiGraphics, x: Int, y: Int, w: Int = width, h: Int = height) {
-            context.blit(location, x, y, u, v, w, h, texWidth, texHeight)
+        fun draw(screen: Screen, context: GuiGraphicsExtractor, x: Int, y: Int, w: Int = width, h: Int = height) {
+            context.blit(RenderPipelines.GUI_TEXTURED, location, x, y, u, v, w, h, texWidth, texHeight)
         }
     }
 

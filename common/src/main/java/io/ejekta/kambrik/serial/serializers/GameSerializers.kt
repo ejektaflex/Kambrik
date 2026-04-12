@@ -10,7 +10,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.TagParser
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 
@@ -20,17 +20,17 @@ object SimpleNbtSerializer : KSerializer<CompoundTag> {
         encoder.encodeString(value.toString())
     }
     override fun deserialize(decoder: Decoder): CompoundTag {
-        return TagParser.parseTag(decoder.decodeString())
+        return TagParser.parseCompoundFully(decoder.decodeString())
     }
 }
 
-object IdentitySer : KSerializer<ResourceLocation> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("kambrik.ResourceLocation", PrimitiveKind.STRING)
-    override fun serialize(encoder: Encoder, value: ResourceLocation) {
+object IdentitySer : KSerializer<Identifier> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("kambrik.Identifier", PrimitiveKind.STRING)
+    override fun serialize(encoder: Encoder, value: Identifier) {
         encoder.encodeString(value.toString())
     }
-    override fun deserialize(decoder: Decoder): ResourceLocation {
-        return ResourceLocation.parse(decoder.decodeString())
+    override fun deserialize(decoder: Decoder): Identifier {
+        return Identifier.parse(decoder.decodeString())
     }
 }
 

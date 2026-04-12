@@ -3,15 +3,16 @@ package io.ejekta.kambrik.gui.screen
 import io.ejekta.kambrik.gui.draw.KGuiDsl
 import io.ejekta.kambrik.gui.draw.KRect
 import io.ejekta.kambrik.gui.draw.reactor.MouseReactor
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
+import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.client.gui.components.events.GuiEventListener
 
 interface KambrikScreenCommon : GuiEventListener {
     val boundsStack: MutableList<Pair<MouseReactor, KRect>>
     val areaClickStack: MutableList<Pair<() -> Unit, KRect>>
     val modalStack: MutableList<KGuiDsl.() -> Unit>
-    fun onDrawBackground(context: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float)
-    fun onDrawForeground(context: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float)
+    fun onDrawBackground(context: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, delta: Float)
+    fun onDrawForeground(context: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, delta: Float)
 
     private fun cycleDrawnWidgets(func: (widget: MouseReactor, rect: KRect) -> Unit) {
         for (bounds in boundsStack) {
@@ -27,7 +28,10 @@ interface KambrikScreenCommon : GuiEventListener {
         }
     }
 
-    override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
+    override fun mouseClicked(event: MouseButtonEvent, doubleClick: Boolean): Boolean {
+        val mouseX = event.x()
+        val mouseY = event.y()
+        val button = event.button()
         for (bounds in boundsStack) {
             val widget = bounds.first
             val rect = bounds.second
@@ -52,7 +56,10 @@ interface KambrikScreenCommon : GuiEventListener {
         return true
     }
 
-    override fun mouseReleased(mouseX: Double, mouseY: Double, button: Int): Boolean {
+    override fun mouseReleased(event: MouseButtonEvent): Boolean {
+        val mouseX = event.x()
+        val mouseY = event.y()
+        val button = event.button()
         cycleDrawnWidgets { widget, rect ->
             if (widget.canDragStop() && widget.isDragging) {
                 widget.doDragStop(mouseX.toInt() - rect.x, mouseY.toInt() - rect.y)

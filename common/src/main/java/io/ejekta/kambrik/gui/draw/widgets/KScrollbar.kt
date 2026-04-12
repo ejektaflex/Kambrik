@@ -4,7 +4,7 @@ import io.ejekta.kambrik.gui.draw.KGuiDsl
 import io.ejekta.kambrik.gui.draw.KSpriteGrid
 import io.ejekta.kambrik.gui.draw.KWidget
 import io.ejekta.kambrik.gui.draw.reactor.MouseReactor
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import kotlin.math.roundToInt
 
 abstract class KScrollbar(

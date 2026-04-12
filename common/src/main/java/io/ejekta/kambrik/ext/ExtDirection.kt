@@ -12,6 +12,6 @@ fun Direction.rotatedClockwise(times: Int): Direction {
 }
 
 fun Direction.toVec3(): Vec3 {
-    return Vec3(normal.x.toDouble(), normal.y.toDouble(), normal.z.toDouble())
+    return Vec3(stepX.toDouble(), stepY.toDouble(), stepZ.toDouble())
 }
 

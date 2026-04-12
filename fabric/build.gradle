@@ -7,13 +7,8 @@ repositories {
 }
 
 dependencies {
-    def localPercaleFabric = rootProject.file("../Percale/fabric/build/libs/percale-fabric-${percale_version}.jar")
-    if (localPercaleFabric.exists()) {
-        modImplementation(files(localPercaleFabric))
-        include(files(localPercaleFabric))
-    } else {
-        modImplementation("io.ejekta.percale:percale-fabric:${percale_version}")
-        include("io.ejekta.percale:percale-fabric:${percale_version}")
-    }
-    modRuntimeOnly "com.terraformersmc:modmenu:${mod_menu_version}"
+    implementation("io.ejekta.percale:percale-fabric-${minecraft_version}:${percale_version}")
+    include("io.ejekta.percale:percale-fabric-${minecraft_version}:${percale_version}")
+    // ModMenu disabled until a 26.1.2-compatible version is available
+    // runtimeOnly "com.terraformersmc:modmenu:${mod_menu_version}"
 }

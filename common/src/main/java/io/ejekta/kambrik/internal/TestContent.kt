@@ -9,14 +9,16 @@ import kotlinx.serialization.Serializable
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.InteractionHand
-import net.minecraft.world.InteractionResultHolder
+import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.TooltipFlag
+import net.minecraft.world.item.component.TooltipDisplay
 import net.minecraft.world.level.Level
+import java.util.function.Consumer
 
 object TestContent : KambrikAutoRegistrar {
 
@@ -25,10 +27,10 @@ object TestContent : KambrikAutoRegistrar {
 
     val MY_DATA by serialComponent<ItemData>("test_data")
 
-    val TEST_ITEM by "test_item" forItem {
-        object : Item(Properties().stacksTo(16).rarity(Rarity.UNCOMMON).component(MY_DATA, ItemData(0, ItemStack.EMPTY) )) {
+    val TEST_ITEM by "test_item" forItem { props ->
+        object : Item(props.stacksTo(16).rarity(Rarity.UNCOMMON).component(MY_DATA, ItemData(0, ItemStack.EMPTY))) {
 
-            override fun use(pLevel: Level, pPlayer: Player, pUsedHand: InteractionHand): InteractionResultHolder<ItemStack> {
+            override fun use(pLevel: Level, pPlayer: Player, pUsedHand: InteractionHand): InteractionResult {
                 if (pPlayer is ServerPlayer) {
                     println("Item used!")
                     val stack = pPlayer.getItemInHand(pUsedHand)
@@ -38,13 +40,13 @@ object TestContent : KambrikAutoRegistrar {
                 return super.use(pLevel, pPlayer, pUsedHand)
             }
 
-            override fun appendHoverText(pStack: ItemStack, pContext: TooltipContext, pTooltipComponents: MutableList<Component>, pTooltipFlag: TooltipFlag) {
+            override fun appendHoverText(pStack: ItemStack, pContext: TooltipContext, pDisplay: TooltipDisplay, pBuilder: Consumer<Component>, pTooltipFlag: TooltipFlag) {
                 val myData = pStack.get(MY_DATA)
-                pTooltipComponents.add(textLiteral("Times Used: ${myData?.timesUsed}"))
-                pTooltipComponents.add(textLiteral("Holding Item: ") {
+                pBuilder.accept(textLiteral("Times Used: ${myData?.timesUsed}"))
+                pBuilder.accept(textLiteral("Holding Item: ") {
                     myData?.place?.let { add(it.displayName) }
                 })
-                super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag)
+                super.appendHoverText(pStack, pContext, pDisplay, pBuilder, pTooltipFlag)
             }
 
         }

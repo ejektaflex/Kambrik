@@ -65,11 +65,11 @@ operator fun Vec3.times(num: Double): Vec3 {
 // Masks a vector with a direction's unit vector
 
 fun Vec3i.dirMask(dir: Direction): Vec3i {
-    return (this * dir.normal)
+    return (this * Vec3i(dir.stepX, dir.stepY, dir.stepZ))
 }
 
 fun BlockPos.dirMask(dir: Direction): BlockPos {
-    return BlockPos(this * dir.normal)
+    return BlockPos(this * Vec3i(dir.stepX, dir.stepY, dir.stepZ))
 }
 
 fun Vec3.dirMask(dir: Direction): Vec3 {

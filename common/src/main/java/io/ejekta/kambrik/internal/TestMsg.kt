@@ -8,10 +8,10 @@ import kotlinx.serialization.Serializable
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 
 @Serializable
-data class TestMsg(val msg: String, @Contextual val id: ResourceLocation) : KambrikMsg() {
+data class TestMsg(val msg: String, @Contextual val id: Identifier) : KambrikMsg() {
     override fun onClientReceived() {
         Minecraft.getInstance().player?.sendSystemMessage(Component.literal("Got Test Msg! It says: $msg"))
         println("Got Test Msg! It says: $msg")

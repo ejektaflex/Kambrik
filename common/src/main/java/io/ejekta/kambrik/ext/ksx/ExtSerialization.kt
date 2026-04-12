@@ -9,7 +9,7 @@ fun <T> Json.encodeToStringTag(serializer: KSerializer<T>, value: T): StringTag 
 }
 
 fun <T> Json.decodeFromStringTag(serializer: KSerializer<T>, nbtString: StringTag): T {
-    return decodeFromString(serializer, nbtString.asString)
+    return decodeFromString(serializer, nbtString.asString().orElseThrow())
 }
 
 

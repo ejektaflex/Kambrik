@@ -1,6 +1,9 @@
 package io.ejekta.kambrik.text
 
+import com.mojang.datafixers.util.Either
+import com.mojang.serialization.JsonOps
 import net.minecraft.ChatFormatting
+import net.minecraft.commands.arguments.selector.EntitySelector
 import net.minecraft.network.chat.*
 import net.minecraft.network.chat.contents.KeybindContents
 import net.minecraft.network.chat.contents.PlainTextContents
@@ -9,6 +12,7 @@ import net.minecraft.network.chat.contents.SelectorContents
 import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.ItemStackTemplate
 import java.util.*
 
 
@@ -25,11 +29,12 @@ fun textKeybind(key: String, func: KambrikTextBuilder<MutableComponent>.() -> Un
 }
 
 fun textScore(name: String, objective: String, func: KambrikTextBuilder<MutableComponent>.() -> Unit = {}): MutableComponent {
-    return textBuilder(MutableComponent.create(ScoreContents(name, objective)), func)
+    return textBuilder(MutableComponent.create(ScoreContents(Either.right(name), objective)), func)
 }
 
 fun textSelector(pattern: String, separator: Component?, func: KambrikTextBuilder<MutableComponent>.() -> Unit = {}): MutableComponent {
-    return textBuilder(MutableComponent.create(SelectorContents(pattern, Optional.ofNullable(separator))), func)
+    val compilable = EntitySelector.COMPILABLE_CODEC.parse(JsonOps.INSTANCE, com.google.gson.JsonPrimitive(pattern)).getOrThrow()
+    return textBuilder(MutableComponent.create(SelectorContents(compilable, Optional.ofNullable(separator))), func)
 }
 
 internal fun <T : MutableComponent> textBuilder(starterText: T, func: KambrikTextBuilder<T>.() -> Unit): T {
@@ -93,19 +98,19 @@ class KambrikTextBuilder<T : MutableComponent>(
         }
 
     fun onHoverShowItem(itemStack: ItemStack) {
-        hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ITEM, HoverEvent.ItemStackInfo(itemStack))
+        hoverEvent = HoverEvent.ShowItem(ItemStackTemplate.fromNonEmptyStack(itemStack))
     }
 
     fun onHoverShowText(text: Component) {
-        hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, text)
+        hoverEvent = HoverEvent.ShowText(text)
     }
 
     fun onHoverShowText(inFunc: KambrikTextBuilder<MutableComponent>.() -> Unit) {
-        hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, textLiteral("", inFunc))
+        hoverEvent = HoverEvent.ShowText(textLiteral("", inFunc))
     }
 
     fun onHoverShowEntity(entity: Entity) {
-        hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ENTITY, HoverEvent.EntityTooltipInfo(entity.type, entity.uuid, entity.name))
+        hoverEvent = HoverEvent.ShowEntity(HoverEvent.EntityTooltipInfo(entity.type, entity.uuid, entity.name))
     }
 
     fun newLine() = addLiteral("\n")

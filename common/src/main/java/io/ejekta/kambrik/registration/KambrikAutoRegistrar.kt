@@ -23,16 +23,19 @@ import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.ai.attributes.Attribute
-import net.minecraft.world.entity.npc.VillagerProfession
-import net.minecraft.world.entity.npc.VillagerType
+import net.minecraft.world.entity.npc.villager.VillagerProfession
+import net.minecraft.world.entity.npc.villager.VillagerType
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.flag.FeatureFlags
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.MenuType
+import net.minecraft.core.registries.Registries
+import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.alchemy.Potion
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.levelgen.carver.CarverConfiguration
@@ -54,17 +57,23 @@ interface KambrikAutoRegistrar : KambrikMarker {
 
     fun afterRegistration() {}
 
-    fun <T> String.forRegistration(reg: Registry<T>, obj: () -> T): Lazy<T> {
+    fun <T : Any> String.forRegistration(reg: Registry<T>, obj: () -> T): Lazy<T> {
         return KambrikRegistrar.register(this@KambrikAutoRegistrar, reg, this, lazy(obj))
     }
 
-    infix fun String.forItem(item: () -> Item) = forRegistration(BuiltInRegistries.ITEM, item)
+    infix fun String.forItem(factory: (Item.Properties) -> Item): Lazy<Item> {
+        val key = ResourceKey.create(Registries.ITEM, Identifier(getId(), this))
+        return forRegistration(BuiltInRegistries.ITEM) { factory(Item.Properties().setId(key)) }
+    }
 
-    infix fun String.forBlock(block: () -> Block) = forRegistration(BuiltInRegistries.BLOCK, block)
+    infix fun String.forBlock(factory: (BlockBehaviour.Properties) -> Block): Lazy<Block> {
+        val key = ResourceKey.create(Registries.BLOCK, Identifier(getId(), this))
+        return forRegistration(BuiltInRegistries.BLOCK) { factory(BlockBehaviour.Properties.of().setId(key)) }
+    }
 
-    infix fun <C : CarverConfiguration?> String.forCarver(carver: () -> WorldCarver<C>): WorldCarver<C> = forRegistration(BuiltInRegistries.CARVER, carver) as WorldCarver<C>
+    infix fun <C : CarverConfiguration> String.forCarver(carver: () -> WorldCarver<C>): WorldCarver<C> = forRegistration(BuiltInRegistries.CARVER, carver) as WorldCarver<C>
 
-    infix fun <FC : FeatureConfiguration?> String.forFeature(feature: () -> Feature<FC>): () -> Feature<FC> =
+    infix fun <FC : FeatureConfiguration> String.forFeature(feature: () -> Feature<FC>): () -> Feature<FC> =
         forRegistration(BuiltInRegistries.FEATURE, feature) as () -> Feature<FC>
 
     infix fun String.forEffect(status: () -> MobEffect) =
@@ -91,9 +100,14 @@ interface KambrikAutoRegistrar : KambrikMarker {
     infix fun String.forSoundEvent(event: () -> SoundEvent) =
         forRegistration(BuiltInRegistries.SOUND_EVENT, event)
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : BlockEntity> String.forBlockEntity(block: Lazy<Block>, factory: (pos: BlockPos, state: BlockState) -> T): Lazy<BlockEntityType<T>> {
         return forRegistration(BuiltInRegistries.BLOCK_ENTITY_TYPE) {
-            BlockEntityType.Builder.of(factory, block.value).build(null)
+            // BlockEntityType.Builder was removed in MC 26.1.2; use reflection to access private constructor
+            val supplier = factory::invoke
+            val ctor = BlockEntityType::class.java.getDeclaredConstructors().first { it.parameterCount == 2 }
+            ctor.isAccessible = true
+            ctor.newInstance(supplier, setOf(block.value)) as BlockEntityType<T>
         } as Lazy<BlockEntityType<T>>
     }
 

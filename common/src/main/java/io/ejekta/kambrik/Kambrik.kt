@@ -9,7 +9,7 @@ import io.ejekta.kambrik.logging.KambrikLoggingApi
 import io.ejekta.kambrik.message.KambrikMessageApi
 import io.ejekta.kambrik.serial.KambrikSerialApi
 import io.ejekta.kambrik.structure.KambrikStructureApi
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import org.apache.logging.log4j.LogManager
 
 object Kambrik {

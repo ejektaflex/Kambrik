@@ -11,6 +11,8 @@ import io.ejekta.kambrik.Kambrik
 import io.ejekta.kambrik.ext.commands.addAll
 import net.minecraft.commands.CommandSource
 import net.minecraft.commands.CommandSourceStack
+import net.minecraft.server.permissions.Permission
+import net.minecraft.server.permissions.PermissionLevel
 import net.minecraft.world.entity.player.Player
 
 typealias ArgDsl<S, T> = KambrikArgBuilder<S, T>.() -> Unit
@@ -84,14 +86,14 @@ fun KambrikArgBuilder<CommandSourceStack, *>.requiresCreative() {
  * Used to ensure that a command requires a specific op level or higher to execute
  */
 fun KambrikArgBuilder<CommandSourceStack, *>.requiresOp(opLevel: Int = 4) {
-    requires { it.hasPermission(opLevel) }
+    requires { it.permissions().hasPermission(Permission.HasCommandLevel(PermissionLevel.byId(opLevel))) }
 }
 
 /**
  * Used to ensure that a command requires creative mode or a specific op level or higher to execute
  */
 fun KambrikArgBuilder<CommandSourceStack, *>.requiresCreativeOrOp(opLevel: Int = 4) {
-    requires { (it.entity is Player && it.player?.isCreative == true) || it.hasPermission(opLevel) }
+    requires { (it.entity is Player && it.player?.isCreative == true) || it.permissions().hasPermission(Permission.HasCommandLevel(PermissionLevel.byId(opLevel))) }
 }
 
 

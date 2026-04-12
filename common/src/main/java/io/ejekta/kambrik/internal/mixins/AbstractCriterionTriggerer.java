@@ -1,7 +1,7 @@
 package io.ejekta.kambrik.internal.mixins;
 
 import io.ejekta.kambrik.Kambrik;
-import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
+import net.minecraft.advancements.criterion.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

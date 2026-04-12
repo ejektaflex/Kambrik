@@ -6,11 +6,11 @@ import net.minecraft.nbt.TagParser
 import net.minecraft.network.FriendlyByteBuf
 
 operator fun CompoundTag.iterator(): Iterator<Pair<String, Tag>> {
-    return allKeys.map { it to get(it)!! }.iterator()
+    return keySet().map { it to get(it)!! }.iterator()
 }
 
 fun CompoundTag.toMap(): Map<String, Tag> {
-    return allKeys.associateWith { get(it)!! }
+    return keySet().associateWith { get(it)!! }
 }
 
 fun Map<String, Tag>.toCompoundTag(): CompoundTag {
@@ -21,12 +21,12 @@ fun Map<String, Tag>.toCompoundTag(): CompoundTag {
     }
 }
 
-fun TagParser.parseTagNonCompound(nbt: String): Tag {
-    return TagParser.parseTag("{content:$nbt}")
+fun parseTagNonCompound(nbt: String): Tag {
+    return TagParser.parseCompoundFully("{content:$nbt}").get("content")!!
 }
 
 fun String.toTagNonCompound(): Tag {
-    return TagParser.parseTag("{content:$this}").get("content")!!
+    return TagParser.parseCompoundFully("{content:$this}").get("content")!!
 }
 
 fun FriendlyByteBuf.unwrapToTag(): Tag {

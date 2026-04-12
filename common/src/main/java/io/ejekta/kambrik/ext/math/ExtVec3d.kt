@@ -21,8 +21,7 @@ private fun intSwitch(i: Int): Int {
 }
 
 fun Vec3.flipMask(dir: Direction): Vec3 {
-    val unit = dir.normal
-    val mask = Vec3i(intSwitch(unit.x), intSwitch(unit.y), intSwitch(unit.z))
+    val mask = Vec3i(intSwitch(dir.stepX), intSwitch(dir.stepY), intSwitch(dir.stepZ))
     return Vec3(x * mask.x, y * mask.y, z * mask.z)
 }
 

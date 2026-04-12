@@ -6,26 +6,23 @@ import io.ejekta.kambrik.text.KambrikTextBuilder
 import io.ejekta.kambrik.text.textLiteral
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.inventory.InventoryScreen
-import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.util.FormattedCharSequence
+import net.minecraft.world.entity.EntitySpawnReason
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
 import kotlin.math.max
 import kotlin.math.min
 
-data class KGuiDsl(val ctx: KGui, val context: GuiGraphics, val mouseX: Int, val mouseY: Int, val delta: Float?) {
+data class KGuiDsl(val ctx: KGui, val context: GuiGraphicsExtractor, val mouseX: Int, val mouseY: Int, val delta: Float?) {
 
     val fontRenderer: Font
         get() = Minecraft.getInstance().font
-
-    val itemRenderer: ItemRenderer
-        get() = Minecraft.getInstance().itemRenderer
 
     private val frameDeferredTasks = mutableListOf<KGuiDsl.() -> Unit>()
 
@@ -68,11 +65,11 @@ data class KGuiDsl(val ctx: KGui, val context: GuiGraphics, val mouseX: Int, val
     }
 
     fun itemStackIcon(stack: ItemStack, x: Int = 0, y: Int = 0) {
-        context.renderItem(stack, ctx.absX(x), ctx.absY(y))
+        context.item(stack, ctx.absX(x), ctx.absY(y))
     }
 
     fun itemStackOverlay(stack: ItemStack, x: Int = 0, y: Int = 0) {
-        context.renderItem(stack, x, y)
+        context.item(stack, x, y)
     }
 
     fun itemStack(stack: ItemStack, x: Int = 0, y: Int = 0) {
@@ -83,7 +80,7 @@ data class KGuiDsl(val ctx: KGui, val context: GuiGraphics, val mouseX: Int, val
     fun itemStackWithTooltip(stack: ItemStack, x: Int, y: Int) {
         itemStack(stack, x, y)
         onHover(x, y, 18, 18) {
-            context.renderTooltip(fontRenderer, stack, x, y)
+            context.setTooltipForNextFrame(fontRenderer, stack, x, y)
         }
     }
 
@@ -98,26 +95,28 @@ data class KGuiDsl(val ctx: KGui, val context: GuiGraphics, val mouseX: Int, val
     }
 
     fun tooltip(components: List<Component>) {
-        tooltipText(components.map { it.visualOrderText })
-    }
-
-    fun tooltipText(texts: List<FormattedCharSequence>) {
         defer {
-            context.renderTooltip(
-                fontRenderer,
-                texts,
-                mouseX,
-                mouseY
-            )
+            context.setTooltipForNextFrame(fontRenderer, components, java.util.Optional.empty(), mouseX, mouseY)
         }
     }
 
+    fun tooltipText(texts: List<FormattedCharSequence>) {
+        // FormattedCharSequence tooltip not directly supported in new API; convert to string form
+        tooltip(texts.map { seq ->
+            val sb = StringBuilder()
+            seq.accept { _, _, codePoint -> sb.appendCodePoint(codePoint); true }
+            Component.literal(sb.toString())
+        })
+    }
+
     fun tooltip(func: KambrikTextBuilder<MutableComponent>.() -> Unit) {
-        tooltipText(listOf(textLiteral("", func).visualOrderText))
+        defer {
+            context.setTooltipForNextFrame(fontRenderer, textLiteral("", func), mouseX, mouseY)
+        }
     }
 
     fun text(x: Int, y: Int, text: Component) {
-        context.drawString(fontRenderer, text, ctx.absX(x), ctx.absY(y), 0xFFFFFF, false)
+        context.text(fontRenderer, text, ctx.absX(x), ctx.absY(y), 0xFFFFFF, false)
     }
 
     fun text(x: Int = 0, y: Int = 0, textDsl: KambrikTextBuilder<MutableComponent>.() -> Unit) {
@@ -125,7 +124,7 @@ data class KGuiDsl(val ctx: KGui, val context: GuiGraphics, val mouseX: Int, val
     }
 
     fun textNoShadow(x: Int, y: Int, text: Component) {
-        context.drawString(fontRenderer, text, ctx.absX(x), ctx.absY(y), 0xFFFFFF, false)
+        context.text(fontRenderer, text, ctx.absX(x), ctx.absY(y), 0xFFFFFF, false)
     }
 
     fun textNoShadow(x: Int = 0, y: Int = 0, textDsl: KambrikTextBuilder<MutableComponent>.() -> Unit) {
@@ -133,7 +132,7 @@ data class KGuiDsl(val ctx: KGui, val context: GuiGraphics, val mouseX: Int, val
     }
 
     fun textCentered(x: Int, y: Int, text: Component) {
-        context.drawString(
+        context.text(
             fontRenderer,
             text,
             ctx.absX(x) - fontRenderer.width(text) / 2,
@@ -150,23 +149,7 @@ data class KGuiDsl(val ctx: KGui, val context: GuiGraphics, val mouseX: Int, val
     fun textImmediate(x: Int, y: Int, text: Component) {
         val poseStack = PoseStack()
         poseStack.translate(0.0, 0.0, 201.0)
-//        textRenderer.draw
-        // TODO allocator visibility? How is this done now, anyways?
-        //val immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().allocator)
-
-//        textRenderer.draw(
-//            text,
-//            (ctx.absX(x) + textRenderer.getWidth(text)).toFloat(),
-//            ctx.absY(y).toFloat(),
-//            0xFFFFFF,
-//            true,
-//            PoseStack.peek().positionMatrix,
-//            immediate,
-//            TextRenderer.TextLayerType.NORMAL,
-//            0,
-//            LightmapTextureManager.MAX_LIGHT_COORDINATE
-//        )
-//        immediate.draw()
+        // TODO: implement using new rendering API if needed
     }
 
     fun sprite(sprite: KSpriteGrid.Sprite, x: Int = 0, y: Int = 0, w: Int = sprite.width, h: Int = sprite.height, func: (AreaDsl.() -> Unit)? = null) {
@@ -185,8 +168,8 @@ data class KGuiDsl(val ctx: KGui, val context: GuiGraphics, val mouseX: Int, val
         }
     }
 
-    fun img(id: ResourceLocation, w: Int, h: Int, x: Int = 0, y: Int = 0, func: (AreaDsl.() -> Unit)? = null) {
-        context.blitSprite(id, ctx.absX(x), ctx.absY(y), w, h)
+    fun img(id: Identifier, w: Int, h: Int, x: Int = 0, y: Int = 0, func: (AreaDsl.() -> Unit)? = null) {
+        context.blitSprite(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, id, ctx.absX(x), ctx.absY(y), w, h)
         func?.let { area(x, y, w, h, it) }
     }
 
@@ -246,7 +229,7 @@ data class KGuiDsl(val ctx: KGui, val context: GuiGraphics, val mouseX: Int, val
         fun livingEntity(entity: LivingEntity, size: Double = min(w, h).toDouble()) {
             val dims = entity.getDimensions(entity.pose)
             val maxDim = (1 / max(dims.height, dims.width) * size).toInt().coerceAtLeast(1)
-            InventoryScreen.renderEntityInInventoryFollowsMouse(
+            InventoryScreen.extractEntityInInventoryFollowsMouse(
                 context,
                 ctx.absX(), ctx.absY(),
                 ctx.absX(w), ctx.absY(h),
@@ -257,7 +240,7 @@ data class KGuiDsl(val ctx: KGui, val context: GuiGraphics, val mouseX: Int, val
         }
 
         fun livingEntity(entityType: EntityType<out LivingEntity>, size: Double = 20.0) {
-            val eet = Minecraft.getInstance().level?.let { entityType.create(it) } ?: return
+            val eet = Minecraft.getInstance().level?.let { entityType.create(it, EntitySpawnReason.LOAD) } ?: return
             val entity = ctx.entityRenderCache.getOrPut(entityType) { eet }
             livingEntity(entity, size)
         }

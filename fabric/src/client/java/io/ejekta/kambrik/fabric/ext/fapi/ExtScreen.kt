@@ -5,17 +5,12 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.screens.Screen
-import net.minecraft.client.renderer.entity.ItemRenderer
 
 val Screen.buttons: List<AbstractWidget>
-    get() = Screens.getButtons(this)
+    get() = Screens.getWidgets(this)
 
 val Screen.client: Minecraft
-    get() = Screens.getClient(this)
-
-val Screen.itemRenderer: ItemRenderer
-    get() = Minecraft.getInstance().itemRenderer
+    get() = Screens.getMinecraft(this)
 
 val Screen.textRenderer: Font
-    get() = Screens.getTextRenderer(this)
-
+    get() = this.getFont()

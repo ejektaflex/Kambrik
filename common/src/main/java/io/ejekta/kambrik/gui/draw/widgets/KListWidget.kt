@@ -3,7 +3,7 @@ package io.ejekta.kambrik.gui.draw.widgets
 import io.ejekta.kambrik.gui.draw.KGuiDsl
 import io.ejekta.kambrik.gui.draw.KWidget
 import io.ejekta.kambrik.gui.draw.reactor.MouseReactor
-import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.Minecraft
 import kotlin.math.max
 import kotlin.math.min
 
@@ -53,7 +53,7 @@ open class KListWidget<T>(
             val allItems = items()
 
             // If holding shift. we can select multiple
-            if (Screen.hasShiftDown() && mode == Mode.MULTI && lastSelectedIndex != null && itemListIndex != null) {
+            if (Minecraft.getInstance().hasShiftDown() && mode == Mode.MULTI && lastSelectedIndex != null && itemListIndex != null) {
                 lastSelectedIndex?.let {
                     val selectedRange = min(it, itemListIndex)..max(it, itemListIndex)
                     val selectedItems = selectedRange.toList().mapNotNull { i -> allItems.getOrNull(i) }
@@ -82,7 +82,7 @@ open class KListWidget<T>(
 
     fun select(items: List<T>) {
 
-        if (!Screen.hasControlDown() && mode != Mode.TOGGLE) {
+        if (!Minecraft.getInstance().hasControlDown() && mode != Mode.TOGGLE) {
             internalSelected.clear()
         }
 
