@@ -1,6 +1,7 @@
 package io.ejekta.kambrik.registration
 
 import io.ejekta.kambrik.Kambrik
+import io.ejekta.kambrik.bridge.Kambridge
 import io.ejekta.kambrik.ext.Identifier
 import io.ejekta.kambrik.internal.KambrikMarker
 import io.ejekta.percale.toCodec
@@ -103,11 +104,7 @@ interface KambrikAutoRegistrar : KambrikMarker {
     @Suppress("UNCHECKED_CAST")
     fun <T : BlockEntity> String.forBlockEntity(block: Lazy<Block>, factory: (pos: BlockPos, state: BlockState) -> T): Lazy<BlockEntityType<T>> {
         return forRegistration(BuiltInRegistries.BLOCK_ENTITY_TYPE) {
-            // BlockEntityType.Builder was removed in MC 26.1.2; use reflection to access private constructor
-            val supplier = factory::invoke
-            val ctor = BlockEntityType::class.java.getDeclaredConstructors().first { it.parameterCount == 2 }
-            ctor.isAccessible = true
-            ctor.newInstance(supplier, setOf(block.value)) as BlockEntityType<T>
+            Kambridge.createBlockEntityType(factory, setOf(block.value))
         } as Lazy<BlockEntityType<T>>
     }
 
@@ -147,4 +144,3 @@ interface KambrikAutoRegistrar : KambrikMarker {
     }
 
 }
-

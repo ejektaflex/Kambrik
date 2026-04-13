@@ -69,7 +69,7 @@ data class KGuiDsl(val ctx: KGui, val context: GuiGraphicsExtractor, val mouseX:
     }
 
     fun itemStackOverlay(stack: ItemStack, x: Int = 0, y: Int = 0) {
-        context.item(stack, x, y)
+        context.itemDecorations(fontRenderer, stack, ctx.absX(x), ctx.absY(y))
     }
 
     fun itemStack(stack: ItemStack, x: Int = 0, y: Int = 0) {
@@ -123,6 +123,18 @@ data class KGuiDsl(val ctx: KGui, val context: GuiGraphicsExtractor, val mouseX:
         text(x, y, textLiteral("", textDsl))
     }
 
+    fun textColored(x: Int, y: Int, text: Component, color: Int, dropShadow: Boolean = false) {
+        context.text(fontRenderer, text, ctx.absX(x), ctx.absY(y), color, dropShadow)
+    }
+
+    fun textShadowed(x: Int, y: Int, text: Component, color: Int) {
+        context.text(fontRenderer, text, ctx.absX(x), ctx.absY(y), color, true)
+    }
+
+    fun nextStratum() {
+        context.nextStratum()
+    }
+
     fun textNoShadow(x: Int, y: Int, text: Component) {
         context.text(fontRenderer, text, ctx.absX(x), ctx.absY(y), 0xFFFFFF, false)
     }
@@ -139,6 +151,17 @@ data class KGuiDsl(val ctx: KGui, val context: GuiGraphicsExtractor, val mouseX:
             ctx.absY(y),
             0xFFFFFF,
             false
+        )
+    }
+
+    fun textCenteredColored(x: Int, y: Int, text: Component, color: Int, dropShadow: Boolean = false) {
+        context.text(
+            fontRenderer,
+            text,
+            ctx.absX(x) - fontRenderer.width(text) / 2,
+            ctx.absY(y),
+            color,
+            dropShadow
         )
     }
 

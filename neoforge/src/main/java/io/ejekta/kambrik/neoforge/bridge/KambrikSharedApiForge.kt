@@ -8,11 +8,16 @@ import io.ejekta.kambrik.message.KambrikMsg
 import io.ejekta.kambrik.registration.KambrikAutoRegistrar
 import io.ejekta.kambrikx.serial.toSimplePacketCodec
 import kotlinx.serialization.KSerializer
+import net.minecraft.core.BlockPos
 import net.minecraft.core.Registry
 import net.minecraft.network.protocol.PacketFlow
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.resources.Identifier
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.entity.BlockEntityType
+import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.fml.loading.FMLEnvironment
 import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
@@ -109,6 +114,16 @@ class KambrikSharedApiForge() : KambrikSharedApi {
     override fun <T : Any> register(autoReg: KambrikAutoRegistrar, reg: Registry<T>, thingId: String, obj: T): T {
         reg.register(Identifier.fromNamespaceAndPath(autoReg.getId(), thingId), obj)
         return obj
+    }
+
+    override fun <T : BlockEntity> createBlockEntityType(
+        factory: (pos: BlockPos, state: BlockState) -> T,
+        validBlocks: Set<Block>
+    ): BlockEntityType<T> {
+        return BlockEntityType(
+            BlockEntityType.BlockEntitySupplier { pos, state -> factory(pos, state) },
+            validBlocks
+        )
     }
 
     companion object {

@@ -5,10 +5,15 @@ import io.ejekta.kambrik.internal.TestMsg
 import io.ejekta.kambrik.message.KambrikMsg
 import io.ejekta.kambrik.registration.KambrikAutoRegistrar
 import kotlinx.serialization.KSerializer
+import net.minecraft.core.BlockPos
 import net.minecraft.core.Registry
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.resources.Identifier
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.entity.BlockEntityType
+import net.minecraft.world.level.block.state.BlockState
 import java.nio.file.Path
 
 interface KambrikSharedApi {
@@ -38,6 +43,11 @@ interface KambrikSharedApi {
     // Registration
 
     fun <T : Any> register(autoReg: KambrikAutoRegistrar, reg: Registry<T>, thingId: String, obj: T): T
+
+    fun <T : BlockEntity> createBlockEntityType(
+        factory: (pos: BlockPos, state: BlockState) -> T,
+        validBlocks: Set<Block>
+    ): BlockEntityType<T>
 
     // Internal
 

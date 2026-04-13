@@ -11,9 +11,14 @@ import net.fabricmc.api.EnvType
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.core.BlockPos
 import net.minecraft.core.Registry
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.entity.BlockEntityType
+import net.minecraft.world.level.block.state.BlockState
 import java.nio.file.Path
 
 class KambrikSharedApiFabric : KambrikSharedApi {
@@ -60,6 +65,16 @@ class KambrikSharedApiFabric : KambrikSharedApi {
 
     override fun <T : Any> register(autoReg: KambrikAutoRegistrar, reg: Registry<T>, thingId: String, obj: T): T {
         return KambrikRegistrar.register(autoReg, reg, thingId, lazyOf(obj)).value
+    }
+
+    override fun <T : BlockEntity> createBlockEntityType(
+        factory: (pos: BlockPos, state: BlockState) -> T,
+        validBlocks: Set<Block>
+    ): BlockEntityType<T> {
+        return BlockEntityType(
+            BlockEntityType.BlockEntitySupplier { pos, state -> factory(pos, state) },
+            validBlocks
+        )
     }
 
     override fun getConfigDir(): Path {

@@ -15,8 +15,10 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 abstract class KambrikContainerScreen<AM : AbstractContainerMenu>(
     menu: AM,
     inventory: Inventory,
-    title: Component
-) : AbstractContainerScreen<AM>(menu, inventory, title), KambrikScreenCommon {
+    title: Component,
+    imageWidth: Int = 176,
+    imageHeight: Int = 166
+) : AbstractContainerScreen<AM>(menu, inventory, title, imageWidth, imageHeight), KambrikScreenCommon {
 
     override val boundsStack = mutableListOf<Pair<MouseReactor, KRect>>()
     override val areaClickStack = mutableListOf<Pair<() -> Unit, KRect>>()
