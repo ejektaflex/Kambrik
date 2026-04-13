@@ -7,13 +7,7 @@ repositories {
 }
 
 dependencies {
-    def localPercaleFabric = rootProject.file("../Percale/fabric/build/libs/percale-fabric-${percale_version}.jar")
-    if (localPercaleFabric.exists()) {
-        modImplementation(files(localPercaleFabric))
-        include(files(localPercaleFabric))
-    } else {
-        modImplementation("io.ejekta.percale:percale-fabric:${percale_version}")
-        include("io.ejekta.percale:percale-fabric:${percale_version}")
-    }
+    modImplementation("io.ejekta.percale:percale-fabric:${percale_version}")
+    include("io.ejekta.percale:percale-fabric:${percale_version}")
     modRuntimeOnly "com.terraformersmc:modmenu:${mod_menu_version}"
 }

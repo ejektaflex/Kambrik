@@ -25,6 +25,11 @@ import java.nio.file.Path
 
 class KambrikSharedApiForge() : KambrikSharedApi {
 
+    companion object {
+        // NeoForge expects a shared payload protocol version here, not a namespace.
+        private const val NETWORK_PROTOCOL_VERSION = "1"
+    }
+
     init {
         Kambrik.Logger.debug("Kambrik Shared API (Forge) Initialized.")
     }
@@ -65,14 +70,13 @@ class KambrikSharedApiForge() : KambrikSharedApi {
 
     // normally subscribeevent
     fun registerPayloads(event: RegisterPayloadHandlersEvent) {
+        val registrar = event.registrar(NETWORK_PROTOCOL_VERSION).executesOn(HandlerThread.NETWORK)
         for (serverMsg in serverMsgMap) {
             Kambrik.Logger.info("Registering ServerMsg: ${serverMsg.type.id}")
-            val registrar = event.registrar(serverMsg.type.id.namespace).executesOn(HandlerThread.NETWORK)
             registrar.playToServer(serverMsg.type, serverMsg.streamCodec, serverMsg.payloadHandler)
         }
         for (clientMsg in clientMsgMap) {
             Kambrik.Logger.info("Registering ClientMsg: ${clientMsg.type.id}")
-            val registrar = event.registrar(clientMsg.type.id.namespace).executesOn(HandlerThread.NETWORK)
             registrar.playToClient(clientMsg.type, clientMsg.streamCodec, clientMsg.payloadHandler)
         }
     }
