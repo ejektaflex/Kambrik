@@ -30,11 +30,26 @@ class KambrikCriterionApi internal constructor() {
     private val subscribers = mutableListOf<KambrikCriterionSubscriber>()
 
     fun handleGameTrigger(player: ServerPlayer, criterion: SimpleTrigger, predicate: SimpleTriggerPredicate) {
+        // The predicate handed to us belongs to the criterion that actually fired, and it usually
+        // closes over a context object of a type only that criterion understands. Subscribers and
+        // handlers legitimately test it against trigger instances parsed from elsewhere (data packs,
+        // bounties, quests), which for strongly-typed criteria blows up with a ClassCastException
+        // deep inside the other mod's `matches`. A mismatch just means "this instance is not the one
+        // that fired", so treat it as a non-match instead of letting it kill the server tick.
+        // Reported against Cobblemon's CaughtPokemonCriterion, but any mod with typed criterion
+        // contexts hits it.
+        val safePredicate = Predicate<SimpleTriggerInstance> { instance ->
+            try {
+                predicate.test(instance)
+            } catch (e: ClassCastException) {
+                false
+            }
+        }
         for (subscriber in subscribers) {
-            subscriber.handle(player, criterion, predicate)
+            subscriber.handle(player, criterion, safePredicate)
         }
         for ((condition, func) in handlers) {
-            val result = testAgainst(criterion, condition, predicate)
+            val result = testAgainst(criterion, condition, safePredicate)
             if (result) {
                 func(player)
             }
